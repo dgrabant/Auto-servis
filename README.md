@@ -1,20 +1,10 @@
-# Programsko inženjerstvo, projekt
-# Auto servis
-
-> Ime projekta u naslovu ima cilj opisati namjenu projekta te pomoći u podizanju početnog interesa za projekt prezentirajući osnovnu svrhu projekta.
-> Isključivo ovisi o Vama!
-> 
-> Naravno, nijedan predložak nije idealan za sve projekte jer su potrebe i ciljevi različiti. Ne bojte se naglasiti Vaš cilj u ovoj početnoj stranici projekta, podržat ćemo ga bez obzira usredotočili se Vi više na tenologiju ili marketing.
-> 
-> Zašto ovaj dokument? Samo manji dio timova je do sada propoznao potrebu (a i meni je lakše pratiti Vaš rad).  
+# Auto servis Web App
 
 # Opis projekta
 Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
 
-Kratko opisati cilj Vašeg projekta. Vaša motivacija?  (Napomena: odgovor nije »Zato što je to bio zadatak i nismo imali ideje za drugo.«). Koji problem rješavate?
-> Obzirom da je ovo zadani projekt navedite i što želite/jeste novo  naučili.
-
-> Dobro izrađen opis omogućuje vam da pokažete svoj rad drugim programerima, kao i potencijalnim poslodavcima. Ne samo da prvi dojam na stranici opisa često razlikuje dobar projekt od lošeg projekta već i predstavlja dobru praksu koju morate savladati.
+Cilj ovog projekta je razviti aplikaciju koja olakšava i prati rad auto servisa. Omogućava korisnicima da zakažu termin u auto servisu, da prate rad i status njihovog vozila te pruža mogućnost komunikacije sa servisom. Osim toga, olakšava preraspodjelu rada serviserima, pruža im detaljan uvid u svako vozilo kao i mogućnost vođenja detaljne evidencije vezane uz svako vozilo. Vlasniku auto servisa pruža mogućnost dubinskog razumijevanja i pregled rada auto servisa te njegovo vođenje. Sustav olakšava u promjene određenih značajki auto servisa te uvidom u statistiku pruža koristan pregled svih informacija i pruža alat za planiranje i kontinuiran razvoj i napredak auto servisa.
+> Razvojem ovog projekta, tim je ostvario bolje razumijevanje stvarnoga svijeta, kao i naprdak svojih inženjerskih sposobnostima u svim mogućim aspektima.
 
 # Funkcijski zahtjevi
 > Navedite ključne zahtjeve Vašeg projekta.
