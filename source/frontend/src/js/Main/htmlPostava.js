@@ -116,7 +116,7 @@
 
       if(val==="Sve"){
         banner.innerHTML = "Dobrodošli!";
-        imgBanner.src = "./src/assets/pictures/audi.jpg";
+        imgBanner.src = "/assets/pictures/audi.jpg";
         document.getElementById("selected").innerText = "Molimo odaberite kategoriju";
       } else{
         banner.innerHTML = "Odabrana kategorija: " + selectedOption.text;

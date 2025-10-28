@@ -183,12 +183,12 @@ function onDocumentClick(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            navDjeloviHTML.hidden = false;
+            //navDjeloviHTML.hidden = false;
         } 
         else {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            navDjeloviHTML.hidden = true;
+            //navDjeloviHTML.hidden = true;
         }
       }
     }, 1500);
