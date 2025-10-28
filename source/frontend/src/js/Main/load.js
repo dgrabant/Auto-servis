@@ -13,7 +13,7 @@ import { checkIfLogedIn } from '../called/loginCheck.js';
 // window.addEventListener('load', () => { ... });
 
 //Putanje do modela i teksture
-const scenePath = '/assets/models/audi_scena1.glb'; // Putanja do .gltf 3D scene
+const scenePath = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
 const texturePath = '/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
@@ -27,8 +27,9 @@ let loadingElement;
 
 window.onload=()=>{
 
-  if(navDjeloviHTML==null) navDjeloviHTML = document.getElementById("navDjelovi");
+  navDjeloviHTML = document.getElementById("navDjelovi");
   console.log(navDjeloviHTML);
+  djeloviHTML.hidden = true;
 
 };
 const maxFps = 60;//za animacije
@@ -266,6 +267,7 @@ function onKeydownEsc(event) {
 function onTouchStart(e) {
   if (e.touches.length > 1) return;
   touchStartX = e.touches[0].clientX;
+  touchEndX = touchStartX;
   touchStartTime = Date.now();
 }
 
@@ -280,7 +282,7 @@ function onTouchEnd(e) {
   const deltaX = touchStartX - touchEndX;
   const elapsed = Date.now() - touchStartTime;
 
-  if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && uTranziciji) {
+ if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
     const direction = deltaX < 0 ? 1 : -1;
     const wheelEvent = new WheelEvent('wheel', { deltaY: direction });
     window.dispatchEvent(wheelEvent);
@@ -291,6 +293,7 @@ function onTouchEnd(e) {
 function onKeydownE(event) {
   if (event.key === "e" || event.key === "E") {
     justLogedIn(scene);
+    renderer.render(scene, activeCamera);
   }
 }
 
@@ -298,6 +301,7 @@ function onKeydownE(event) {
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
     justLogedOut(scene);
+    renderer.render(scene, activeCamera);
   }
 }
 
