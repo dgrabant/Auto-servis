@@ -126,7 +126,7 @@ loader.load(
   texturePath,
   (texture) => {
     loadingText.textContent = 'Loading textures....';
-    texture.mapping = THREE.EquirectangularReflectionMapping;
+    if(!mobileOptimization) texture.mapping = THREE.EquirectangularReflectionMapping;
     texture.colorSpace = THREE.SRGBColorSpace;
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
@@ -135,7 +135,7 @@ loader.load(
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
     scene.background = envMap;
-    scene.environment = envMap;
+    if(!mobileOptimization) scene.environment = envMap;
 
     texture.dispose();
     pmremGenerator.dispose();
