@@ -1,13 +1,15 @@
 import * as THREE from 'three';
-export function setupRenderer(scene, renderer) {
+export function setupRenderer(scene, renderer, mobileOptimization) {
 	//Renderer does the job of rendering the graphics
 	
 
 	renderer.setSize(window.innerWidth, window.innerHeight);
 
 	//set up the renderer with the default settings for threejs.org/editor - revision r153
-	//renderer.shadowMap.enabled = true;
-	//renderer.shadowMap.type = THREE.VSMShadowMap;
+	if(!mobileOptimization){
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.VSMShadowMap;
+	}
 	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
 	//renderer.shadows = true;
 	//renderer.shadowType = 2;
@@ -38,8 +40,10 @@ const mesh = [];
 
         // uvijek dodaj mesh u listu i uključi sjene
         mesh.push(object);
-        object.castShadow = true;
-        object.receiveShadow = true;
+		if (!mobileOptimization) {
+        	object.castShadow = true;
+        	object.receiveShadow = true;
+		}
 		object.side = THREE.DoubleSide;
         // ako je dijete od STEER_HR, uključi dubinu
         if (isChildOfSteer || (object.isMesh && (object.name.toLowerCase().includes('login') || object.name.toLowerCase().includes('djelovi') || object.name.toLowerCase().includes('servis')))) {
@@ -57,28 +61,28 @@ const mesh = [];
     }
 });
 
+if (!mobileOptimization) {
+	// Create an empty array to store the lights
+	const pointLights = [];
+	const spotLights = [];
+	const hemisphereLights = [];
 
-// Create an empty array to store the lights
-const pointLights = [];
-const spotLights = [];
-const hemisphereLights = [];
-
-// Traverse the scene
-scene.traverse((object) => {
-  // Check if the object is a PointLight
-  if (object.isPointLight) {
-    pointLights.push(object);
-	object.castShadow = true;
-	object.shadow.mapSize.width = 256;
-	object.shadow.mapSize.height = 256;
-	object.shadow.camera.near = 0.5;
-	object.shadow.camera.far = 25;
-	object.shadow.camera.left = -10;
-	object.shadow.camera.right = 10;
-	object.shadow.camera.top = 10;
-	object.shadow.camera.bottom = -10;
-	object.shadow.radius = 15;
-	object.shadow.blurSamples = 2;
+	// Traverse the scene
+	scene.traverse((object) => {
+  	// Check if the object is a PointLight
+  	if (object.isPointLight) {
+    	pointLights.push(object);
+		object.castShadow = true;
+		object.shadow.mapSize.width = 256;
+		object.shadow.mapSize.height = 256;
+		object.shadow.camera.near = 0.5;
+		object.shadow.camera.far = 25;
+		object.shadow.camera.left = -10;
+		object.shadow.camera.right = 10;
+		object.shadow.camera.top = 10;
+		object.shadow.camera.bottom = -10;
+		object.shadow.radius = 15;
+		object.shadow.blurSamples = 2;
   }
 });
 
@@ -108,6 +112,9 @@ console.log(scene.children);
 });
 
 	console.log(`Found ${pointLights.length} point lights:`, pointLights,`Found ${spotLights.length} spot lights:`, spotLights, `Found ${mesh.length} meshes:`, mesh, `Found ${hemisphereLights.length} HemiLight:`, hemisphereLights  );
+
+}
+
 
 	return renderer
 }

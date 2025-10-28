@@ -9,8 +9,7 @@ import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPre
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
 
-// *** UKLONJENO: cleanMemory() se više ne koristi
-// window.addEventListener('load', () => { ... });
+
 
 //Putanje do modela i teksture
 const scenePath = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
@@ -22,7 +21,33 @@ const loadingText = document.getElementById("loadText");
 
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
-let loadingElement;
+let mobileOptimization;
+
+//provjera na kojem uređaju se stranica ucita
+
+function provjeriUredjaj() {
+
+    const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    const sirinaEkrana = window.innerWidth;
+
+    if (imaDodir) {
+      mobileOptimization = true;
+        if (sirinaEkrana < 768) {
+            return 'Mobitel';
+        } else {
+            return 'Tablet';
+        }
+    } else {
+      mobileOptimization = false;
+        return 'Desktop';
+    }
+}
+
+// === Primjer korištenja ===
+const tipUredjaja = provjeriUredjaj();
+console.log("Tip uređaja:", tipUredjaja);
+
 
 
 window.onload=()=>{
@@ -92,7 +117,7 @@ console.log("Interactable objects: ", interactableModels);
 
 
 //postavljanje sjena 
-renderer = setupRenderer(scene, renderer);
+renderer = setupRenderer(scene, renderer, mobileOptimization);
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
