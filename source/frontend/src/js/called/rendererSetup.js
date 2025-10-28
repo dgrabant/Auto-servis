@@ -1,120 +1,111 @@
 import * as THREE from 'three';
+
 export function setupRenderer(scene, renderer, mobileOptimization) {
-	//Renderer does the job of rendering the graphics
-	
 
-	renderer.setSize(window.innerWidth, window.innerHeight);
+    // --- Postavke Renderera ---
 
-	//set up the renderer with the default settings for threejs.org/editor - revision r153
-	if(!mobileOptimization){
-	renderer.shadowMap.enabled = true;
-	renderer.shadowMap.type = THREE.VSMShadowMap;
-	}
-	//renderer.shadowMap.type = THREE.PCFSoftShadowMap
-	//renderer.shadows = true;
-	//renderer.shadowType = 2;
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.toneMapping = 1;
-	renderer.toneMappingExposure = 1
-	renderer.useLegacyLights  = false;
-	renderer.toneMapping = THREE.NoToneMapping;
-	//renderer.setClearColor(0xffffff, 0);
-	renderer.outputColorSpace = THREE.SRGBColorSpace //make sure three/build/three.module.js is over r152 or this feature is not available. 
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-const mesh = [];
-	
-	scene.traverse(function (object) {
-    if (object.isMesh) {
-        // provjera da li je dijete od STEER_HR
-        let parent = object.parent;
-        let isChildOfSteer = false;
+    // Ograniči PixelRatio da uštediš performanse
+    let pixelRatio = Math.min(window.devicePixelRatio, 2); // Max 2x za desktop
+    if (mobileOptimization) {
+        pixelRatio = Math.min(window.devicePixelRatio, 1); // Max 1.5x (ili čak 1) za mobitele
+    }
+    renderer.setPixelRatio(pixelRatio);
 
-        while (parent) {
-            if (parent.name === 'STEER_HR') {
-                isChildOfSteer = true;
-                break;
+    // Postavke sjena
+    if (!mobileOptimization) {
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.VSMShadowMap; // VSM je OK, ali PCFSoftShadowMap je često brži
+    }
+
+    // Postavke boja i tonova
+    // renderer.toneMapping = THREE.LinearToneMapping; // (Vrijednost 1)
+    renderer.toneMapping = THREE.NoToneMapping; // (Vrijednost 0) - Najbrže. 
+    // renderer.toneMapping = THREE.ACESFilmicToneMapping; // (Vrijednost 5) - Najljepše.
+    
+    // toneMappingExposure nema efekta ako je toneMapping = NoToneMapping
+    // renderer.toneMappingExposure = 1; 
+    
+    renderer.useLegacyLights = false;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+
+    // --- JEDAN PROLAZ KROZ SCENU (Optimizacija) ---
+
+    const meshes = [];
+    const pointLights = [];
+    const spotLights = [];
+    const hemisphereLights = [];
+
+    scene.traverse(function (object) {
+
+        // 1. Provjera za Mesheve
+        if (object.isMesh) {
+            meshes.push(object);
+
+            if (!mobileOptimization) {
+                object.castShadow = true;
+                object.receiveShadow = true;
             }
-            parent = parent.parent;
-        }
 
+            // Provjera roditelja (parent)
+            let parent = object.parent;
+            let isChildOfSteer = false;
+            while (parent) {
+                if (parent.name === 'STEER_HR') {
+                    isChildOfSteer = true;
+                    break;
+                }
+                parent = parent.parent;
+            }
 
-        // uvijek dodaj mesh u listu i uključi sjene
-        mesh.push(object);
-		if (!mobileOptimization) {
-        	object.castShadow = true;
-        	object.receiveShadow = true;
-		}
-		object.side = THREE.DoubleSide;
-        // ako je dijete od STEER_HR, uključi dubinu
-        if (isChildOfSteer || (object.isMesh && (object.name.toLowerCase().includes('login') || object.name.toLowerCase().includes('djelovi') || object.name.toLowerCase().includes('servis')))) {
+            // Provjera materijala
             const materials = Array.isArray(object.material)
                 ? object.material
                 : [object.material];
 
             materials.forEach(mat => {
-                mat.depthWrite = true;
-                mat.depthTest = true;
-                //mat.side = THREE.DoubleSide; // ispravna postavka umjesto object.doubleSided
+                // *** ISPRAVAK: 'side' se postavlja na materijal, ne na mesh ***
+                mat.side = THREE.DoubleSide; 
+
+                // Uključi dubinu za specifične objekte
+                if (isChildOfSteer || (object.name.toLowerCase().includes('login') || object.name.toLowerCase().includes('djelovi') || object.name.toLowerCase().includes('servis'))) {
+                    mat.depthWrite = true;
+                    mat.depthTest = true;
+                }
             });
+        
+        // 2. Provjera za PointLights (samo ako NISMO na mobitelu)
+        } else if (!mobileOptimization && object.isPointLight) {
+            pointLights.push(object);
+            object.castShadow = true;
+            // NAPOMENA: 256 je jako niska rezolucija. 512 je bolji balans.
+            object.shadow.mapSize.width = 512; 
+            object.shadow.mapSize.height = 512;
+            object.shadow.camera.near = 0.5;
+            object.shadow.camera.far = 25;
+            object.shadow.radius = 15;
+            object.shadow.blurSamples = 2;
+
+        // 3. Provjera za SpotLights (samo ako NISMO na mobitelu)
+        } else if (!mobileOptimization && object.isSpotLight) {
+            spotLights.push(object);
+            object.castShadow = true;
+            object.shadow.mapSize.width = 512;
+            object.shadow.mapSize.height = 512;
+            object.shadow.camera.near = 0.5;
+            object.shadow.camera.far = 25;
+            object.shadow.radius = 15;
+            object.shadow.blurSamples = 2;
+
+        // 4. Provjera za HemisphereLights
+        } else if (object.isHemisphereLight) {
+            hemisphereLights.push(object);
         }
+    });
 
-    }
-});
+    console.log(`Pronađeno u jednom prolazu: ${meshes.length} mesheva, ${pointLights.length} point lightova, ${spotLights.length} spot lightova, ${hemisphereLights.length} HemiLightova.`);
 
-if (!mobileOptimization) {
-	// Create an empty array to store the lights
-	const pointLights = [];
-	const spotLights = [];
-	const hemisphereLights = [];
-
-	// Traverse the scene
-	scene.traverse((object) => {
-  	// Check if the object is a PointLight
-  	if (object.isPointLight) {
-    	pointLights.push(object);
-		object.castShadow = true;
-		object.shadow.mapSize.width = 256;
-		object.shadow.mapSize.height = 256;
-		object.shadow.camera.near = 0.5;
-		object.shadow.camera.far = 25;
-		object.shadow.camera.left = -10;
-		object.shadow.camera.right = 10;
-		object.shadow.camera.top = 10;
-		object.shadow.camera.bottom = -10;
-		object.shadow.radius = 15;
-		object.shadow.blurSamples = 2;
-  }
-});
-
-// Now, the `pointLights` array contains all point lights in the scene
-
-console.log(scene.children);
-	scene.traverse(function (object) {
-	if (object.isSpotLight) {
-		object.castShadow = true;
-		object.shadow.mapSize.width = 256;
-		object.shadow.mapSize.height = 256;
-		object.shadow.camera.near = 0.5;
-		object.shadow.camera.far = 25;
-		object.shadow.camera.left = -10;
-		object.shadow.camera.right = 10;
-		object.shadow.camera.top = 10;
-		object.shadow.camera.bottom = -10;
-		object.shadow.radius = 15;
-		object.shadow.blurSamples = 2;
-		spotLights.push(object);
-	}
-	});
-	scene.traverse(function (object) {
-    if (object.isHemisphereLight) {
-        hemisphereLights.push(object);
-    }
-});
-
-	console.log(`Found ${pointLights.length} point lights:`, pointLights,`Found ${spotLights.length} spot lights:`, spotLights, `Found ${mesh.length} meshes:`, mesh, `Found ${hemisphereLights.length} HemiLight:`, hemisphereLights  );
-
-}
-
-
-	return renderer
+    return renderer;
 }

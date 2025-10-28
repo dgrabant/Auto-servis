@@ -72,8 +72,9 @@ let mouseInside = false;
 
 let renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
-  antialias: true,
+  antialias: !mobileOptimization,
 });
+
 
 // 🔹 Kreiranje nove Three.js scene (let umjesto const za lakše čišćenje)
 let scene = new THREE.Scene();
@@ -126,7 +127,7 @@ loader.load(
   texturePath,
   (texture) => {
     loadingText.textContent = 'Loading textures....';
-    if(!mobileOptimization) texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.mapping = THREE.EquirectangularReflectionMapping;
     texture.colorSpace = THREE.SRGBColorSpace;
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
