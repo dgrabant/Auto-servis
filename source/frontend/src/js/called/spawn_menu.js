@@ -3,23 +3,23 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 const modelData = [
     { 
-        path: '/src/assets/models/login.glb', 
+        path: '/public/assets/models/login.glb', 
         position: { x: -11, y: 0.5, z: 4 },
         rotation: { x: 0, y: THREE.MathUtils.degToRad(120), z: 0 },
         name: 'login'
     },
     { 
-        path: '/src/assets/models/djelovi.glb', 
+        path: '/public/assets/models/djelovi.glb', 
         position: { x: -5, y: 1.6, z: 0.1 }, 
         name: 'djelovi'
     },
     { 
-        path: '/src/assets/models/servis.glb', 
+        path: '/public/assets/models/servis.glb', 
         position: { x: -8, y: 1.7, z: 5 }, 
         name: 'servis'
     },
     { 
-        path: '/src/assets/models/loginNeeded.glb', 
+        path: '/public/assets/models/loginNeeded.glb', 
         position: { x: -8, y: 1.7, z: 5 }, 
         name: 'loginNeeded'
     }

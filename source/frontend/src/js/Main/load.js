@@ -13,10 +13,10 @@ import { checkIfLogedIn } from '../called/loginCheck.js';
 // window.addEventListener('load', () => { ... });
 
 //Putanje do modela i teksture
-const scenePath = '/src/assets/models/audi_scena1.glb'; // Putanja do .gltf 3D scene
-const texturePath = '/src/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
-const cameraPath = '/src/assets/models/kamere.gltf';
-const svjetlaPath = '/src/assets/models/svjetla.gltf';
+const scenePath = '/public/assets/models/audi_scena1.glb'; // Putanja do .gltf 3D scene
+const texturePath = '/public/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
+const cameraPath = '/public/assets/models/kamere.gltf';
+const svjetlaPath = '/public/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loadingText = document.getElementById("loadText");
 
