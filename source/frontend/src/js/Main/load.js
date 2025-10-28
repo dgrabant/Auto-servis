@@ -20,14 +20,14 @@ const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loadingText = document.getElementById("loadText");
 
-let navDjeloviHTML;
+let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let loadingElement;
 
 
 window.onload=()=>{
 
-  navDjeloviHTML = document.getElementById("navDjelovi");
+  if(navDjeloviHTML==null) navDjeloviHTML = document.getElementById("navDjelovi");
   console.log(navDjeloviHTML);
 
 };
@@ -234,12 +234,12 @@ function onKeydownEsc(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            navDjeloviHTML.hidden = false;
+            document.getElementById("navDjelovi").hidden = false;
         } 
         else {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            navDjeloviHTML.hidden = true;
+            document.getElementById("navDjelovi").hidden = true;
         }
       }
       if (cameraPosition == 2) {
