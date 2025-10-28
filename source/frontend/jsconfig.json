@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    // other options...
+    "paths": {
+      "three/webgpu": ["three/build/three.webgpu.js"],
+      "three/tsl": ["three/build/three.tsl.js"],
+    },
+  }
+}
