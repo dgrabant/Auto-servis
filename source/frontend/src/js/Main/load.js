@@ -25,13 +25,12 @@ let uTranziciji=true;
 let loadingElement;
 
 
-
-setTimeout(() => {
+window.onload=()=>{
 
   navDjeloviHTML = document.getElementById("navDjelovi");
   console.log(navDjeloviHTML);
 
-},1500);
+};
 const maxFps = 60;//za animacije
 const fps = 10; //sve ostalo
 let isLoaded = false;
@@ -125,7 +124,7 @@ loader.load(
         isLoaded =true;
         renderer.render(scene, activeCamera);
         onWindowResize();
-        //main.hidden = true;
+        main.hidden = true;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -183,12 +182,12 @@ function onDocumentClick(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            //navDjeloviHTML.hidden = false;
+            navDjeloviHTML.hidden = false;
         } 
         else {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            //navDjeloviHTML.hidden = true;
+            navDjeloviHTML.hidden = true;
         }
       }
     }, 1500);
@@ -233,12 +232,12 @@ function onKeydownEsc(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            //navDjeloviHTML.hidden = false;
+            navDjeloviHTML.hidden = false;
         } 
         else {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            //navDjeloviHTML.hidden = true;
+            navDjeloviHTML.hidden = true;
         }
       }
       if (cameraPosition == 2) {
