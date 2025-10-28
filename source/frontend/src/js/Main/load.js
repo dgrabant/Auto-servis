@@ -125,7 +125,7 @@ loader.load(
         isLoaded =true;
         renderer.render(scene, activeCamera);
         onWindowResize();
-        main.hidden = true;
+        //main.hidden = true;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -224,18 +224,21 @@ function onKeydownEsc(event) {
     if (event.key === "Escape" || event.key === "Esc") {
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);
+
+      console.log(djeloviHTML);
+      console.log(navDjeloviHTML);
       
       if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            navDjeloviHTML.hidden = false;
+            //navDjeloviHTML.hidden = false;
         } 
         else {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            navDjeloviHTML.hidden = true;
+            //navDjeloviHTML.hidden = true;
         }
       }
       if (cameraPosition == 2) {
