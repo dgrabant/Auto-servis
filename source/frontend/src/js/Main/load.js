@@ -223,6 +223,8 @@ function onKeydownEsc(event) {
     if (event.key === "Escape" || event.key === "Esc") {
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);
+      
+      navDjeloviHTML = document.getElementById("navDjelovi");
 
       console.log(djeloviHTML);
       console.log(navDjeloviHTML);
