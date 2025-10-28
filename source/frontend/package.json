@@ -16,9 +16,7 @@
 
     "lint": "eslint .",
 
-    "preview": "vite preview",
-
-    "start": "vite preview --host 0.0.0.0 --port $PORT"
+    "preview": "vite preview"
 
   },
 
