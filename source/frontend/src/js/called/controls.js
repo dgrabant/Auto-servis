@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-export function moveCamera(scene, startingModelPath, texturePath) {
-
-}
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
@@ -77,6 +74,31 @@ export function returnToPrevCam(cameraPosition) {
   else return cameraPosition;
 }
 
-export function lightUpModel(modelList, litUpModels){
-  
+export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false){
+  if (lightUpAll) {
+    movingLight.intensity = 2.5;
+  }
+  else{
+    if (firstHitButtonName == "djelovi" || firstHitButtonName == "servis" || firstHitButtonName == "login") {
+      movingLight.intensity = 2.5;
+    }
+    else{
+      movingLight.intensity = 0;
+    }
+  }
+}
+
+export function transitionLight(cameraPosition, movingLight, mobileOptimization){
+  if (!mobileOptimization) {
+    movingLight.intensity = 0;
+  }
+  if (cameraPosition == 6){
+    movingLight.position.set(-4.654, 2.003, 0.1);
+  }
+  if (cameraPosition == 4){
+    movingLight.position.set(-8, 2, 5.25);
+  }
+  if (cameraPosition == 5){
+    movingLight.position.set(-11.476, 2.474, 4.674);
+  }
 }

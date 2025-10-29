@@ -5,7 +5,7 @@ import { LoadGLTFByPath, LoadCameraPath, LoadSvjetlaPath } from '../called/model
 import { setupRenderer } from '../called/rendererSetup.js'; // Funkcija za postavljanje renderera
 // *** NOVO: Uvoz cleanupSpawnedModels za čišćenje statičkih referenci ***
 import { spawnMultipleModels, justLogedIn, justLogedOut, cleanupSpawnedModels } from '../called/spawn_menu.js'; 
-import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
+import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
 
@@ -25,6 +25,9 @@ let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
 let texturePath;
+let hoverOn = true;
+const movingLight = new THREE.PointLight(0xffffff, 50, 0);
+movingLight.position.set(-4.5, 1.6, 0.1);
 
 //provjera na kojem uređaju se stranica ucita
 
@@ -36,6 +39,7 @@ function provjeriUredjaj() {
 
     if (imaDodir) {
       mobileOptimization = true;
+      lightUpModel(null,movingLight, true);
       scenePath = scenePathMoblie;
       texturePath = texturePathMobile;
         if (sirinaEkrana < 768) {
@@ -95,6 +99,8 @@ let interactableModels = [];
 //renderer = setupRenderer(scene, renderer);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+scene.add(movingLight);
 
 if (mobileOptimization) {
   // 🔹 Dodavanje svjetla u scenu
@@ -245,6 +251,8 @@ function onWindowWheel(event) {
         cameraPositionPrev = cameraPosition;
         cameraPosition = cameraNext(cameraList, cameraPosition);
       }
+      uTranziciji = true;
+      transitionLight(cameraPosition, movingLight, mobileOptimization);
       if ((cameraPositionPrev == 4 && cameraPosition == 5) || (cameraPositionPrev == 5 && cameraPosition == 4)) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
       }
@@ -342,9 +350,14 @@ function onKeydownQ(event) {
 }
 
 function onMouseMove(event) {
+  if (hoverOn && !uTranziciji) {
+    hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
-    console.log("Hover: ",firstHitButtonName);
-		//lightUpModel(modelList, litUpModels);
+    //console.log("Hover: ",firstHitButtonName);
+		lightUpModel(firstHitButtonName, movingLight, false);
+
+    renderer.render(scene, activeCamera)
+  }
 	}
 
 // ======================================================
@@ -379,6 +392,7 @@ function initCameraSystem() {
   function animate() {
     console.log("animate");
     setTimeout( function() {
+        hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
     }, 1000 / fps );
 
