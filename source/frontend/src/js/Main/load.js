@@ -357,7 +357,6 @@ function onMouseMove(event) {
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
       document.body.style.cursor = 'pointer';
-      console.log(canvasElement.style.cursor);
       
       renderer.render(scene, activeCamera);
     }
