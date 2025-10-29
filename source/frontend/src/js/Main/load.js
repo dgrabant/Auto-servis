@@ -80,6 +80,7 @@ let touchStartX = 0;
 let touchEndX = 0;
 let touchStartTime = 0;
 let mouseInside = false;
+const canvasElement = document.querySelector('#bg');
 
 let renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
@@ -351,9 +352,11 @@ function onMouseMove(event) {
     hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
-		lightUpModel(firstHitButtonName, movingLight, false);
-
-    renderer.render(scene, activeCamera)
+		if(lightUpModel(firstHitButtonName, movingLight, false)){
+      canvasElement.style.cursor = 'pointer';
+      renderer.render(scene, activeCamera);
+    }
+    else canvasElement.style.cursor = 'default';
   }
 	}
 

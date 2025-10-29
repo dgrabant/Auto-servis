@@ -79,11 +79,14 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
     movingLight.intensity = 2.5;
   }
   else{
-    if (firstHitButtonName == "djelovi" || firstHitButtonName == "servis" || firstHitButtonName == "login") {
+    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitButtonName == "login") {
       movingLight.intensity = 2.5;
+      return true;
     }
     else{
+      
       movingLight.intensity = 0;
+      return false;
     }
   }
 }
