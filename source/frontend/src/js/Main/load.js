@@ -212,6 +212,7 @@ function onDocumentClick(event) {
     firstHitName = getFirstObjectHit(event, window, activeCamera, scene, 7); 
     console.log(firstHitName);
     
+    document.body.style.cursor = 'default';
     cameraPosition = clickTransition(cameraPosition, firstHitName);
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
     if (cameraPosition == 2) {
@@ -350,8 +351,9 @@ function onKeydownQ(event) {
     renderer.render(scene, activeCamera);
   }
 }
-
+let lastOnMouseMove;
 function onMouseMove(event) {
+  lastOnMouseMove = event;
   if (hoverOn && !uTranziciji) {
     hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
@@ -408,6 +410,14 @@ function transitionCamera(fromCam, toCam, duration) {
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
+    const firstHitButtonName = getFirstObjectHit(lastOnMouseMove, window, activeCamera, scene, 7);
+    //console.log("Hover: ",firstHitButtonName);
+		if(lightUpModel(firstHitButtonName, movingLight, false)){
+      document.body.style.cursor = 'pointer';
+      
+      renderer.render(scene, activeCamera);
+    }
+    else document.body.style.cursor = 'default';
     animate();
   }, duration);
   if (!fromCam || !toCam || !renderer) {
