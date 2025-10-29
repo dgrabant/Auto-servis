@@ -111,6 +111,12 @@ const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 1);
 scene.add(hemiLight);
 }
 
+await spawnMultipleModels(scene, checkIfLogedIn(), loadingText).then(models => {
+  interactableModels = models;
+})
+  .catch((error) => console.error('Error loading JSON scene:', error));
+console.log("Interactable objects: ", interactableModels);
+
 
 // 🔹 Učitavanje .gltf scene (asinhrono)
 await LoadGLTFByPath(scene, scenePath, loadingText)
@@ -128,11 +134,7 @@ await LoadCameraPath(scene, cameraPath, loadingText)
   })
   .catch((error) => console.error('Error loading JSON scene:', error));
 
-await spawnMultipleModels(scene, checkIfLogedIn(), loadingText).then(models => {
-  interactableModels = models;
-})
-  .catch((error) => console.error('Error loading JSON scene:', error));
-console.log("Interactable objects: ", interactableModels);
+
 
 
 
@@ -168,6 +170,7 @@ loader.load(
     
     // *** SPREMANJE ID-A TIMERA 1 ***
       loadingText.textContent = 'Almost done.....';
+      initialLoadTimeout2 = setTimeout(() => {
         activeCamera=cameraList[1];
         isLoaded =true;
         renderer.render(scene, activeCamera);
@@ -180,10 +183,11 @@ loader.load(
         }
           // *** SPREMANJE ID-A TIMERA 2 ***
         initialLoadTimeout2 = setTimeout(() => {
-          console.log("Pokrećem prijelaz na kameru 5...");
+          console.log("Pokrećem prijelaz na kameru 6...");
           transitionCamera(activeCamera, cameraList[6], 1500);
         
         }, 1500);
+      }, 1000);
   },  
   undefined,
   (err) => console.error("Greška pri učitavanju teksture:", err)
