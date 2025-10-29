@@ -136,7 +136,7 @@ console.log("Interactable objects: ", interactableModels);
 scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization);
 
-//movingLight.castShadow = false;
+if (mobileOptimization) movingLight.castShadow = false;
 if (!mobileOptimization) movingLight.intensity = 0;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
@@ -382,7 +382,7 @@ function initCameraSystem() {
 
  
   //onWindowResize(); // Pozovi odmah
-
+  if (!mobileOptimization)
   animate(); // Pokreni render petlju
 
   // Glavna petlja renderiranja
