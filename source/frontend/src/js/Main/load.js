@@ -28,7 +28,9 @@ let texturePath;
 let hoverOn = true;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
-
+const maxFps = 60;//za animacije
+const fps = 25; //sve ostalo
+let isLoaded = false;
 //provjera na kojem uređaju se stranica ucita
 
 function provjeriUredjaj() {
@@ -68,9 +70,7 @@ window.onload=()=>{
   djeloviHTML.hidden = true;
 
 };
-const maxFps = 60;//za animacije
-const fps = 10; //sve ostalo
-let isLoaded = false;
+
 
 // 🔹 Globalne varijable za čišćenje
 let animationFrameId; // Za zaustavljanje render petlje
@@ -135,6 +135,7 @@ console.log("Interactable objects: ", interactableModels);
 
 //postavljanje sjena 
 renderer = setupRenderer(scene, renderer, mobileOptimization);
+movingLight.castShadow = false;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -353,7 +354,7 @@ function onMouseMove(event) {
   if (hoverOn && !uTranziciji) {
     hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
-    //console.log("Hover: ",firstHitButtonName);
+    console.log("Hover: ",firstHitButtonName);
 		lightUpModel(firstHitButtonName, movingLight, false);
 
     renderer.render(scene, activeCamera)
