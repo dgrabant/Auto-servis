@@ -161,9 +161,7 @@ loader.load(
     console.log("Pozadina i refleksije su uspješno postavljene!");
     
     // *** SPREMANJE ID-A TIMERA 1 ***
-    setTimeout(() => {
-      loadingText.textContent = 'All done.....';
-      initialLoadTimeout1 = setTimeout(() => {
+      loadingText.textContent = 'Almost done.....';
         activeCamera=cameraList[1];
         isLoaded =true;
         renderer.render(scene, activeCamera);
@@ -180,10 +178,6 @@ loader.load(
           transitionCamera(activeCamera, cameraList[6], 1500);
         
         }, 1500);
-
-
-      }, 1500);
-    }, 500);
   },  
   undefined,
   (err) => console.error("Greška pri učitavanju teksture:", err)
@@ -383,11 +377,7 @@ function initCameraSystem() {
  
   //onWindowResize(); // Pozovi odmah
 
-
-  if (isLoaded) {
-    animate(); // Pokreni render petlju
-  }
-    
+  animate(); // Pokreni render petlju
 
   // Glavna petlja renderiranja
   function animate() {
