@@ -12,7 +12,8 @@ import { checkIfLogedIn } from '../called/loginCheck.js';
 
 
 //Putanje do modela i teksture
-const scenePath = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
+const scenePathPC = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
+const scenePathMoblie = '/assets/models/audi_scena_mobitel.glb';
 const texturePath = '/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
@@ -22,6 +23,7 @@ const loadingText = document.getElementById("loadText");
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
+let scenePath;
 
 //provjera na kojem uređaju se stranica ucita
 
@@ -33,12 +35,14 @@ function provjeriUredjaj() {
 
     if (imaDodir) {
       mobileOptimization = true;
+      cameraPath = scenePathMoblie;
         if (sirinaEkrana < 768) {
             return 'Mobitel';
         } else {
             return 'Tablet';
         }
     } else {
+      scenePath = scenePathPC
       mobileOptimization = false;
         return 'Desktop';
     }
