@@ -54,7 +54,7 @@ export function cameraPrev(cameraList, cameraPosition) {
 }
 
 export function clickTransition(cameraPosition, firstHitName) {
-  if (firstHitName == "djelovi") {
+  if (firstHitButtonName.startsWith("djelovi")) {
     return 3;
   }
   else if (firstHitName == "servis") {

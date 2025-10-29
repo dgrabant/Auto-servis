@@ -253,6 +253,7 @@ function onWindowWheel(event) {
         cameraPosition = cameraNext(cameraList, cameraPosition);
       }
       uTranziciji = true;
+      document.body.style.cursor = 'default';
       transitionLight(cameraPosition, movingLight, mobileOptimization);
       if ((cameraPositionPrev == 4 && cameraPosition == 5) || (cameraPositionPrev == 5 && cameraPosition == 4)) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
