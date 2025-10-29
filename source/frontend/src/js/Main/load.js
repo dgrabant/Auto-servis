@@ -35,14 +35,14 @@ function provjeriUredjaj() {
 
     if (imaDodir) {
       mobileOptimization = true;
-      cameraPath = scenePathMoblie;
+      scenePath = scenePathMoblie;
         if (sirinaEkrana < 768) {
             return 'Mobitel';
         } else {
             return 'Tablet';
         }
     } else {
-      scenePath = scenePathPC
+      scenePath = scenePathPC;
       mobileOptimization = false;
         return 'Desktop';
     }

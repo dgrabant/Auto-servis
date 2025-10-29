@@ -22,7 +22,7 @@ export const LoadGLTFByPath = (scene, startingModelPath, loadingText) => {
         if (xhr.total) {
           const progress = (xhr.loaded / xhr.total) * 100;
           loadingText.textContent = `Loading model: ${progress.toFixed(1)}%`;
-          //console.log(`Loading model: ${progress.toFixed(1)}%`);
+          console.log(`Loading model: ${progress.toFixed(1)}%`);
         }
       },
       (error) => {
