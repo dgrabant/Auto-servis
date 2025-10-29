@@ -26,10 +26,12 @@ let mobileOptimization;
 let scenePath;
 let texturePath;
 let hoverOn = true;
+let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fps = 20; //sve ostalo
+const fpsPC = 20; //sve ostalo
+const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 //provjera na kojem uređaju se stranica ucita
 
@@ -41,6 +43,7 @@ function provjeriUredjaj() {
 
     if (imaDodir) {
       mobileOptimization = true;
+      fps = fpsMobile;
       lightUpModel(null,movingLight, true);
       scenePath = scenePathMoblie;
       texturePath = texturePathMobile;
@@ -50,6 +53,7 @@ function provjeriUredjaj() {
             return 'Tablet';
         }
     } else {
+      fps = fpsPC;
       scenePath = scenePathPC;
       mobileOptimization = false;
       texturePath = texturePathPC;
@@ -382,21 +386,7 @@ function initCameraSystem() {
 
  
   //onWindowResize(); // Pozovi odmah
-  if (!mobileOptimization)
-  animate(); // Pokreni render petlju
-
-  // Glavna petlja renderiranja
-  function animate() {
-    //console.log("animate");
-    setTimeout( function() {
-        hoverOn = true;
-        animationFrameId = requestAnimationFrame(animate); 
-    }, 1000 / fps );
-
-    if (renderer && activeCamera) {
-      renderer.render(scene, activeCamera);
-    }
-  }
+  
 }
   // 🔹 Funkcija za resize
   function onWindowResize() {
@@ -418,6 +408,7 @@ function transitionCamera(fromCam, toCam, duration) {
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
+    animate();
   }, duration);
   if (!fromCam || !toCam || !renderer) {
     console.warn("Kamera ili renderer nisu definirani!");
@@ -451,7 +442,22 @@ function transitionCamera(fromCam, toCam, duration) {
   animate2();
 }
 
+animate(); // Pokreni render petlju
 
+  // Glavna petlja renderiranja
+  function animate() {
+    //console.log("animate");
+    setTimeout( function() {
+      if (!uTranziciji) {
+        hoverOn = true;
+        animationFrameId = requestAnimationFrame(animate); 
+      }
+      }, 1000 / fps );
+
+    if (renderer && activeCamera) {
+      renderer.render(scene, activeCamera);
+    }
+  }
 // ======================================================
 // 🔹 FUNKCIJA ZA ČIŠĆENJE MEMORIJE (FINALNI CLEANUP)
 // ======================================================
