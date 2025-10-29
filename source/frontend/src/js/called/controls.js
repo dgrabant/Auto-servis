@@ -76,3 +76,7 @@ export function returnToPrevCam(cameraPosition) {
   }
   else return cameraPosition;
 }
+
+export function lightUpModel(modelList, litUpModels){
+  
+}

@@ -5,16 +5,16 @@ import { LoadGLTFByPath, LoadCameraPath, LoadSvjetlaPath } from '../called/model
 import { setupRenderer } from '../called/rendererSetup.js'; // Funkcija za postavljanje renderera
 // *** NOVO: Uvoz cleanupSpawnedModels za čišćenje statičkih referenci ***
 import { spawnMultipleModels, justLogedIn, justLogedOut, cleanupSpawnedModels } from '../called/spawn_menu.js'; 
-import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
+import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
-
 
 
 //Putanje do modela i teksture
 const scenePathPC = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
 const scenePathMoblie = '/assets/models/audi_scena_mobitel.glb';
-const texturePath = '/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
+const texturePathPC = '/assets/textures/background.jpg'; // Putanja do panoramske pozadinske teksture (HDRI)
+const texturePathMobile = '/assets/textures/backgroundMobile.jpg';
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
@@ -24,6 +24,7 @@ let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
+let texturePath;
 
 //provjera na kojem uređaju se stranica ucita
 
@@ -36,6 +37,7 @@ function provjeriUredjaj() {
     if (imaDodir) {
       mobileOptimization = true;
       scenePath = scenePathMoblie;
+      texturePath = texturePathMobile;
         if (sirinaEkrana < 768) {
             return 'Mobitel';
         } else {
@@ -44,6 +46,7 @@ function provjeriUredjaj() {
     } else {
       scenePath = scenePathPC;
       mobileOptimization = false;
+      texturePath = texturePathPC;
         return 'Desktop';
     }
 }
@@ -93,9 +96,12 @@ let interactableModels = [];
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// 🔹 Dodavanje svjetla u scenu
-const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 0);
+if (mobileOptimization) {
+  // 🔹 Dodavanje svjetla u scenu
+const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 1);
 scene.add(hemiLight);
+}
+
 
 // 🔹 Učitavanje .gltf scene (asinhrono)
 await LoadGLTFByPath(scene, scenePath, loadingText)
@@ -335,15 +341,11 @@ function onKeydownQ(event) {
   }
 }
 
-// 🔸 Praćenje miša
-function onMouseEnter() {
-  mouseInside = true;
-  console.log('Miš je na stranici');
-}
-function onMouseLeave() {
-  mouseInside = false;
-  console.log('Miš je napustio stranicu');
-}
+function onMouseMove(event) {
+		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
+    console.log("Hover: ",firstHitButtonName);
+		//lightUpModel(modelList, litUpModels);
+	}
 
 // ======================================================
 // 🔹 FUNKCIJA ZA POSTAVLJANJE SUSTAVA KAMERA I KONTROLA
@@ -362,8 +364,7 @@ function initCameraSystem() {
   window.addEventListener('touchend', onTouchEnd);
 
   // Praćenje miša
-  window.addEventListener('mouseenter', onMouseEnter);
-  window.addEventListener('mouseleave', onMouseLeave);
+  document.addEventListener('mousemove', onMouseMove, false);
 
  
   //onWindowResize(); // Pozovi odmah
@@ -469,8 +470,7 @@ function cleanup() {
   window.removeEventListener('touchstart', onTouchStart);
   window.removeEventListener('touchmove', onTouchMove);
   window.removeEventListener('touchend', onTouchEnd);
-  window.removeEventListener('mouseenter', onMouseEnter);
-  window.removeEventListener('mouseleave', onMouseLeave);
+  document.removeEventListener('mousemove', onMouseMove, false);
 
   // 4. Očisti modele iz modula 'spawn_menu.js' (KLJUČNO ZA STATIČKE REFERENCE)
     cleanupSpawnedModels(); 
