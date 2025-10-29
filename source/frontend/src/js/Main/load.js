@@ -139,7 +139,7 @@ await LoadCameraPath(scene, cameraPath, loadingText)
 
 
 //postavljanje sjena 
-scene.add(movingLight);
+
 renderer = setupRenderer(scene, renderer, mobileOptimization);
 
 if (mobileOptimization) movingLight.castShadow = false;
@@ -167,7 +167,7 @@ loader.load(
     pmremGenerator.dispose();
 
     console.log("Pozadina i refleksije su uspješno postavljene!");
-    
+    scene.add(movingLight);
     // *** SPREMANJE ID-A TIMERA 1 ***
       loadingText.textContent = 'Almost done.....';
       initialLoadTimeout2 = setTimeout(() => {
