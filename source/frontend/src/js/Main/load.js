@@ -388,7 +388,10 @@ function initCameraSystem() {
   window.addEventListener('touchend', onTouchEnd);
 
   // Praćenje miša
-  document.addEventListener('mousemove', onMouseMove, false);
+  if (!mobileOptimization) {
+    document.addEventListener('mousemove', onMouseMove, false);
+  }
+ 
 
  
   //onWindowResize(); // Pozovi odmah
