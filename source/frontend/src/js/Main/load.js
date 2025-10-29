@@ -100,7 +100,6 @@ let interactableModels = [];
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-scene.add(movingLight);
 
 if (mobileOptimization) {
   // 🔹 Dodavanje svjetla u scenu
@@ -134,8 +133,11 @@ console.log("Interactable objects: ", interactableModels);
 
 
 //postavljanje sjena 
+scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization);
-movingLight.castShadow = false;
+
+//movingLight.castShadow = false;
+movingLight.intensity = 0;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -348,7 +350,7 @@ function onMouseMove(event) {
   if (hoverOn && !uTranziciji) {
     hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
-    console.log("Hover: ",firstHitButtonName);
+    //console.log("Hover: ",firstHitButtonName);
 		lightUpModel(firstHitButtonName, movingLight, false);
 
     renderer.render(scene, activeCamera)
