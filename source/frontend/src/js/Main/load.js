@@ -80,7 +80,6 @@ let touchStartX = 0;
 let touchEndX = 0;
 let touchStartTime = 0;
 let mouseInside = false;
-const canvasElement = document.querySelector('#bg');
 
 let renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
@@ -138,7 +137,7 @@ scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization);
 
 //movingLight.castShadow = false;
-movingLight.intensity = 0;
+if (!mobileOptimization) movingLight.intensity = 0;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -353,10 +352,12 @@ function onMouseMove(event) {
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
-      canvasElement.style.cursor = 'pointer';
+      document.body.style.cursor = 'pointer';
+      console.log(canvasElement.style.cursor);
+      
       renderer.render(scene, activeCamera);
     }
-    else canvasElement.style.cursor = 'default';
+    else document.body.style.cursor = 'default';
   }
 	}
 
