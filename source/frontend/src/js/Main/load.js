@@ -29,7 +29,7 @@ let hoverOn = true;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fps = 25; //sve ostalo
+const fps = 20; //sve ostalo
 let isLoaded = false;
 //provjera na kojem uređaju se stranica ucita
 
@@ -383,7 +383,7 @@ function initCameraSystem() {
 
   // Glavna petlja renderiranja
   function animate() {
-    console.log("animate");
+    //console.log("animate");
     setTimeout( function() {
         hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
