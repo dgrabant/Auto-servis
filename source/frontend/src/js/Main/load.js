@@ -70,15 +70,15 @@ function cekajKlik(idGumba) {
       if (odabrano.value == 'true') {
         pcPerformance = true;
         fps = fpsMobile;
-        texturePath = texturePathMobile;
       }
       resolve();
     }, { once: true });
   });
 }
-if (!mobileOptimization)
+if (!mobileOptimization){
 await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
-
+}
+else forma.hidden = true;
 // Tek nakon klika nastavljaš s ostatkom:
 console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
 
