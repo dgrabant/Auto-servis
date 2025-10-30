@@ -415,6 +415,8 @@ function onMouseMove(event) {
   lastOnMouseMove = event;
   if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
+    console.log("hoverd");
+    
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
@@ -518,7 +520,7 @@ animate(); // Pokreni render petlju
 
   // Glavna petlja renderiranja
   function animate() {
-    console.log("Is loaded: ",isLoaded);
+    //console.log("Is loaded: ",isLoaded);
     
     //console.log("animate");
     setTimeout( function() {
