@@ -518,6 +518,8 @@ animate(); // Pokreni render petlju
 
   // Glavna petlja renderiranja
   function animate() {
+    console.log("Is loaded: ",isLoaded);
+    
     //console.log("animate");
     setTimeout( function() {
       if (!uTranziciji) {
