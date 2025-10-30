@@ -31,7 +31,8 @@ let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fpsPC = 15; //sve ostalo
+const fpsPC = 20;
+const fpsPCPerformance = 15; //sve ostalo
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
@@ -69,7 +70,7 @@ function cekajKlik(idGumba) {
       forma.hidden = true;
       if (odabrano.value == 'true') {
         pcPerformance = true;
-        fps = fpsMobile;
+        fps = fpsPCPerformance;
         texturePath = texturePathMobile;
         scenePath = scenePathPC;
       }
