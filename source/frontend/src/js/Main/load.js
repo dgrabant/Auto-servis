@@ -275,10 +275,10 @@ function onDocumentClick(event) {
     document.body.style.cursor = 'default';
     cameraPosition = clickTransition(cameraPosition, firstHitName);
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
-    if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
+    if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
-    if (firstHitName == "servis"){
+    if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
