@@ -240,7 +240,7 @@ loader.load(
           transitionCamera(activeCamera, cameraList[6], 1500);
           setTimeout(() => {
             isLoaded = true;
-          },1600);
+          },1700);
         }, 1000);
       }, 500);
   },  
@@ -413,7 +413,7 @@ function onKeydownQ(event) {
 let lastOnMouseMove;
 function onMouseMove(event) {
   lastOnMouseMove = event;
-  if (hoverOn && !uTranziciji) {
+  if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
