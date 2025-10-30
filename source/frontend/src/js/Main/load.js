@@ -279,7 +279,7 @@ function onDocumentClick(event) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
     if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
-      transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     transitionTimeout = setTimeout(() => { 
@@ -475,6 +475,7 @@ function transitionCamera(fromCam, toCam, duration) {
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
+     }, duration);
     if (isLoaded) {
   
     const firstHitButtonName = getFirstObjectHit(lastOnMouseMove, window, activeCamera, scene, 7);
@@ -489,7 +490,7 @@ function transitionCamera(fromCam, toCam, duration) {
     }
     animate();
 
-  }, duration);
+ 
   if (!fromCam || !toCam || !renderer) {
     console.warn("Kamera ili renderer nisu definirani!");
     return;
