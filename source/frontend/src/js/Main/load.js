@@ -238,9 +238,10 @@ loader.load(
         initialLoadTimeout2 = setTimeout(() => {
           console.log("Pokrećem prijelaz na kameru 6...");
           transitionCamera(activeCamera, cameraList[6], 1500);
+          
           setTimeout(() => {
             isLoaded = true;
-          },10000);
+          },3000);
         }, 1000);
       }, 500);
   },  
@@ -474,6 +475,8 @@ function transitionCamera(fromCam, toCam, duration) {
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
+    if (isLoaded) {
+  
     const firstHitButtonName = getFirstObjectHit(lastOnMouseMove, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
@@ -483,6 +486,8 @@ function transitionCamera(fromCam, toCam, duration) {
     }
     else document.body.style.cursor = 'default';
     animate();
+        
+    }
   }, duration);
   if (!fromCam || !toCam || !renderer) {
     console.warn("Kamera ili renderer nisu definirani!");
