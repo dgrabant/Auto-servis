@@ -53,8 +53,8 @@ function provjeriUredjaj() {
         } else {
             return 'Tablet';
         }
-    } else {
-      
+      } else {
+        mobileOptimization = false;
         return 'Desktop';
     }
 }
@@ -71,11 +71,11 @@ function cekajKlik(idGumba) {
         pcPerformance = true;
         fps = fpsMobile;
         texturePath = texturePathMobile;
+        scenePath = scenePathPC;
       }
       else{
         fps = fpsPC;
         scenePath = scenePathPC;
-        mobileOptimization = false;
         texturePath = texturePathPC;
       }
       resolve();
@@ -85,7 +85,7 @@ function cekajKlik(idGumba) {
 const tipUredjaja = provjeriUredjaj();
 if (!mobileOptimization)
 await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
-
+else forma.hidden = true;
 // Tek nakon klika nastavljaš s ostatkom:
 console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
 
