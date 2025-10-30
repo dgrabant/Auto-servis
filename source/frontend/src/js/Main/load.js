@@ -31,8 +31,7 @@ let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fpsPC = 20;
-const fpsPCPerformance = 15; //sve ostalo
+const fpsPC = 30;
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
@@ -55,6 +54,7 @@ function provjeriUredjaj() {
             return 'Tablet';
         }
       } else {
+        fps = fpsPC;
         mobileOptimization = false;
         return 'Desktop';
     }
@@ -70,12 +70,15 @@ function cekajKlik(idGumba) {
       forma.hidden = true;
       if (odabrano.value == 'true') {
         pcPerformance = true;
-        fps = fpsPCPerformance;
         texturePath = texturePathMobile;
         scenePath = scenePathPC;
       }
+      else if (odabrano.value == "ultra") {
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathMoblie;
+      }
       else{
-        fps = fpsPC;
         scenePath = scenePathPC;
         texturePath = texturePathPC;
       }
