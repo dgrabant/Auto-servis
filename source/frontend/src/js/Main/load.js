@@ -111,6 +111,18 @@ const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 1);
 scene.add(hemiLight);
 }
 
+
+await LoadCameraPath(scene, cameraPath, loadingText)
+  .then(() => {
+    cameraList = getFirstCameraInScene(scene);
+    activeCamera = cameraList[0];
+    updateCameraAspect(activeCamera);
+    initCameraSystem(); // Pokreni sustav kamera i kontrole
+  })
+  .catch((error) => console.error('Error loading JSON scene:', error));
+
+  
+
 await spawnMultipleModels(scene, checkIfLogedIn(), loadingText).then(models => {
   interactableModels = models;
 })
@@ -125,14 +137,7 @@ await LoadGLTFByPath(scene, scenePath, loadingText)
 await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
   .catch((error) => console.error('Error loading JSON scene:', error));
 
-await LoadCameraPath(scene, cameraPath, loadingText)
-  .then(() => {
-    cameraList = getFirstCameraInScene(scene);
-    activeCamera = cameraList[0];
-    updateCameraAspect(activeCamera);
-    initCameraSystem(); // Pokreni sustav kamera i kontrole
-  })
-  .catch((error) => console.error('Error loading JSON scene:', error));
+
 
 
 
