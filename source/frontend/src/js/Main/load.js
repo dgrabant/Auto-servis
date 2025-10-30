@@ -36,9 +36,33 @@ const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
+function provjeriUredjaj() {
 
+    const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    const sirinaEkrana = window.innerWidth;
+
+    if (imaDodir) {
+      mobileOptimization = true;
+      fps = fpsMobile;
+      lightUpModel(null,movingLight, true);
+      scenePath = scenePathMoblie;
+      texturePath = texturePathMobile;
+        if (sirinaEkrana < 768) {
+            return 'Mobitel';
+        } else {
+            return 'Tablet';
+        }
+    } else {
+      
+        return 'Desktop';
+    }
+}
 function cekajKlik(idGumba) {
   return new Promise(resolve => {
+    if (mobileOptimization) {
+      resolve();
+    }
     document.getElementById(idGumba).addEventListener("click", () => {
       const odabrano = document.querySelector('input[name="odgovor"]:checked');
       console.log(forma, odabrano.value);
@@ -58,36 +82,21 @@ function cekajKlik(idGumba) {
     }, { once: true });
   });
 }
+const tipUredjaja = provjeriUredjaj();
+if (!mobileOptimization)
+await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 
-async function provjeriUredjaj() {
+// Tek nakon klika nastavljaš s ostatkom:
+console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
 
-    const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
-    const sirinaEkrana = window.innerWidth;
 
-    if (imaDodir) {
-      forma.hidden = true;
-      mobileOptimization = true;
-      fps = fpsMobile;
-      lightUpModel(null,movingLight, true);
-      scenePath = scenePathMoblie;
-      texturePath = texturePathMobile;
-        if (sirinaEkrana < 768) {
-            return 'Mobitel';
-        } else {
-            return 'Tablet';
-        }
-    } else {
-      await cekajKlik("submit");
-        return 'Desktop';
-    }
-}
 
 
 
 
 // === Primjer korištenja ===
-const tipUredjaja = provjeriUredjaj();
+
 console.log("Tip uređaja:", tipUredjaja);
 
 
