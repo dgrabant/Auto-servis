@@ -241,7 +241,7 @@ loader.load(
           
           setTimeout(() => {
             isLoaded = true;
-          },3000);
+          },2000);
         }, 1000);
       }, 500);
   },  
