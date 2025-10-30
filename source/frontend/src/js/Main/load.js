@@ -171,8 +171,8 @@ await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
 scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
-if (mobileOptimization) movingLight.castShadow = false;
-if (!mobileOptimization) movingLight.intensity = 0;
+if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
+//if (!mobileOptimization) movingLight.intensity = 0;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -190,7 +190,7 @@ loader.load(
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
     scene.background = envMap;
-    if(!mobileOptimization) scene.environment = envMap;
+    if(!mobileOptimization && !pcPerformance) scene.environment = envMap;
 
     texture.dispose();
     pmremGenerator.dispose();
