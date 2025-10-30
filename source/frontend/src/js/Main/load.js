@@ -30,7 +30,7 @@ let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fpsPC = 20; //sve ostalo
+const fpsPC = 15; //sve ostalo
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 //provjera na kojem uređaju se stranica ucita
@@ -139,7 +139,7 @@ await LoadCameraPath(scene, cameraPath, loadingText)
 
 
 //postavljanje sjena 
-
+scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization);
 
 if (mobileOptimization) movingLight.castShadow = false;
@@ -167,7 +167,7 @@ loader.load(
     pmremGenerator.dispose();
 
     console.log("Pozadina i refleksije su uspješno postavljene!");
-    scene.add(movingLight);
+    
     // *** SPREMANJE ID-A TIMERA 1 ***
       loadingText.textContent = 'Almost done.....';
       initialLoadTimeout2 = setTimeout(() => {
