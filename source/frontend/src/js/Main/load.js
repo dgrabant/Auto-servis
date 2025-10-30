@@ -69,6 +69,8 @@ function cekajKlik(idGumba) {
       forma.hidden = true;
       if (odabrano.value == 'true') {
         pcPerformance = true;
+        fps = fpsMobile;
+        texturePath = texturePathMobile;
       }
       resolve();
     }, { once: true });
@@ -129,7 +131,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-if (mobileOptimization) {
+if (mobileOptimization || pcPerformance) {
   // 🔹 Dodavanje svjetla u scenu
 const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 1);
 scene.add(hemiLight);
