@@ -485,9 +485,10 @@ function transitionCamera(fromCam, toCam, duration) {
       renderer.render(scene, activeCamera);
     }
     else document.body.style.cursor = 'default';
-    animate();
-        
+            
     }
+    animate();
+
   }, duration);
   if (!fromCam || !toCam || !renderer) {
     console.warn("Kamera ili renderer nisu definirani!");
