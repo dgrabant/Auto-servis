@@ -228,7 +228,7 @@ loader.load(
           transitionCamera(activeCamera, cameraList[6], 1500);
           setTimeout(() => {
             isLoaded = true;
-          },2000);
+          },1600);
         }, 1000);
       }, 500);
   },  
