@@ -275,10 +275,10 @@ function onDocumentClick(event) {
     document.body.style.cursor = 'default';
     cameraPosition = clickTransition(cameraPosition, firstHitName);
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
-    if (cameraPosition == 2) {
+    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "login") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
-    else{
+    if (firstHitButtonName == "servis"){
       transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
@@ -416,7 +416,7 @@ function onMouseMove(event) {
   lastOnMouseMove = event;
   if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
-    console.log("hoverd");
+    //console.log("hoverd");
     
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
