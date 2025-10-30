@@ -20,7 +20,7 @@ const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loadingText = document.getElementById("loadText");
 const forma = document.getElementById("performance");
-
+const tutorial = document.getElementById("tutorial");
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
@@ -36,6 +36,16 @@ const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
+function cekajPotvrdu(idGumba) {
+  return new Promise(resolve => {
+    document.getElementById(idGumba).addEventListener("click", () => {
+      forma.hidden = false
+      tutorial.hidden = true;
+      resolve();
+    }, { once: true });
+  });
+
+}
 function provjeriUredjaj() {
 
     const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -87,6 +97,8 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
+await cekajPotvrdu("understood");
+
 if (!mobileOptimization)
 await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 else forma.hidden = true;
