@@ -26,7 +26,7 @@ let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
 let texturePath;
-let hoverOn = true;
+let hoverOn = false;
 let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
@@ -174,7 +174,7 @@ scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
 if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
-//if (!mobileOptimization) movingLight.intensity = 0;
+movingLight.intensity = 2.5;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -216,9 +216,11 @@ loader.load(
         initialLoadTimeout2 = setTimeout(() => {
           console.log("Pokrećem prijelaz na kameru 6...");
           transitionCamera(activeCamera, cameraList[6], 1500);
-        
-        }, 1500);
-      }, 1000);
+          setTimeout(() => {
+            isLoaded = true;
+          },2000);
+        }, 1000);
+      }, 500);
   },  
   undefined,
   (err) => console.error("Greška pri učitavanju teksture:", err)
