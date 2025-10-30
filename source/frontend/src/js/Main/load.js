@@ -203,7 +203,6 @@ loader.load(
       loadingText.textContent = 'Almost done.....';
       initialLoadTimeout2 = setTimeout(() => {
         activeCamera=cameraList[1];
-        isLoaded =true;
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
@@ -499,7 +498,7 @@ animate(); // Pokreni render petlju
     //console.log("animate");
     setTimeout( function() {
       if (!uTranziciji) {
-        hoverOn = true;
+        if (isLoaded) hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
       }
       }, 1000 / fps );
