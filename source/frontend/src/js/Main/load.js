@@ -279,7 +279,7 @@ function onDocumentClick(event) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
     if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
-      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1100);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     transitionTimeout = setTimeout(() => { 
