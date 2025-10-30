@@ -36,13 +36,37 @@ const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
-function provjeriUredjaj() {
+
+function cekajKlik(idGumba) {
+  return new Promise(resolve => {
+    document.getElementById(idGumba).addEventListener("click", () => {
+      const odabrano = document.querySelector('input[name="odgovor"]:checked');
+      console.log(forma, odabrano.value);
+      forma.hidden = true;
+      if (odabrano.value == 'true') {
+        pcPerformance = true;
+        fps = fpsMobile;
+        texturePath = texturePathMobile;
+      }
+      else{
+        fps = fpsPC;
+        scenePath = scenePathPC;
+        mobileOptimization = false;
+        texturePath = texturePathPC;
+      }
+      resolve();
+    }, { once: true });
+  });
+}
+
+async function provjeriUredjaj() {
 
     const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
     const sirinaEkrana = window.innerWidth;
 
     if (imaDodir) {
+      forma.hidden = true;
       mobileOptimization = true;
       fps = fpsMobile;
       lightUpModel(null,movingLight, true);
@@ -54,36 +78,10 @@ function provjeriUredjaj() {
             return 'Tablet';
         }
     } else {
-      fps = fpsPC;
-      scenePath = scenePathPC;
-      mobileOptimization = false;
-      texturePath = texturePathPC;
+      await cekajKlik("submit");
         return 'Desktop';
     }
 }
-function cekajKlik(idGumba) {
-  return new Promise(resolve => {
-    document.getElementById(idGumba).addEventListener("click", () => {
-      const odabrano = document.querySelector('input[name="odgovor"]:checked');
-      console.log(forma, odabrano.value);
-      forma.hidden = true;
-      if (odabrano.value == 'true') {
-        pcPerformance = true;
-        fps = fpsMobile;
-      }
-      resolve();
-    }, { once: true });
-  });
-}
-if (!mobileOptimization){
-await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
-}
-else forma.hidden = true;
-// Tek nakon klika nastavljaš s ostatkom:
-console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
-
-
-
 
 
 
