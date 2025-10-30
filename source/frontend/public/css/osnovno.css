@@ -4,6 +4,13 @@ canvas {
     left: 0;
     z-index: 1;
 }
+#performance {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 70;
+     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
+}
 body {
         margin: 0;
       }
@@ -68,7 +75,7 @@ body {
     
     /* Pozadina */
     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
-    z-index: 99999; /* Osigurava da je iznad svega ostalog */
+    z-index: 50; /* Osigurava da je iznad svega ostalog */
     
     /* Centriranje sadržaja */
     display: flex;

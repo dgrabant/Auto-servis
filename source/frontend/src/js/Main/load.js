@@ -19,6 +19,7 @@ const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loadingText = document.getElementById("loadText");
+const forma = document.getElementById("performance");
 
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
@@ -33,8 +34,8 @@ const maxFps = 60;//za animacije
 const fpsPC = 15; //sve ostalo
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
+let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
-
 function provjeriUredjaj() {
 
     const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -60,6 +61,30 @@ function provjeriUredjaj() {
         return 'Desktop';
     }
 }
+function cekajKlik(idGumba) {
+  return new Promise(resolve => {
+    document.getElementById(idGumba).addEventListener("click", () => {
+      const odabrano = document.querySelector('input[name="odgovor"]:checked');
+      console.log(forma, odabrano.value);
+      forma.hidden = true;
+      if (odabrano.value == 'true') {
+        pcPerformance = true;
+      }
+      resolve();
+    }, { once: true });
+  });
+}
+if (!mobileOptimization)
+await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
+
+// Tek nakon klika nastavljaš s ostatkom:
+console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
+
+
+
+
+
+
 
 // === Primjer korištenja ===
 const tipUredjaja = provjeriUredjaj();
@@ -83,7 +108,6 @@ let transitionTimeout; // Za timere tijekom klikova i Esc
 let touchStartX = 0;
 let touchEndX = 0;
 let touchStartTime = 0;
-let mouseInside = false;
 
 let renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
@@ -145,7 +169,7 @@ await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
 
 //postavljanje sjena 
 scene.add(movingLight);
-renderer = setupRenderer(scene, renderer, mobileOptimization);
+renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
 if (mobileOptimization) movingLight.castShadow = false;
 if (!mobileOptimization) movingLight.intensity = 0;
