@@ -214,7 +214,8 @@ loader.load(
 
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
-    scene.background = envMap;
+    if(!mobileOptimization) scene.background = envMap;
+    else scene.background = new THREE.Color(0x1a2b3c);
     if(!mobileOptimization && !pcPerformance) scene.environment = envMap;
 
     texture.dispose();
