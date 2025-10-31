@@ -58,23 +58,24 @@ export const spawnMultipleModels = (scene, isLogedIn = false, loadingText, mobil
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
     loader.setDRACOLoader(dracoLoader);
-
+    let loadPromises;
+    let data;
     try {
       if (!mobileOptimization){
-      const loadPromises = modelData.map(data => loader.loadAsync(data.path));
+      loadPromises = modelData.map(data => loader.loadAsync(data.path));
       }
       else{
-        const loadPromises = modelDataMob.map(data => loader.loadAsync(data.path));
+      loadPromises = modelDataMob.map(data => loader.loadAsync(data.path));
       }
       const loadedGltfs = await Promise.all(loadPromises);
 
       loadedGltfs.forEach((glb, index) => {
         const model = glb.scene;
         if (!mobileOptimization) {
-          const data = modelData[index];
+          data = modelData[index];
         }
         else{
-          const data = modelDataMob[index];
+          data = modelDataMob[index];
         }
         
 
