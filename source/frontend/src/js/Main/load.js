@@ -172,7 +172,7 @@ await LoadCameraPath(scene, cameraPath, loadingText)
 
   
 
-await spawnMultipleModels(scene, checkIfLogedIn(), loadingText).then(models => {
+await spawnMultipleModels(scene, checkIfLogedIn(), loadingText, mobileOptimization).then(models => {
   interactableModels = models;
 })
   .catch((error) => console.error('Error loading JSON scene:', error));
