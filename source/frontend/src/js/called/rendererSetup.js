@@ -9,7 +9,7 @@ export function setupRenderer(scene, renderer, mobileOptimization, pcPerformance
     // Ograniči PixelRatio da uštediš performanse
     let pixelRatio = Math.min(window.devicePixelRatio, 2); // Max 2x za desktop
     if (mobileOptimization) {
-        pixelRatio = Math.min(window.devicePixelRatio, 1.5); // Max 1.5x (ili čak 1) za mobitele
+        pixelRatio = Math.min(window.devicePixelRatio, 1); // Max 1.5x (ili čak 1) za mobitele
     }
     renderer.setPixelRatio(pixelRatio);
 
