@@ -6,19 +6,20 @@ import jakarta.persistence.*;
 @Table(name="dijelovi")
 public class Services {
     @Id
+    @Column(name="idDijela")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDijela;
 
-    @Column(nullable = false, length = 50)
+    @Column(name="naziv", nullable = false, length = 50)
     private String naziv;
 
-    @Column(nullable = false)
+    @Column(name="cijena", nullable = false)
     private double cijena;
 
-    @Column(nullable = false, length = 500)
+    @Column(name="opis", nullable = false, length = 500)
     private String opis;
 
-    @Column(nullable = false, length = 200)
+    @Column(name="slikaUrl", nullable = false, length = 200)
     private String slikaUrl;
 
     public long getIdDijela() {
@@ -48,7 +49,7 @@ public class Services {
     }
 
     public void setOpis(String opis) {
-        if(opis.isEmpty() || opis.length()>500) throw new RuntimeException();
+        if(opis.length()>500) throw new RuntimeException();
         else this.opis = opis;
     }
 
@@ -57,7 +58,7 @@ public class Services {
     }
 
     public void setSlikaUrl(String slikaUrl) {
-        if(slikaUrl.isEmpty() || slikaUrl.length()>200) throw new RuntimeException();
+        if(slikaUrl.length()>200) throw new RuntimeException();
         else this.slikaUrl = slikaUrl;
     }
 }

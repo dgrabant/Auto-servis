@@ -36,7 +36,7 @@ public class ServicesController {
         partsDetails.put("status",200);
 
         List<Services> parts = servicesService.getAllServices();
-        partsDetails.put("dijelovi", parts);
+        partsDetails.put("usluge", parts);
 
         return partsDetails;
     }

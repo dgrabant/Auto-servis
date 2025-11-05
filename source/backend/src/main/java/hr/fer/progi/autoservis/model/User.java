@@ -8,6 +8,7 @@ import java.util.List;
 @Table(name="korisnik")
 public class User {
     @Id
+    @Column(name="idKorisnika")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idKorisnika;
 
@@ -20,7 +21,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(name="davateljUsluge", nullable = false, length = 20)
     private String davateljUsluge;
 
     @Column(nullable = false, length = 10)
