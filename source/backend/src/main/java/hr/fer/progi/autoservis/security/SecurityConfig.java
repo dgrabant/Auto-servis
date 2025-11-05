@@ -31,12 +31,12 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/", "/error", "/auth/callback/**","/oauth2/authorization/**","/oauth-redirect").permitAll()
+                    .requestMatchers("/", "/error", "/login/oauth2/code/**","/oauth2/authorization/**","/oauth-redirect").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
-                    .redirectionEndpoint(endpoint -> endpoint.baseUri("/auth/callback/*"))
+                    .loginPage("/login")
                     .successHandler(oAuth2SuccessHandler)
             );
 
