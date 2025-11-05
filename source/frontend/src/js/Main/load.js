@@ -19,22 +19,33 @@ const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loadingText = document.getElementById("loadText");
-
+const forma = document.getElementById("performance");
+const tutorial = document.getElementById("tutorial");
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
 let texturePath;
-let hoverOn = true;
+let hoverOn = false;
 let fps;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
-const fpsPC = 15; //sve ostalo
+const fpsPC = 30;
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
+let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
+function cekajPotvrdu(idGumba) {
+  return new Promise(resolve => {
+    document.getElementById(idGumba).addEventListener("click", () => {
+      forma.hidden = false
+      tutorial.hidden = true;
+      resolve();
+    }, { once: true });
+  });
 
+}
 function provjeriUredjaj() {
 
     const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -52,17 +63,56 @@ function provjeriUredjaj() {
         } else {
             return 'Tablet';
         }
-    } else {
-      fps = fpsPC;
-      scenePath = scenePathPC;
-      mobileOptimization = false;
-      texturePath = texturePathPC;
+      } else {
+        fps = fpsPC;
+        mobileOptimization = false;
         return 'Desktop';
     }
 }
+function cekajKlik(idGumba) {
+  return new Promise(resolve => {
+    if (mobileOptimization) {
+      resolve();
+    }
+    document.getElementById(idGumba).addEventListener("click", () => {
+      const odabrano = document.querySelector('input[name="odgovor"]:checked');
+      console.log(forma, odabrano.value);
+      forma.hidden = true;
+      if (odabrano.value == 'true') {
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathPC;
+      }
+      else if (odabrano.value == "ultra") {
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathMoblie;
+      }
+      else{
+        scenePath = scenePathPC;
+        texturePath = texturePathPC;
+      }
+      resolve();
+    }, { once: true });
+  });
+}
+const tipUredjaja = provjeriUredjaj();
+await cekajPotvrdu("understood");
+
+if (!mobileOptimization)
+await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
+else forma.hidden = true;
+// Tek nakon klika nastavljaš s ostatkom:
+console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
+
+
+
+
+
+
 
 // === Primjer korištenja ===
-const tipUredjaja = provjeriUredjaj();
+
 console.log("Tip uređaja:", tipUredjaja);
 
 
@@ -83,7 +133,6 @@ let transitionTimeout; // Za timere tijekom klikova i Esc
 let touchStartX = 0;
 let touchEndX = 0;
 let touchStartTime = 0;
-let mouseInside = false;
 
 let renderer = new THREE.WebGLRenderer({
   canvas: document.querySelector('#bg'),
@@ -105,7 +154,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-if (mobileOptimization) {
+if (mobileOptimization || pcPerformance) {
   // 🔹 Dodavanje svjetla u scenu
 const hemiLight = new THREE.HemisphereLight(0x00527a, 0xffaa00, 1);
 scene.add(hemiLight);
@@ -123,7 +172,7 @@ await LoadCameraPath(scene, cameraPath, loadingText)
 
   
 
-await spawnMultipleModels(scene, checkIfLogedIn(), loadingText).then(models => {
+await spawnMultipleModels(scene, checkIfLogedIn(), loadingText, mobileOptimization).then(models => {
   interactableModels = models;
 })
   .catch((error) => console.error('Error loading JSON scene:', error));
@@ -145,10 +194,10 @@ await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
 
 //postavljanje sjena 
 scene.add(movingLight);
-renderer = setupRenderer(scene, renderer, mobileOptimization);
+renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
-if (mobileOptimization) movingLight.castShadow = false;
-if (!mobileOptimization) movingLight.intensity = 0;
+if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
+movingLight.intensity = 2.5;
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -166,7 +215,7 @@ loader.load(
     const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
     scene.background = envMap;
-    if(!mobileOptimization) scene.environment = envMap;
+    if(!mobileOptimization && !pcPerformance) scene.environment = envMap;
 
     texture.dispose();
     pmremGenerator.dispose();
@@ -177,7 +226,6 @@ loader.load(
       loadingText.textContent = 'Almost done.....';
       initialLoadTimeout2 = setTimeout(() => {
         activeCamera=cameraList[1];
-        isLoaded =true;
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
@@ -190,9 +238,12 @@ loader.load(
         initialLoadTimeout2 = setTimeout(() => {
           console.log("Pokrećem prijelaz na kameru 6...");
           transitionCamera(activeCamera, cameraList[6], 1500);
-        
-        }, 1500);
-      }, 1000);
+          
+          setTimeout(() => {
+            isLoaded = true;
+          },2000);
+        }, 1000);
+      }, 500);
   },  
   undefined,
   (err) => console.error("Greška pri učitavanju teksture:", err)
@@ -224,11 +275,11 @@ function onDocumentClick(event) {
     document.body.style.cursor = 'default';
     cameraPosition = clickTransition(cameraPosition, firstHitName);
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
-    if (cameraPosition == 2) {
+    if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
-    else{
-      transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+    if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1240);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     transitionTimeout = setTimeout(() => { 
@@ -244,7 +295,7 @@ function onDocumentClick(event) {
             document.getElementById("navDjelovi").hidden = true;
         }
       }
-    }, 1500);
+    }, 1250);
   
   }
 }
@@ -363,8 +414,10 @@ function onKeydownQ(event) {
 let lastOnMouseMove;
 function onMouseMove(event) {
   lastOnMouseMove = event;
-  if (hoverOn && !uTranziciji) {
+  if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
+    //console.log("hoverd");
+    
 		const firstHitButtonName = getFirstObjectHit(event, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
@@ -422,6 +475,8 @@ function transitionCamera(fromCam, toCam, duration) {
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
+    if (isLoaded) {
+  
     const firstHitButtonName = getFirstObjectHit(lastOnMouseMove, window, activeCamera, scene, 7);
     //console.log("Hover: ",firstHitButtonName);
 		if(lightUpModel(firstHitButtonName, movingLight, false)){
@@ -430,7 +485,10 @@ function transitionCamera(fromCam, toCam, duration) {
       renderer.render(scene, activeCamera);
     }
     else document.body.style.cursor = 'default';
+            
+    }
     animate();
+
   }, duration);
   if (!fromCam || !toCam || !renderer) {
     console.warn("Kamera ili renderer nisu definirani!");
@@ -468,10 +526,12 @@ animate(); // Pokreni render petlju
 
   // Glavna petlja renderiranja
   function animate() {
+    //console.log("Is loaded: ",isLoaded);
+    
     //console.log("animate");
     setTimeout( function() {
       if (!uTranziciji) {
-        hoverOn = true;
+        if (isLoaded) hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
       }
       }, 1000 / fps );

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function setupRenderer(scene, renderer, mobileOptimization) {
+export function setupRenderer(scene, renderer, mobileOptimization, pcPerformance) {
 
     // --- Postavke Renderera ---
 
@@ -14,7 +14,7 @@ export function setupRenderer(scene, renderer, mobileOptimization) {
     renderer.setPixelRatio(pixelRatio);
 
     // Postavke sjena
-    if (!mobileOptimization) {
+    if (!mobileOptimization && !pcPerformance) {
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.VSMShadowMap; // VSM je OK, ali PCFSoftShadowMap je često brži
     }
@@ -44,7 +44,7 @@ export function setupRenderer(scene, renderer, mobileOptimization) {
         if (object.isMesh) {
             meshes.push(object);
 
-            if (!mobileOptimization) {
+            if (!mobileOptimization && !pcPerformance) {
                 object.castShadow = true;
                 object.receiveShadow = true;
             }
@@ -77,7 +77,7 @@ export function setupRenderer(scene, renderer, mobileOptimization) {
             });
         
         // 2. Provjera za PointLights (samo ako NISMO na mobitelu)
-        } else if (!mobileOptimization && object.isPointLight) {
+        } else if (!mobileOptimization && object.isPointLight && !pcPerformance) {
             pointLights.push(object);
             object.castShadow = true;
             // NAPOMENA: 256 je jako niska rezolucija. 512 je bolji balans.
@@ -89,7 +89,7 @@ export function setupRenderer(scene, renderer, mobileOptimization) {
             object.shadow.blurSamples = 2;
 
         // 3. Provjera za SpotLights (samo ako NISMO na mobitelu)
-        } else if (!mobileOptimization && object.isSpotLight) {
+        } else if (!mobileOptimization && object.isSpotLight && !pcPerformance) {
             spotLights.push(object);
             object.castShadow = true;
             object.shadow.mapSize.width = 512;

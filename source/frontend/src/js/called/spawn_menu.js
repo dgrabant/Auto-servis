@@ -24,9 +24,32 @@ const modelData = [
         name: 'loginNeeded'
     }
 ];
+const modelDataMob = [
+    { 
+        path: '/assets/models/login_mobitel.glb', 
+        position: { x: -11, y: 0.5, z: 4 },
+        rotation: { x: 0, y: THREE.MathUtils.degToRad(120), z: 0 },
+        name: 'login'
+    },
+    { 
+        path: '/assets/models/djelovi_mobitel.glb', 
+        position: { x: -5, y: 1.6, z: 0.1 }, 
+        name: 'djelovi'
+    },
+    { 
+        path: '/assets/models/servis_mobitel.glb', 
+        position: { x: -8, y: 1.7, z: 5 }, 
+        name: 'servis'
+    },
+    { 
+        path: '/assets/models/loginNeeded.glb', 
+        position: { x: -8, y: 1.7, z: 5 }, 
+        name: 'loginNeeded'
+    }
+];
 let models = [];
 
-export const spawnMultipleModels = (scene, isLogedIn = false, loadingText) =>{
+export const spawnMultipleModels = (scene, isLogedIn = false, loadingText, mobileOptimization = false) =>{
   loadingText.textContent = 'Loading main menu....';
   return new Promise(async (resolve, reject) => {
     console.log('Počinje učitavanje više modela sa DRACO kompresijom...');
@@ -35,14 +58,26 @@ export const spawnMultipleModels = (scene, isLogedIn = false, loadingText) =>{
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
     loader.setDRACOLoader(dracoLoader);
-
+    let loadPromises;
+    let data;
     try {
-      const loadPromises = modelData.map(data => loader.loadAsync(data.path));
+      if (!mobileOptimization){
+      loadPromises = modelData.map(data => loader.loadAsync(data.path));
+      }
+      else{
+      loadPromises = modelDataMob.map(data => loader.loadAsync(data.path));
+      }
       const loadedGltfs = await Promise.all(loadPromises);
 
       loadedGltfs.forEach((glb, index) => {
         const model = glb.scene;
-        const data = modelData[index];
+        if (!mobileOptimization) {
+          data = modelData[index];
+        }
+        else{
+          data = modelDataMob[index];
+        }
+        
 
         model.position.set(data.position.x, data.position.y, data.position.z);
         model.name = data.name;
@@ -84,7 +119,7 @@ export function cleanupSpawnedModels() {
         // Dodatna provjera: Iako bi Three.js resursi trebali biti očišćeni s cleanup() u loaf.js,
         // brisanje referenci ovdje je ključno za oslobađanje memorije iz modula.
         if (model.parent) {
-             model.parent.remove(model);
+          model.parent.remove(model);
         }
     });
     // Brisanje polja
