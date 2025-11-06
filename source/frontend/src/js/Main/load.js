@@ -39,6 +39,17 @@ const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
+
+if (!checkIfLogedIn()) {
+    tutorial.hidden = false;
+    loadingScreen.hidden = false;
+    console.log("maknut hidden");
+    
+
+  }
+
+
+
 function cekajPotvrdu(idGumba) {
   return new Promise(resolve => {
     document.getElementById(idGumba).addEventListener("click", () => {
@@ -139,7 +150,7 @@ console.log("Tip uređaja:", tipUredjaja);
 
 
 
-function onload(event){
+/*function onload(event){
   if (!checkIfLogedIn()) {
     tutorial.hidden = false;
     loadingScreen.hidden = false;
@@ -151,7 +162,7 @@ function onload(event){
   console.log(navDjeloviHTML);
   djeloviHTML.hidden = true;
 };
-
+*/
 
 // 🔹 Globalne varijable za čišćenje
 let animationFrameId; // Za zaustavljanje render petlje
@@ -476,7 +487,6 @@ function onMouseMove(event) {
 function initCameraSystem() {
   // 🔸 Dodavanje svih listenera
   document.addEventListener('click', onDocumentClick);
-  document.addEventListener('DOMContentLoaded', onload);
   window.addEventListener('wheel', onWindowWheel);
   document.addEventListener('keydown', onKeydownEsc);
   document.addEventListener('keydown', onKeydownE);
@@ -603,7 +613,6 @@ function cleanup() {
 
   // 3. Ukloni SVE event listenere
   document.removeEventListener('click', onDocumentClick);
-  document.removeEventListener('DOMContentLoaded', onload);
   window.removeEventListener('wheel', onWindowWheel);
   window.removeEventListener('resize', onWindowResize);
   document.removeEventListener('keydown', onKeydownEsc);
