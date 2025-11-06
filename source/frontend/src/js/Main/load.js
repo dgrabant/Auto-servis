@@ -316,20 +316,15 @@ function onDocumentClick(event) {
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     transitionTimeout = setTimeout(() => { 
-      if (cameraPosition == 3) {
+      if (cameraPosition == 4) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
             document.getElementById("navDjelovi").hidden = false;
         } 
-        else {
-            djeloviHTML.classList.remove('visible');
-            djeloviHTML.classList.add('hidden');
-            document.getElementById("navDjelovi").hidden = true;
-        }
       }
       if (cameraPosition == 2) {
-            console.log("camera 5");
+            console.log("camera 2");
             
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
@@ -339,14 +334,6 @@ function onDocumentClick(event) {
             document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
-        else {
-          console.log("hidden true");
-            loginHTML.classList.remove('visible');
-            loginHTML.classList.add('hidden');
-            loginHTML.hidden = false;
-            document.getElementById("google").hidden = true;
-            document.getElementById("github").hidden = true;
-        }
       }
     }, 1250);
         
@@ -381,7 +368,7 @@ function onWindowWheel(event) {
 
 // 🔸 Tipka "Escape"
 function onKeydownEsc(event) {
-  if ((cameraPosition == 3 || cameraPosition == 2) && !uTranziciji) {
+  if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
     if (event.key === "Escape" || event.key === "Esc") {
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);
@@ -391,29 +378,39 @@ function onKeydownEsc(event) {
       console.log(djeloviHTML);
       console.log(navDjeloviHTML);
       
-      if (cameraPosition == 3) {
+      if (cameraPosition == 4) {
         cameraPosition = returnToPrevCam(cameraPosition);
-        if (djeloviHTML.classList.contains('hidden')) {
-            djeloviHTML.classList.remove('hidden');
-            djeloviHTML.classList.add('visible'); 
-            document.getElementById("navDjelovi").hidden = false;
-        } 
-        else {
+        if (djeloviHTML.classList.contains('visible')) 
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
             document.getElementById("navDjelovi").hidden = true;
         }
       }
-      if (cameraPosition == 2) {
+      else if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
         transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
+      }
+      else if (cameraPosition == 2) {
+        cameraPosition = returnToPrevCam(cameraPosition);
+        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        if (loginHTML.classList.contains('visible')) {
+            loginHTML.classList.remove('visible');
+            loginHTML.classList.add('hidden');
+            loginHTML.hidden = false;
+            document.getElementById("google").hidden = true;
+            document.getElementById("github").hidden = true;
+        }
+      }
+        transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+      }, 1000);
         
       }
-      else
-        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+      else{
+      // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
       transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
