@@ -106,7 +106,7 @@ if (false) {
   await cekajPotvrdu("understood");
 }
 else
-  forma.hidden = false;
+  forma.hidden = true;
 
 if (!mobileOptimization){
   if (checkIfLogedIn() && performanceMem) {
