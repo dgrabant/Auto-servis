@@ -10,6 +10,12 @@
     
   </head>
   <body>
+    <div id="login" class="hidden">
+      <button id="google" type="button" hidden>google login</button>
+      <button id="github" type="button" hidden>github login</button>
+    </div>
+
+
     <div id="tutorial">
       <h1>Ovo je tutorijal, nije gotov jos</h1>
       <button id="understood" type="button">I Understand</button>
@@ -69,6 +75,25 @@
     <div id="container3D"></div>
     <script type="module" src="./src/js/Main/load.js"></script>
     <script type="module" src="./src/js/Main/htmlPostava.js"></script>
+    <script>
+    // Dohvaćamo gumb za Google koristeći njegov ID
+    const googleButton = document.getElementById('google');
+
+    // Dohvaćamo gumb za GitHub koristeći njegov ID
+    const githubButton = document.getElementById('github');
+
+    // 1. Dodajemo "event listener" na Google gumb
+    googleButton.addEventListener('click', () => {
+        // Kada netko klikne, preusmjeri preglednik na ovu adresu
+        window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/google';
+    });
+
+    // 2. Dodajemo "event listener" na GitHub gumb
+    githubButton.addEventListener('click', () => {
+        // Kada netko klikne, preusmjeri preglednik na ovu adresu
+        window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/github';
+    });
+</script>
   <canvas id="bg"></canvas>
   </body>
 

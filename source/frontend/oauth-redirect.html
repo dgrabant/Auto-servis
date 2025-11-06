@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Autorizacija je u tijeku...</title>
+</head>
+<body>
+    <p>Prijava je uspješna. Pričekajte trenutak dok vas preusmjerimo...</p>
+
+    <script>
+        (function() {
+            // 1. Čitanje tokena iz URL-a
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            const REDIRECT_PAGE = '/index.html'; 
+
+            if (token) {
+                // 2. Spremanje tokena u Local Storage
+                localStorage.setItem('authToken', token);
+
+                console.log('Token uspješno spremljen. Preusmjeravanje...');
+
+                // Opcionalno: Briše token iz URL-a
+                window.history.replaceState(null, '', window.location.pathname);
+                
+                // 3. Preusmjeravanje na glavnu stranicu
+                window.location.href = REDIRECT_PAGE;
+
+            } else {
+                // Rukovanje greškom
+                console.error('Token nije pronađen. Vraćanje na glavnu stranicu.');
+                window.location.href = REDIRECT_PAGE;
+            }
+        })();
+    </script>
+</body>
+</html>

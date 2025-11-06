@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <title>Logout in progress...</title>
+</head>
+<body>
+    <p>Deleting memory...</p>
+
+    <script>
+        (function() {
+
+            const REDIRECT_PAGE = '/index.html'; 
+            
+            localStorage.setItem('authToken', false);
+
+            console.log('Loged out...');
+            
+            window.location.href = REDIRECT_PAGE;
+        })();
+    </script>
+</body>
+</html>
