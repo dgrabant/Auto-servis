@@ -8,7 +8,7 @@ public class Services {
     @Id
     @Column(name="idUsluge")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idDijela;
+    private long idUsluge;
 
     @Column(name="naziv", nullable = false, length = 50)
     private String naziv;
@@ -22,8 +22,8 @@ public class Services {
     @Column(name="slikaUrl", nullable = false, length = 200)
     private String slikaUrl;
 
-    public long getIdDijela() {
-        return idDijela;
+    public long getIdUsluge() {
+        return idUsluge;
     }
 
     public String getNaziv() {

@@ -3,12 +3,12 @@ package hr.fer.progi.autoservis.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="usluga")
+@Table(name="dijelovi")
 public class Parts {
     @Id
-    @Column(name="idUsluge")
+    @Column(name="idDijela")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idUsluge;
+    private long idDijela;
 
     @Column(name="naziv", nullable = false, length = 50)
     private String naziv;
@@ -22,8 +22,8 @@ public class Parts {
     @Column(name="slikaUrl", nullable = false, length = 200)
     private String slikaUrl;
 
-    public long getIdUsluge() {
-        return idUsluge;
+    public long getIdDijela() {
+        return idDijela;
     }
 
     public String getNaziv() {
