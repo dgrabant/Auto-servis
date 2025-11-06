@@ -18,9 +18,11 @@ const texturePathMobile = '/assets/textures/backgroundMobile.jpg';
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
+const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
+const performanceMem = localStorage.getItem('performance');
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
@@ -82,8 +84,39 @@ function cekajKlik(idGumba) {
         pcPerformance = true;
         texturePath = texturePathMobile;
         scenePath = scenePathPC;
+        localStorage.setItem('performance', 1);
       }
       else if (odabrano.value == "ultra") {
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathMoblie;
+        localStorage.setItem('performance', 2);
+      }
+      else{
+        scenePath = scenePathPC;
+        texturePath = texturePathPC;
+        localStorage.setItem('performance', 0);
+      }
+      resolve();
+    }, { once: true });
+  });
+}
+const tipUredjaja = provjeriUredjaj();
+if (false) {
+  await cekajPotvrdu("understood");
+}
+else
+  forma.hidden = true;
+
+if (!mobileOptimization){
+  /*if (checkIfLogedIn() && performanceMem) {
+    forma.hidden = true;
+    if (performanceMem == 1) {
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathPC;
+      }
+      else if (performanceMem == 2) {
         pcPerformance = true;
         texturePath = texturePathMobile;
         scenePath = scenePathMoblie;
@@ -92,23 +125,13 @@ function cekajKlik(idGumba) {
         scenePath = scenePathPC;
         texturePath = texturePathPC;
       }
-      resolve();
-    }, { once: true });
-  });
+  }
+  else*/
+  await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 }
-const tipUredjaja = provjeriUredjaj();
-await cekajPotvrdu("understood");
-
-if (!mobileOptimization)
-await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 else forma.hidden = true;
 // Tek nakon klika nastavljaš s ostatkom:
 console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
-
-
-
-
-
 
 
 // === Primjer korištenja ===
@@ -185,11 +208,6 @@ await LoadGLTFByPath(scene, scenePath, loadingText)
 
 await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
   .catch((error) => console.error('Error loading JSON scene:', error));
-
-
-
-
-
 
 
 //postavljanje sjena 
@@ -295,6 +313,20 @@ function onDocumentClick(event) {
             document.getElementById("navDjelovi").hidden = true;
         }
       }
+      if (cameraPosition == 5) {
+        if (loginHTML.classList.contains('hidden')) {
+            loginHTML.classList.remove('hidden');
+            loginHTML.classList.add('visible'); 
+            document.getElementById("google").hidden = false;
+            document.getElementById("github").hidden = false;
+        } 
+        else {
+            loginHTML.classList.remove('visible');
+            loginHTML.classList.add('hidden');
+            document.getElementById("google").hidden = true;
+            document.getElementById("github").hidden = true;
+        }
+      }
     }, 1250);
   
   }
@@ -363,11 +395,8 @@ function onKeydownEsc(event) {
       transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
-      
-   
+    }
   }
-  }
- 
 }
 
 // 🔸 Mobilni touch - Start
@@ -389,7 +418,7 @@ function onTouchEnd(e) {
   const deltaX = touchStartX - touchEndX;
   const elapsed = Date.now() - touchStartTime;
 
- if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
+if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
     const direction = deltaX < 0 ? 1 : -1;
     const wheelEvent = new WheelEvent('wheel', { deltaY: direction });
     window.dispatchEvent(wheelEvent);
