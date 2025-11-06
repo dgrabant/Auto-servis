@@ -25,19 +25,19 @@ public class ServicesController {
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
-    public Map<String, Object> getAllParts(@AuthenticationPrincipal UserPrincipal userPrincipal){
+    public Map<String, Object> getAllServices(@AuthenticationPrincipal UserPrincipal userPrincipal){
         if(userPrincipal==null){
             Map<String, Object> error = new HashMap<>();
             error.put("status",401);
             return error;
         }
 
-        Map<String, Object> partsDetails = new HashMap<>();
-        partsDetails.put("status",200);
+        Map<String, Object> servicesDetails = new HashMap<>();
+        servicesDetails.put("status",200);
 
-        List<Services> parts = servicesService.getAllServices();
-        partsDetails.put("usluge", parts);
+        List<Services> services = servicesService.getAllServices();
+        servicesDetails.put("usluge", services);
 
-        return partsDetails;
+        return servicesDetails;
     }
 }

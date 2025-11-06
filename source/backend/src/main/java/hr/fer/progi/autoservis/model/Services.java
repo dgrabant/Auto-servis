@@ -3,10 +3,10 @@ package hr.fer.progi.autoservis.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="dijelovi")
+@Table(name="usluga")
 public class Services {
     @Id
-    @Column(name="idDijela")
+    @Column(name="idUsluge")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDijela;
 
