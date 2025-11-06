@@ -22,6 +22,7 @@ const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
+const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
@@ -139,10 +140,10 @@ console.log("Tip uređaja:", tipUredjaja);
 
 
 window.onload=()=>{
-  if (checkIfLogedIn()) {
-  console.log("forma: ", forma);
-  forma.hidden = true;
-  tutorial.hidden = true;
+  if (!checkIfLogedIn()) {
+    tutorial.hidden = false;
+    loadingScreen.hidden = false;
+
   }
   navDjeloviHTML = document.getElementById("navDjelovi");
   console.log(navDjeloviHTML);
