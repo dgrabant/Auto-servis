@@ -3,7 +3,7 @@ export function checkIfLogedIn(){
 
     if (authToken) {
         // TOKEN JE PRONAĐEN (Korisnik je prijavljen)
-        console.log('Korisnik je prijavljen. Token: ', authToken);
+        console.log('Korisnik je prijavljen.');
         // Ovdje učitajte sadržaj za prijavljenog korisnika (npr. 'Welcome Dashboard')
         //document.getElementById('app-container').innerHTML = '<h2>Dobrodošli! Vi ste prijavljeni.</h2>';
         return true;

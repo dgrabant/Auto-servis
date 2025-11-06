@@ -109,7 +109,7 @@ else
   forma.hidden = true;
 
 if (!mobileOptimization){
-  if (checkIfLogedIn() && performanceMem) {
+  if (checkIfLogedIn()) {
     forma.hidden = true;
     if (performanceMem == 1) {
         pcPerformance = true;
