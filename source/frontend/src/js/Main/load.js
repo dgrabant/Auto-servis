@@ -435,8 +435,8 @@ if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
 // 🔸 UI Izbornik - Tipka "E"
 function onKeydownE(event) {
   if (event.key === "e" || event.key === "E") {
-    justLogedIn(scene);
-    renderer.render(scene, activeCamera);
+    console.log(checkIfLogedIn());
+    
   }
 }
 
