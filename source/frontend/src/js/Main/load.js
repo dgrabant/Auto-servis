@@ -443,7 +443,9 @@ if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
 // 🔸 UI Izbornik - Tipka "Q"
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
-    localStorage.setItem('authToken', "proba");;
+    localStorage.setItem('authToken', "proba");
+    console.log("token dodan");
+    
     renderer.render(scene, activeCamera);
   }
 }
