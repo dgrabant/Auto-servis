@@ -102,11 +102,12 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
-if (!checkIfLogedIn()) {
-  await cekajPotvrdu("understood");
+if (checkIfLogedIn()) {
+  forma.hidden = true;
 }
 else
-  forma.hidden = true;
+  await cekajPotvrdu("understood");
+  
 
 if (!mobileOptimization){
   if (checkIfLogedIn()) {

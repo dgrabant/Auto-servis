@@ -27,7 +27,7 @@ export function getFirstObjectHit(event, window, camera, scene, maxDistance = In
     // Return clicked object (optional)
     return firstHit.name;
   } else {
-     return "No object hit.";
+    return "No object hit.";
   }
 }
 
