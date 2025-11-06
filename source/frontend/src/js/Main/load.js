@@ -102,7 +102,7 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
-if (!checkIfLogedIn()) {
+if (false) {
   await cekajPotvrdu("understood");
 }
 else
