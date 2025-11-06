@@ -102,12 +102,7 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
-if (checkIfLogedIn()) {
-  console.log("forma: ", forma);
-  
-  tutorial.hidden = true;
-}
-else
+if (!(checkIfLogedIn())) 
   await cekajPotvrdu("understood");
   
 
@@ -144,7 +139,11 @@ console.log("Tip uređaja:", tipUredjaja);
 
 
 window.onload=()=>{
-
+  if (checkIfLogedIn()) {
+  console.log("forma: ", forma);
+  forma.hidden = true;
+  tutorial.hidden = true;
+  }
   navDjeloviHTML = document.getElementById("navDjelovi");
   console.log(navDjeloviHTML);
   djeloviHTML.hidden = true;
