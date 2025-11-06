@@ -143,6 +143,8 @@ window.onload=()=>{
   if (!checkIfLogedIn()) {
     tutorial.hidden = false;
     loadingScreen.hidden = false;
+    console.log("maknut hidden");
+    
 
   }
   navDjeloviHTML = document.getElementById("navDjelovi");
