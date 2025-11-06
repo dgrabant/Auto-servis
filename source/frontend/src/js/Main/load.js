@@ -440,6 +440,7 @@ function onKeydownEsc(event) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
     }*/
+    }
   }
 }
 
