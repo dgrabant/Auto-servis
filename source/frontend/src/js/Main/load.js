@@ -322,7 +322,7 @@ function onDocumentClick(event) {
       }, 1250);
     }
     if (firstHitName.startsWith("login")) {
-      transitionCamera(activeCamera, cameraList[cameraPosition], 900);
+      transitionCamera(activeCamera, cameraList[cameraPosition], 700);
       transitionTimeout = setTimeout(() => { 
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
@@ -332,7 +332,7 @@ function onDocumentClick(event) {
             document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
-      }, 900);
+      }, 700);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     /*transitionTimeout = setTimeout(() => { 
@@ -404,13 +404,16 @@ function onKeydownEsc(event) {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
             document.getElementById("navDjelovi").hidden = true;
+            transitionTimeout = setTimeout(() => {
+            transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
+        }, 1000);
         }
       else if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        /*transitionTimeout = setTimeout(() => {
+        transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);*/
+      }, 1000);
       }
       else if (cameraPosition == 2) {
         cameraPosition = returnToPrevCam(cameraPosition);
@@ -422,13 +425,16 @@ function onKeydownEsc(event) {
             document.getElementById("google").hidden = true;
             document.getElementById("github").hidden = true;
         }
-      }
         transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
+        }, 1000);
+      }
+        /*transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
         
       }
-      /*else{
+      else{
       // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
       transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
