@@ -105,6 +105,8 @@ const tipUredjaja = provjeriUredjaj();
 if (!checkIfLogedIn()) {
   await cekajPotvrdu("understood");
 }
+else
+  forma.hidden = false;
 
 if (!mobileOptimization){
   if (checkIfLogedIn() && performanceMem) {
