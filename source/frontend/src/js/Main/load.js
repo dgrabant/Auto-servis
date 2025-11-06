@@ -433,13 +433,13 @@ if (Math.abs(deltaX) > 80 && elapsed > 100 && elapsed < 600 && !uTranziciji) {
 }
 
 // 🔸 UI Izbornik - Tipka "E"
-/*function onKeydownE(event) {
+function onKeydownE(event) {
   if (event.key === "e" || event.key === "E") {
     justLogedIn(scene);
     renderer.render(scene, activeCamera);
   }
 }
-*/
+
 // 🔸 UI Izbornik - Tipka "Q"
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
