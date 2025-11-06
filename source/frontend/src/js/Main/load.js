@@ -270,7 +270,7 @@ loader.load(
           // *** SPREMANJE ID-A TIMERA 2 ***
         initialLoadTimeout2 = setTimeout(() => {
           console.log("Pokrećem prijelaz na kameru 6...");
-          transitionCamera(activeCamera, cameraList[6], 1500);
+          transitionCamera(activeCamera, cameraList[7], 1500);
           
           setTimeout(() => {
             isLoaded = true;
@@ -293,7 +293,7 @@ console.log(isFirst ? 'MAIN je prvi u body-ju' : 'MAIN NIJE prvi u body-ju');
 // 🔹 IMENOVANE FUNKCIJE ZA EVENT LISTENERE
 // ======================================================
 
-let cameraPosition = 6;
+let cameraPosition = cameraList.length - 1;
 let cameraPositionPrev;
 let firstHitName;
 
@@ -328,8 +328,7 @@ function onDocumentClick(event) {
             document.getElementById("navDjelovi").hidden = true;
         }
       }
-    }, 1250);
-          if (cameraPosition == 5) {
+      if (cameraPosition == 2) {
             console.log("camera 5");
             
         if (loginHTML.classList.contains('hidden')) {
@@ -349,6 +348,8 @@ function onDocumentClick(event) {
             document.getElementById("github").hidden = true;
         }
       }
+    }, 1250);
+        
   
   }
 }

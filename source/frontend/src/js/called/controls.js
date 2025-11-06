@@ -55,21 +55,26 @@ export function cameraPrev(cameraList, cameraPosition) {
 
 export function clickTransition(cameraPosition, firstHitName) {
   if (firstHitName.startsWith("djelovi")) {
-    return 3;
+    return 4;
   }
   else if (firstHitName == "servis") {
-    return 2;
+    return 3;
   }
+  else if (firstHitName.startsWith("login")) 
+    return 2;
   else return cameraPosition;
 
 }
 
 export function returnToPrevCam(cameraPosition) {
   if (cameraPosition == 3) {
-    return 6;
+    return 5;
   }
   else if (cameraPosition == 2) {
-    return 4;
+    return 6;
+  }
+  else if (cameraPosition == 4) {
+    return 7;
   }
   else return cameraPosition;
 }
