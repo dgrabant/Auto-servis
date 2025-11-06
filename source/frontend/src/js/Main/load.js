@@ -102,14 +102,14 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
-if (checkIfLogedIn()) {
+if (!checkIfLogedIn()) {
   await cekajPotvrdu("understood");
 }
 else
   forma.hidden = true;
 
 if (!mobileOptimization){
-  if (checkIfLogedIn() && performanceMem) {
+  if (!checkIfLogedIn() && performanceMem) {
     forma.hidden = true;
     if (performanceMem == 1) {
         pcPerformance = true;
@@ -319,7 +319,8 @@ function onDocumentClick(event) {
             
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
-            loginHTML.classList.add('visible'); 
+            loginHTML.classList.add('visible');
+            loginHTML.hidden = false;
             document.getElementById("google").hidden = false;
             document.getElementById("github").hidden = false;
             console.log("hidden false");
@@ -328,6 +329,7 @@ function onDocumentClick(event) {
           console.log("hidden true");
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
+            loginHTML.hidden = false;
             document.getElementById("google").hidden = true;
             document.getElementById("github").hidden = true;
         }
