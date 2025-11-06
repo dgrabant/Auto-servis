@@ -109,7 +109,7 @@ else
   forma.hidden = true;
 
 if (!mobileOptimization){
-  if (checkIfLogedIn() && performanceMem) {
+  /*if (checkIfLogedIn() && performanceMem) {
     forma.hidden = true;
     if (performanceMem == 1) {
         pcPerformance = true;
@@ -126,7 +126,7 @@ if (!mobileOptimization){
         texturePath = texturePathPC;
       }
   }
-  else
+  else*/
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 }
 else forma.hidden = true;
