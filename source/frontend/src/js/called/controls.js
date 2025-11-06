@@ -100,13 +100,13 @@ export function transitionLight(cameraPosition, movingLight, mobileOptimization)
   if (!mobileOptimization) {
     movingLight.intensity = 0;
   }
-  if (cameraPosition == 6){
+  if (cameraPosition == 7){
     movingLight.position.set(-4.654, 2.003, 0.1);
   }
-  if (cameraPosition == 4){
+  if (cameraPosition == 5){
     movingLight.position.set(-8, 2, 5.25);
   }
-  if (cameraPosition == 5){
+  if (cameraPosition == 6){
     movingLight.position.set(-11.476, 2.474, 4.674);
   }
 }

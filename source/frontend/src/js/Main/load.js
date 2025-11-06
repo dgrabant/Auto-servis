@@ -385,7 +385,6 @@ function onKeydownEsc(event) {
             djeloviHTML.classList.add('hidden');
             document.getElementById("navDjelovi").hidden = true;
         }
-      }
       else if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
@@ -415,6 +414,7 @@ function onKeydownEsc(event) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
     }*/
+  }
 }
 
 // 🔸 Mobilni touch - Start
