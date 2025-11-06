@@ -427,7 +427,7 @@ function onKeydownEsc(event) {
         }
         transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 700);
-        }, 1000);
+        }, 700);
       }
         /*transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
