@@ -139,7 +139,7 @@ console.log("Tip uređaja:", tipUredjaja);
 
 
 
-window.onload=()=>{
+function onload(event){
   if (!checkIfLogedIn()) {
     tutorial.hidden = false;
     loadingScreen.hidden = false;
@@ -476,6 +476,7 @@ function onMouseMove(event) {
 function initCameraSystem() {
   // 🔸 Dodavanje svih listenera
   document.addEventListener('click', onDocumentClick);
+  document.addEventListener('DOMContentLoaded', onload);
   window.addEventListener('wheel', onWindowWheel);
   document.addEventListener('keydown', onKeydownEsc);
   document.addEventListener('keydown', onKeydownE);
@@ -602,6 +603,7 @@ function cleanup() {
 
   // 3. Ukloni SVE event listenere
   document.removeEventListener('click', onDocumentClick);
+  document.removeEventListener('DOMContentLoaded', onload);
   window.removeEventListener('wheel', onWindowWheel);
   window.removeEventListener('resize', onWindowResize);
   document.removeEventListener('keydown', onKeydownEsc);
