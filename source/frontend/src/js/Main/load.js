@@ -389,9 +389,9 @@ function onKeydownEsc(event) {
       else if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        transitionTimeout = setTimeout(() => {
+        /*transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
+      }, 1000);*/
       }
       else if (cameraPosition == 2) {
         cameraPosition = returnToPrevCam(cameraPosition);
@@ -409,13 +409,12 @@ function onKeydownEsc(event) {
       }, 1000);
         
       }
-      else{
+      /*else{
       // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
       transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
-    }
-  }
+    }*/
 }
 
 // 🔸 Mobilni touch - Start
