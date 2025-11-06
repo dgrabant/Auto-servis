@@ -313,21 +313,25 @@ function onDocumentClick(event) {
             document.getElementById("navDjelovi").hidden = true;
         }
       }
-      if (cameraPosition == 5) {
+    }, 1250);
+          if (cameraPosition == 5) {
+            console.log("camera 5");
+            
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
             loginHTML.classList.add('visible'); 
             document.getElementById("google").hidden = false;
             document.getElementById("github").hidden = false;
+            console.log("hidden false");
         } 
         else {
+          console.log("hidden true");
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
             document.getElementById("google").hidden = true;
             document.getElementById("github").hidden = true;
         }
       }
-    }, 1250);
   
   }
 }
