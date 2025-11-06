@@ -22,7 +22,7 @@ const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
-//const performanceMem = localStorage.getItem('performance');
+const performanceMem = localStorage.getItem('performance');
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
@@ -102,14 +102,14 @@ function cekajKlik(idGumba) {
   });
 }
 const tipUredjaja = provjeriUredjaj();
-if (false) {
+if (checkIfLogedIn()) {
   await cekajPotvrdu("understood");
 }
 else
   forma.hidden = true;
 
 if (!mobileOptimization){
-  /*if (checkIfLogedIn() && performanceMem) {
+  if (checkIfLogedIn() && performanceMem) {
     forma.hidden = true;
     if (performanceMem == 1) {
         pcPerformance = true;
@@ -126,7 +126,7 @@ if (!mobileOptimization){
         texturePath = texturePathPC;
       }
   }
-  else*/
+  else
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 }
 else forma.hidden = true;
