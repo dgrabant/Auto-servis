@@ -22,7 +22,7 @@ const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
-const performanceMem = localStorage.getItem('performance');
+//const performanceMem = localStorage.getItem('performance');
 let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
