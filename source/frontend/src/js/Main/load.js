@@ -311,11 +311,31 @@ function onDocumentClick(event) {
     if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
-    if (firstHitName.startsWith("djelovi") || firstHitName == "login") {
+    if (firstHitName.startsWith("djelovi")) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 1240);
+      transitionTimeout = setTimeout(() => { 
+        if (djeloviHTML.classList.contains('hidden')) {
+            djeloviHTML.classList.remove('hidden');
+            djeloviHTML.classList.add('visible'); 
+            document.getElementById("navDjelovi").hidden = false;
+        } 
+      }, 1250);
+    }
+    if (firstHitName.startsWith("login")) {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 900);
+      transitionTimeout = setTimeout(() => { 
+        if (loginHTML.classList.contains('hidden')) {
+            loginHTML.classList.remove('hidden');
+            loginHTML.classList.add('visible');
+            loginHTML.hidden = false;
+            document.getElementById("google").hidden = false;
+            document.getElementById("github").hidden = false;
+            console.log("hidden false");
+        } 
+      }, 900);
     }
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-    transitionTimeout = setTimeout(() => { 
+    /*transitionTimeout = setTimeout(() => { 
       if (cameraPosition == 4) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
@@ -336,7 +356,7 @@ function onDocumentClick(event) {
         } 
       }
     }, 1250);
-        
+      */  
   
   }
 }
