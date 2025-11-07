@@ -29,7 +29,7 @@ const contentTitle = document.getElementById('current-title');
             slider.classList.add(`rot-${newPosition}`);
             
             // 3. Ažuriraj simulirani sadržaj
-            if (!checkIfLogedIn() && position == 3) {
+            if (!checkIfLogedIn() && position == 2) {
                 contentTitle.textContent = sectionData[4].title;
             }
             else

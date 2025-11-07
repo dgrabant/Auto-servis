@@ -22,7 +22,6 @@ const djeloviHTML = document.getElementById("djelovi");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const hudHTML = document.getElementById("hud");
-const contentHTML = document.getElementById("content-sections");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
@@ -266,7 +265,6 @@ loader.load(
         onWindowResize();
         main.hidden = true;
         hudHTML.hidden = false;
-        contentHTML.hidden = false;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
