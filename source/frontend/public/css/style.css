@@ -4,7 +4,7 @@
 }
 
 #djelovi {
-    position: absolute;
+    position: relative;
     display:flex;
     min-width: 100%;
     min-height:100vh; 
@@ -182,4 +182,4 @@ body {
 }
 
 
-@media(max-width:600px){ body{flex-direction:column;} #sidebar{width:100%;} }
+@media(max-width:600px){ #djelovi{flex-direction:column;} #sidebar{width:100%;} }
