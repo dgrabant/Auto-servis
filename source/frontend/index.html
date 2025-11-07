@@ -4,12 +4,28 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/src/css/hud.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>projekt_stranica</title>
 
     
   </head>
   <body>
+    <div id="hud">
+      <div class="circular-indicator-container">
+        
+        <div class="indicator-dot dot-pos-1" data-position="1"></div>
+        <div class="indicator-dot dot-pos-2" data-position="2"></div>
+        <div class="indicator-dot dot-pos-3" data-position="3"></div>
+        
+        <div class="indicator-slider"></div>
+    </div>
+    
+    <div class="content-sections">
+        <h3 id="current-title">Djelovi</h3>
+    </div>
+
+    </div>
     <div id="login" class="hidden" hidden>
       <button id="google" type="button" hidden>google login</button>
       <button id="github" type="button" hidden>github login</button>
@@ -74,6 +90,7 @@
     
     <div id="container3D"></div>
     <script type="module" src="./src/js/Main/load.js"></script>
+    <script type="module" src="./src/js/Main/indicator.js"></script>
     <script type="module" src="./src/js/Main/htmlPostava.js"></script>
     <script>
     // Dohvaćamo gumb za Google koristeći njegov ID

@@ -1,0 +1,165 @@
+ /* Globalni stilovi */
+        #hud {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        /* --- SPREMNIK ZA KRUŽNI INDIKATOR (FIKSIRAN) --- */
+        .circular-indicator-container {
+            position: fixed;
+            top: -103px;    /* Postavlja središte kruga u gornji desni kut ekrana */
+            right: -103px;  
+            z-index: 100; 
+
+            width: 205px; 
+            height: 205px; 
+            border: 2px solid #331717; 
+            border-radius: 50%; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: #000000c4;
+            overflow: hidden; 
+        }
+
+        /* Skrivamo tri četvrtine kruga, ostavljajući samo donju lijevu četvrtinu vidljivom */
+        .circular-indicator-container::before {
+            content: '';
+            position: absolute; 
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 50%;
+            background-color: #f4f4f9; 
+            z-index: 10;
+        }
+        .circular-indicator-container::after {
+            content: '';
+            position: absolute; 
+            top: 0;
+            left: 0;
+            width: 100%; 
+            height: 100%;
+            background-color: #f4f4f9; 
+            z-index: 10;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 100%, 50% 50%, 0 50%);
+        }
+        
+        /* --- POZICIONIRANJE TOČAKA --- */
+
+        .indicator-dot {
+            position: absolute; 
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #7e9bea; 
+            cursor: pointer;
+            z-index: 20; 
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .indicator-dot.active {
+            background-color: #ffc400; 
+            transform: scale(1.3);
+        }
+
+        .dot-pos-1 {
+            left: 10px;
+            bottom: 78px; 
+        }
+        .dot-pos-2 {
+            left: 35px;
+            bottom: 33px;
+        }
+        .dot-pos-3 {
+            left: 79px; 
+            bottom: 10px;
+        }
+
+        /* SLIDER (KAZALJKA) */
+        .indicator-slider {
+            position: absolute;
+            top: 100px; 
+            left: 100px; 
+            width: 90px; 
+            height: 3px; 
+            background-color: #ff0000; 
+            transform-origin: 0 50%; 
+            box-shadow: 0 0 8px rgba(255, 69, 0, 0.7);
+            z-index: 15;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+        }
+
+        .indicator-slider.rot-1 {
+            transform: rotate(170deg); 
+        }
+        .indicator-slider.rot-2 {
+            transform: rotate(135deg); 
+        }
+        .indicator-slider.rot-3 {
+            transform: rotate(100deg); 
+        }
+        
+        /* --- STILIZIRANJE I FIKSIRANJE SADRŽAJA --- */
+        .content-sections {
+            /* KLJUČNE PROMJENE ZA FIKSIRANJE I POZICIONIRANJE: */
+            position: fixed;
+            top: 110px;      /* Odmak od gornjeg ruba */
+            right: 0px;    /* Odmak od desnog ruba */
+            z-index: 90;    /* Manji od indikatora, ali iznad body */
+            color: rgb(236, 255, 127);
+            width: 10%;
+            max-width: 150px; /* Postavljeno na 200px max */
+            min-width: 100px; /* Osiguraj da nije preuzak */
+            min-height: 30px;
+            border: 2px solid #331717b6; 
+            border-right: #0057b300;
+            border-radius: 30px;
+            border-bottom-right-radius: 0;
+            border-top-right-radius: 0;
+            background-color: #000000c0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            padding: 10px;
+            /* Uklonjena svojstva za centriranje jer je fiksiran */
+            margin: 0; 
+        }
+        
+        /* Navigacijski gumbi ostaju fiksni s ostatkom sekcije */
+        .navigation-buttons {
+            position: fixed;
+            top: 230px; /* Postavlja se ispod content-sections (top 50 + height 150 + margin 30) */
+            right: 50px;
+            z-index: 90;
+
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            max-width: 200px; /* Ograniči širinu da ostane uz sadržaj */
+        }
+        
+        .navigation-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        
+        .navigation-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Prilagodi glavni naslov da ne ometa fiksirane elemente */
+        h1 {
+             margin-top: 250px; /* Dodaj razmak ispod fiksnih elemenata */
+        }
