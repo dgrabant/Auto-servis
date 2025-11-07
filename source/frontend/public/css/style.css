@@ -10,8 +10,9 @@
     min-height:100vh; 
     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
     color: #1e293b;
-    animation: gradientFlow 18s ease infinite; 
+    /*animation: gradientFlow 18s ease infinite; */
     z-index: 40;
+    will-change: transform;
 }
 body {
     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
