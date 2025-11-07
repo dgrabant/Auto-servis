@@ -8,7 +8,8 @@ const contentTitle = document.getElementById('current-title');
             1: { title: "Djelovi"},
             2: { title: "Servis"},
             3: { title: "Login"},
-            4: { title: "Login needed"}
+            4: { title: "Login needed"},
+            5: { title: "Account"}
         };
 
         /**
@@ -33,8 +34,10 @@ const contentTitle = document.getElementById('current-title');
             if (!checkIfLogedIn() && position == 2) {
                 contentTitle.textContent = sectionData[4].title;
             }
-            else
-            contentTitle.textContent = sectionData[newPosition].title;
+            else if (position == 3)
+                contentTitle.textContent = sectionData[5].title;
+            else 
+                contentTitle.textContent = sectionData[newPosition].title;
         }
 
         // Dodaj event listenere na točke
