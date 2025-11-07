@@ -71,7 +71,7 @@ export function clickTransition(cameraPosition, firstHitName) {
     hideHud(true);
     return 3;
   }
-  else if (firstHitName.startsWith("login")){
+  else if (firstHitName == "login"){
     if(hudHTML.classList.contains('visible')) {
       hudHTML.classList.remove('visible');
       hudHTML.classList.add('hidden');
@@ -116,7 +116,7 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
     movingLight.intensity = 2.5;
   }
   else{
-    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitButtonName == "login") {
+    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitName.startsWith("login")) {
       movingLight.intensity = 2.5;
       return true;
     }

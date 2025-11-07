@@ -300,6 +300,20 @@ let cameraPosition = cameraList.length - 1;
 let cameraPositionPrev;
 let firstHitName;
 
+function loginNeeded() {
+  cameraPositionPrev = cameraPosition;
+  cameraPosition = 6;
+  uTranziciji = true;
+  document.body.style.cursor = 'default';
+  transitionLight(cameraPosition, movingLight, mobileOptimization);
+  if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
+    }
+  else
+    transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+}
+
+
 // 🔸 Klik mišem
 function onDocumentClick(event) {
   if (cameraPosition != 3 && !uTranziciji && cameraPosition != 2) {
@@ -323,7 +337,7 @@ function onDocumentClick(event) {
         } 
       }, 1250);
     }
-    if (firstHitName.startsWith("login")) {
+    if (firstHitName == "login") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 700);
       transitionTimeout = setTimeout(() => { 
         if (loginHTML.classList.contains('hidden')) {
@@ -336,6 +350,10 @@ function onDocumentClick(event) {
         } 
       }, 700);
     }
+    if (firstHitName.startsWith("loginNeeded")) {
+      loginNeeded();
+    }
+
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     /*transitionTimeout = setTimeout(() => { 
       if (cameraPosition == 4) {
