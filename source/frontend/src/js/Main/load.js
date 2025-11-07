@@ -26,7 +26,7 @@ const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
-let navDjeloviHTML = document.getElementById("navDjelovi");
+//let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
@@ -333,7 +333,7 @@ function onDocumentClick(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            document.getElementById("navDjelovi").hidden = false;
+            //document.getElementById("navDjelovi").hidden = false;
         } 
       }, 1250);
     }
@@ -444,17 +444,17 @@ function onKeydownEsc(event) {
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);
       
-      navDjeloviHTML = document.getElementById("navDjelovi");
+      //navDjeloviHTML = document.getElementById("navDjelovi");
 
       console.log(djeloviHTML);
-      console.log(navDjeloviHTML);
+      //console.log(navDjeloviHTML);
       
       if (cameraPosition == 4) {
         cameraPosition = returnToPrevCam(cameraPosition);
         if (djeloviHTML.classList.contains('visible')) 
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
-            document.getElementById("navDjelovi").hidden = true;
+            //document.getElementById("navDjelovi").hidden = true;
             transitionTimeout = setTimeout(() => {
             transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
         }, 1000);
