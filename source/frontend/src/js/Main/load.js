@@ -300,7 +300,6 @@ let cameraPosition = cameraList.length - 1;
 let cameraPositionPrev;
 let firstHitName;
 
-
 // 🔸 Klik mišem
 function onDocumentClick(event) {
   if (cameraPosition != 3 && !uTranziciji && cameraPosition != 2) {

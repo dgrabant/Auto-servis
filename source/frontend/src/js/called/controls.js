@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
+const hudHTML = document.getElementById("hud");
 
 // *** PROMJENA OVDJE: Dodan 'event' kao prvi argument ***
 export function getFirstObjectHit(event, window, camera, scene, maxDistance = Infinity) {
@@ -55,25 +56,56 @@ export function cameraPrev(cameraList, cameraPosition) {
 
 export function clickTransition(cameraPosition, firstHitName) {
   if (firstHitName.startsWith("djelovi")) {
+    if(hudHTML.classList.contains('visible')) {
+      hudHTML.classList.remove('visible');
+      hudHTML.classList.add('hidden');
+    } 
+    hideHud(true);
     return 4;
   }
   else if (firstHitName == "servis") {
+    if(hudHTML.classList.contains('visible')) {
+      hudHTML.classList.remove('visible');
+      hudHTML.classList.add('hidden');
+    }
+    hideHud(true);
     return 3;
   }
-  else if (firstHitName.startsWith("login")) 
+  else if (firstHitName.startsWith("login")){
+    if(hudHTML.classList.contains('visible')) {
+      hudHTML.classList.remove('visible');
+      hudHTML.classList.add('hidden');
+    }
+    hideHud(true); 
     return 2;
+  }
   else return cameraPosition;
 
 }
 
 export function returnToPrevCam(cameraPosition) {
   if (cameraPosition == 3) {
+    if(hudHTML.classList.contains('hidden')) {
+      hudHTML.classList.remove('hidden');
+      hudHTML.classList.add('visible');
+    } 
+    hideHud(false);
     return 5;
   }
   else if (cameraPosition == 2) {
+    if(hudHTML.classList.contains('hidden')) {
+      hudHTML.classList.remove('hidden');
+      hudHTML.classList.add('visible');
+    } 
+    hideHud(false);
     return 6;
   }
   else if (cameraPosition == 4) {
+    if(hudHTML.classList.contains('hidden')) {
+      hudHTML.classList.remove('hidden');
+      hudHTML.classList.add('visible');
+    } 
+    hideHud(false);
     return 7;
   }
   else return cameraPosition;
@@ -109,4 +141,9 @@ export function transitionLight(cameraPosition, movingLight, mobileOptimization)
   if (cameraPosition == 6){
     movingLight.position.set(-11.476, 2.474, 4.674);
   }
+}
+
+
+function hideHud(hidden){
+  hudHTML.hidden = hidden;
 }
