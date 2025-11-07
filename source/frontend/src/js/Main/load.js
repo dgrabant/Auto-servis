@@ -20,6 +20,7 @@ const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
+const hudHTML = document.getElementById("hud");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
@@ -262,6 +263,7 @@ loader.load(
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
+        hudHTML.hidden = false;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
