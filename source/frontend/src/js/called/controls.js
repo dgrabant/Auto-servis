@@ -116,7 +116,7 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
     movingLight.intensity = 2.5;
   }
   else{
-    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitName.startsWith("login")) {
+    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitButtonName.startsWith("login")) {
       movingLight.intensity = 2.5;
       return true;
     }
