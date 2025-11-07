@@ -1,6 +1,7 @@
+import { checkIfLogedIn } from '../called/loginCheck.js';
 const slider = document.querySelector('.indicator-slider');
-        const dots = document.querySelectorAll('.indicator-dot');
-        const contentTitle = document.getElementById('current-title');
+const dots = document.querySelectorAll('.indicator-dot');
+const contentTitle = document.getElementById('current-title');
         
         const sectionData = {
             1: { title: "Djelovi"},
@@ -13,7 +14,7 @@ const slider = document.querySelector('.indicator-slider');
          * Funkcija koja ažurira indikatore i sadržaj
          * @param {number} position - Nova pozicija (1, 2 ili 3)
          */
-        function updateIndicators(position) {
+    export function updateIndicators(position) {
             const newPosition = position.toString();
 
             // 1. Ažuriraj active klasu na točkama
@@ -28,6 +29,10 @@ const slider = document.querySelector('.indicator-slider');
             slider.classList.add(`rot-${newPosition}`);
             
             // 3. Ažuriraj simulirani sadržaj
+            if (!checkIfLogedIn() && position == 3) {
+                contentTitle.textContent = sectionData[4].title;
+            }
+            else
             contentTitle.textContent = sectionData[newPosition].title;
         }
 

@@ -8,6 +8,7 @@ import { spawnMultipleModels, justLogedIn, justLogedOut, cleanupSpawnedModels } 
 import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
+import { updateIndicators } from './indicator.js';
 
 
 //Putanje do modela i teksture
@@ -21,6 +22,7 @@ const djeloviHTML = document.getElementById("djelovi");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const hudHTML = document.getElementById("hud");
+const contentHTML = document.getElementById("content-sections");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
@@ -264,6 +266,7 @@ loader.load(
         onWindowResize();
         main.hidden = true;
         hudHTML.hidden = false;
+        contentHTML.hidden = false;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -371,15 +374,23 @@ function onWindowWheel(event) {
       if (event.deltaY < 0) {
         cameraPositionPrev = cameraPosition;
         cameraPosition = cameraPrev(cameraList, cameraPosition);
-        
       } else {
         cameraPositionPrev = cameraPosition;
         cameraPosition = cameraNext(cameraList, cameraPosition);
       }
+        if (cameraPosition == 7) {
+          updateIndicators(1);
+        }
+        if (cameraPosition == 6) {
+          updateIndicators(3); 
+        }
+        if (cameraPosition == 5) {
+          updateIndicators(2);
+        }
       uTranziciji = true;
       document.body.style.cursor = 'default';
       transitionLight(cameraPosition, movingLight, mobileOptimization);
-      if ((cameraPositionPrev == 4 && cameraPosition == 5) || (cameraPositionPrev == 5 && cameraPosition == 4)) {
+      if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
       }
       else
