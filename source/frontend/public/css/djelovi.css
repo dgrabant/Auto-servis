@@ -17,7 +17,7 @@ body{
     padding: 0;
     margin: -10;
     background-color: #14364200;
-    background-image: url(../pictures/background.jpg);
+    background-image: url(../assets/pictures/background.jpg);
 
     background-size:cover;
 
@@ -184,10 +184,10 @@ header {
     margin-bottom: 25%;
     margin-left: 10%;
     margin-right: 10%;
-    content: url("../pictures/cart_proi.png");
+    content: url("../assets/pictures/cart_proi.png");
 }
 .cart_picture_2:hover{
-    content: url("../pictures/cart_proi.gif");
+    content: url("../assets/pictures/cart_proi.gif");
 }
 .cart_picture_2:active{
     animation: growShrink 0.2s;
@@ -425,17 +425,17 @@ label {
     display: block;
 }
 .back_picture{
-    content: url("../pictures/back.png");
+    content: url("../assets/pictures/back.png");
 }
 .back_picture:hover{
-    content: url("../pictures/back.gif");
+    content: url("../assets/pictures/back.gif");
 }
 
 .logo_pic{
-    content: url("../pictures/logo.png");
+    content: url("../assets/pictures/logo.png");
 }
 .logo_pic:hover{
-    content: url("../pictures/logo.gif");
+    content: url("../assets/pictures/logo.gif");
 }
 
 .logo_pic{
@@ -499,18 +499,6 @@ label {
 }
 option:hover {
     background-color: yellow;
-}
-
-
-.search_picture{
-    max-width: 25px;
-    max-height: 25px;
-    padding: 10px;
-    right: 10px;
-    content: url("../pictures/search.png");
-}
-.search_picture:hover{
-    content: url("../pictures/search.gif");
 }
 
 
