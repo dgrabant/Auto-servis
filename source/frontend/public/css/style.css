@@ -4,8 +4,9 @@
 }
 
 #djelovi {
-    position: fixed;
-    display:flex; 
+    position: absolute;
+    display:flex;
+    min-width: 100%;
     min-height:100vh; 
     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
     color: #1e293b;
