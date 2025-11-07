@@ -396,6 +396,29 @@ function onWindowWheel(event) {
     }
   }
 }
+export function inTransition(){
+  return uTranziciji;
+}
+export function indicatorClick(position){
+  cameraPositionPrev = cameraPosition;
+  if (position == 1) {
+      cameraPosition = 7;
+    }
+  if (position == 3) {
+      cameraPosition = 6;
+    }
+  if (position == 2) {
+      cameraPosition = 5;
+    }
+  uTranziciji = true;
+  document.body.style.cursor = 'default';
+  transitionLight(cameraPosition, movingLight, mobileOptimization);
+  if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
+    }
+  else
+    transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+}
 
 // 🔸 Tipka "Escape"
 function onKeydownEsc(event) {

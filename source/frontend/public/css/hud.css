@@ -6,7 +6,7 @@
             padding: 20px;
         }
 
-        h1 {
+        #current-title {
             color: #333;
             margin-bottom: 30px;
             text-align: center;
@@ -61,7 +61,7 @@
             background-color: #7e9bea; 
             cursor: pointer;
             z-index: 20; 
-            transition: background-color 0.3s, transform 0.3s;
+            transition: background-color 1s, transform 1s;
         }
         .indicator-dot.active {
             background-color: #ffc400; 
@@ -92,7 +92,7 @@
             transform-origin: 0 50%; 
             box-shadow: 0 0 8px rgba(255, 69, 0, 0.7);
             z-index: 15;
-            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+            transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
         }
 
         .indicator-slider.rot-1 {
@@ -160,6 +160,6 @@
         }
 
         /* Prilagodi glavni naslov da ne ometa fiksirane elemente */
-        h1 {
+        #current-title {
              margin-top: 250px; /* Dodaj razmak ispod fiksnih elemenata */
         }

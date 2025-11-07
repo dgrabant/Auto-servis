@@ -1,4 +1,5 @@
 import { checkIfLogedIn } from '../called/loginCheck.js';
+import { inTransition, indicatorClick } from './load.js';
 const slider = document.querySelector('.indicator-slider');
 const dots = document.querySelectorAll('.indicator-dot');
 const contentTitle = document.getElementById('current-title');
@@ -39,8 +40,12 @@ const contentTitle = document.getElementById('current-title');
         // Dodaj event listenere na točke
         dots.forEach(dot => {
             dot.addEventListener('click', (event) => {
-                const newPosition = parseInt(event.target.getAttribute('data-position'));
-                updateIndicators(newPosition);
+                if (!inTransition()) {
+                    const newPosition = parseInt(event.target.getAttribute('data-position'));
+                    indicatorClick()
+                    updateIndicators(newPosition);
+                }
+                
             });
         });
 
