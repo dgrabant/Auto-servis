@@ -6,11 +6,6 @@
             padding: 20px;
         }
 
-        #current-title {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-        }
 
         /* --- SPREMNIK ZA KRUŽNI INDIKATOR (FIKSIRAN) --- */
         .circular-indicator-container {
@@ -157,9 +152,4 @@
         
         .navigation-buttons button:hover {
             background-color: #0056b3;
-        }
-
-        /* Prilagodi glavni naslov da ne ometa fiksirane elemente */
-        #current-title {
-             margin-top: 250px; /* Dodaj razmak ispod fiksnih elemenata */
         }

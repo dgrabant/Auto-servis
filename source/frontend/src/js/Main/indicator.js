@@ -42,7 +42,7 @@ const contentTitle = document.getElementById('current-title');
             dot.addEventListener('click', (event) => {
                 if (!inTransition()) {
                     const newPosition = parseInt(event.target.getAttribute('data-position'));
-                    indicatorClick()
+                    indicatorClick(newPosition);
                     updateIndicators(newPosition);
                 }
                 
