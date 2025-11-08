@@ -10,7 +10,7 @@ import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup
 import { checkIfLogedIn } from '../called/loginCheck.js';
 import { updateIndicators } from './indicator.js';
 
-
+let stranicaUpaljena = true;
 //Putanje do modela i teksture
 const scenePathPC = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
 const scenePathMoblie = '/assets/models/audi_scena_mobitel.glb';
@@ -278,6 +278,7 @@ loader.load(
           
           setTimeout(() => {
             isLoaded = true;
+            stranicaUpaljena = false;
           },2000);
         }, 1000);
       }, 500);
@@ -336,6 +337,7 @@ function onDocumentClick(event) {
             djeloviHTML.classList.add('visible'); 
             //document.getElementById("navDjelovi").hidden = false;
         } 
+        stranicaUpaljena = true;
       }, 1250);
     }
     if (firstHitName == "login") {
@@ -349,6 +351,7 @@ function onDocumentClick(event) {
             document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
+        stranicaUpaljena = true;
       }, 700);
     }
     if (firstHitName.startsWith("loginNeeded")) {
@@ -455,6 +458,7 @@ function onKeydownEsc(event) {
         if (djeloviHTML.classList.contains('visible')) 
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
+            stranicaUpaljena = false;
             //document.getElementById("navDjelovi").hidden = true;
             transitionTimeout = setTimeout(() => {
             transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
@@ -476,6 +480,7 @@ function onKeydownEsc(event) {
             loginHTML.hidden = false;
             document.getElementById("google").hidden = true;
             document.getElementById("github").hidden = true;
+            stranicaUpaljena = false;
         }
         transitionTimeout = setTimeout(() => {
         transitionCamera(activeCamera, cameraList[cameraPosition], 700);
@@ -658,7 +663,7 @@ animate(); // Pokreni render petlju
     
     //console.log("animate");
     setTimeout( function() {
-      if (!uTranziciji) {
+      if (!uTranziciji && !stranicaUpaljena) {
         if (isLoaded) hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
       }
