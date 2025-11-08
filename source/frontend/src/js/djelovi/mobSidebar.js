@@ -8,7 +8,7 @@ document.getElementById('drop').addEventListener('click', (event) => {
     let previousText = drop.innerHTML;
 
     // Provjera trenutnog teksta na gumbu
-    if (!(sidebar.classList.contains("hide"))) {
+    if (sidebar.classList.contains("hide")) {
         // Ako je tekst "Otvori izbornik", promijeni ga na "Zatvori izbornik"
         drop.innerHTML = "Zatvori izbornik";
         
