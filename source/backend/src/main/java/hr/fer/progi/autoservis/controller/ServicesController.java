@@ -24,14 +24,7 @@ public class ServicesController {
     }
 
     @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    public Map<String, Object> getAllServices(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(userPrincipal==null){
-            Map<String, Object> error = new HashMap<>();
-            error.put("status",401);
-            return error;
-        }
-
+    public Map<String, Object> getAllServices(){
         Map<String, Object> servicesDetails = new HashMap<>();
         servicesDetails.put("status",200);
 

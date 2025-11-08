@@ -23,7 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/info")
-    @PreAuthorize("hasRole('KORISNIK')")
+    @PreAuthorize("hasAuthority('KORISNIK')")
     public Map<String, Object> getCurrentUser(@AuthenticationPrincipal UserPrincipal userPrincipal){
         if(userPrincipal==null){
             Map<String, Object> error = new HashMap<>();
