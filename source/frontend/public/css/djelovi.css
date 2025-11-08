@@ -26,6 +26,7 @@ body{
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    padding-top: 20px;
     z-index: 50;
 }
 .footclick{
@@ -270,7 +271,7 @@ nav ul li {
 .sidebar-info {
     text-align: center;
     align-self: center;
-    min-width: 310px;
+    min-width: 410px;
     border-radius: 20px;
     width: 22%;
     padding: 5px;

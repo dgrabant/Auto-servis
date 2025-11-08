@@ -138,7 +138,7 @@
     <footer>
         
         <div class="sidebar-info">
-            <a id="kontakt" class="foot">Kontakt</a>
+            <a id="kontakt" class="foot" onclick="kontakt()">Kontakt</a>
             <a id="vrijeme" class="foot">Radno vrijeme</a>
             <a id="mi" class="foot" >O nama</a>
         </div>
@@ -178,6 +178,12 @@
         // Kada netko klikne, preusmjeri preglednik na ovu adresu
         window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/github';
     });
+</script>
+<script>
+  function kontakt(){
+    console.log("kontakt");
+    
+  }
 </script>
   <canvas id="bg"></canvas>
   </body>
