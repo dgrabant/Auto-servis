@@ -24,14 +24,7 @@ public class PartsController {
     }
 
     @GetMapping("")
-    @PreAuthorize("isAuthenticated()")
-    public Map<String, Object> getAllParts(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(userPrincipal==null){
-            Map<String, Object> error = new HashMap<>();
-            error.put("status",401);
-            return error;
-        }
-
+    public Map<String, Object> getAllParts(){
         Map<String, Object> partsDetails = new HashMap<>();
         partsDetails.put("status",200);
 
