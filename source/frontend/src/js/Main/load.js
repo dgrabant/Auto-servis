@@ -48,8 +48,11 @@ let pcPerformance = false;
 function disableScroll() {
     // Postavlja CSS svojstvo overflow na 'hidden' za body element.
     // Time se sakrivaju scrollbarovi i onemogućuje skrolanje.
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Ključna riječ za glatku animaciju
+    });
     document.body.style.overflow = 'hidden';
-
     // Također je dobra praksa postaviti overflow: hidden i na <html> element
     // radi bolje konzistencije u različitim preglednicima, posebno mobilnim.
     document.documentElement.style.overflow = 'hidden';
