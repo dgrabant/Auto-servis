@@ -63,7 +63,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: #38bff88c; 
+            background-color: #00567a70; 
             cursor: pointer;
             z-index: 20; 
             transition: background-color 1s, transform 1s;
@@ -93,9 +93,9 @@
             left: 100px; 
             width: 90px; 
             height: 3px; 
-            background-color: #000000; 
+            background-color: #38bff8; 
             transform-origin: 0 50%; 
-            box-shadow: #38bff8;
+            box-shadow: #000000;
             z-index: 15;
             transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
         }
