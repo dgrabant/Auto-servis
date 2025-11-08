@@ -334,6 +334,7 @@ function onDocumentClick(event) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
             //document.getElementById("navDjelovi").hidden = false;
+            canvas.hidden=true;
         } 
       }, 1250);
     }
@@ -454,6 +455,7 @@ function onKeydownEsc(event) {
         if (djeloviHTML.classList.contains('visible')) 
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
+            canvas.hidden=false; //naci bolje rješenje
             //document.getElementById("navDjelovi").hidden = true;
             transitionTimeout = setTimeout(() => {
             transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
