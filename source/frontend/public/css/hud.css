@@ -1,3 +1,11 @@
+@font-face {
+    font-family: 'Americorps'; 
+    src: url('../assets/fonts/spyagency3ital.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    /* Koristimo 'truetype' format jer je datoteka .ttf */
+    /* Dodajte 'font-display: swap;' za bolji performance ako je potrebno */
+}
  /* Globalni stilovi */
         #hud {
             font-family: Arial, sans-serif;
@@ -10,17 +18,19 @@
         /* --- SPREMNIK ZA KRUŽNI INDIKATOR (FIKSIRAN) --- */
         .circular-indicator-container {
             position: fixed;
-            top: -105px;    /* Postavlja središte kruga u gornji desni kut ekrana */
-            right: -105px;  
+            top: -104px;    /* Postavlja središte kruga u gornji desni kut ekrana */
+            right: -104px;  
             z-index: 100; 
 
             width: 205px; 
             height: 205px; 
-            border: 2px solid #331717; 
             border-radius: 50%; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: #000000c4;
             overflow: hidden; 
+
+            background: #00000038;
+            border: 1px solid #38bff88c;
+            backdrop-filter: blur(20px);
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
         }
 
         /* Skrivamo tri četvrtine kruga, ostavljajući samo donju lijevu četvrtinu vidljivom */
@@ -53,7 +63,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background-color: #7e9bea; 
+            background-color: #38bff88c; 
             cursor: pointer;
             z-index: 20; 
             transition: background-color 1s, transform 1s;
@@ -83,9 +93,9 @@
             left: 100px; 
             width: 90px; 
             height: 3px; 
-            background-color: #ff0000; 
+            background-color: #000000; 
             transform-origin: 0 50%; 
-            box-shadow: 0 0 8px rgba(255, 69, 0, 0.7);
+            box-shadow: #38bff8;
             z-index: 15;
             transition: transform 1.25s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
         }
@@ -103,22 +113,23 @@
         /* --- STILIZIRANJE I FIKSIRANJE SADRŽAJA --- */
         .content-sections {
             /* KLJUČNE PROMJENE ZA FIKSIRANJE I POZICIONIRANJE: */
+            font-family: 'Americorps'; 
             position: fixed;
             top: 110px;      /* Odmak od gornjeg ruba */
             right: 0px;    /* Odmak od desnog ruba */
             z-index: 90;    /* Manji od indikatora, ali iznad body */
-            color: rgb(236, 255, 127);
+            color: #000000;
             width: 10%;
             max-width: 150px; /* Postavljeno na 200px max */
             min-width: 100px; /* Osiguraj da nije preuzak */
             min-height: 30px;
-            border: 2px solid #331717b6; 
-            border-right: #0057b300;
+            border: 2px solid #000000; 
+            border-right: #00000000;
             border-radius: 30px;
             border-bottom-right-radius: 0;
             border-top-right-radius: 0;
-            background-color: #000000c0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            background-color: #38bff8;
+            box-shadow: #38bff8;
             text-align: center;
             padding: 10px;
             /* Uklonjena svojstva za centriranje jer je fiksiran */
@@ -143,7 +154,7 @@
             padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            background-color: #007bff;
+            background-color: #38bff8;
             color: white;
             cursor: pointer;
             font-size: 16px;
@@ -151,5 +162,5 @@
         }
         
         .navigation-buttons button:hover {
-            background-color: #0056b3;
+            background-color: #fbff00;
         }
