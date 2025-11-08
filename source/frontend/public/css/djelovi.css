@@ -10,6 +10,7 @@
 body{
     margin: 0;
     padding: 0;
+    background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
 }
 .glavni{
     height: 100%;
@@ -26,6 +27,7 @@ body{
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    z-index: 1000;
 }
 .footclick{
     text-align: center;
@@ -308,12 +310,13 @@ main {
 .products {
     display: flex;
     flex-wrap: wrap;
-    
+    z-index: 60;
     gap: 20px;
     justify-content: left;
 }
 
 .product {
+    z-index: 60;
     min-width: 300px;
     border-radius: 50px;
     width: 22%;

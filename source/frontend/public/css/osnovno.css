@@ -21,12 +21,8 @@ canvas {
     height: 100%;
     position: absolute;
     z-index: 70;
-     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
+    background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
 }
-body {
-        margin: 0;
-      }
-
       .progress-bar-container {
         position: absolute;
         left: 50%;

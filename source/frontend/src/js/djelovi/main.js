@@ -113,7 +113,7 @@ document.getElementById("category-select").addEventListener("change", function()
     if (selectedCategory === "all") {
         present_pict.src = "/assets/pictures/audi.jpg"; // Slika za "Sve kategorije"
     } else {
-        present_pict.src = `pictures/${selectedImage}`; // Slika za odabranu kategoriju
+        present_pict.src = `/assets/pictures/${selectedImage}`; // Slika za odabranu kategoriju
     }
 
     document.querySelectorAll(".product").forEach(product => {
