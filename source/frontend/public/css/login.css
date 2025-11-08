@@ -77,6 +77,22 @@
     background-color: #db4437; /* Google crvena */
 }
 
+.iconsLogin {
+    margin-bottom: 15px;
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+    display: flex;
+    align-items: center;
+    background: #38bff8a9;
+    backdrop-filter: blur(30px);
+    padding: 10px 0px;
+}
+.iconsLogin span {
+    margin: 0 15px;
+    cursor: pointer;
+    position: relative;
+}
+
 .login-button.google:hover {
     background-color: #c2382c;
     transform: translateY(-2px);

@@ -34,7 +34,7 @@ const contentTitle = document.getElementById('current-title');
             if (!checkIfLogedIn() && position == 2) {
                 contentTitle.textContent = sectionData[4].title;
             }
-            else if (!checkIfLogedIn() && position == 3)
+            else if (checkIfLogedIn() && position == 3)
                 contentTitle.textContent = sectionData[5].title;
             else 
                 contentTitle.textContent = sectionData[newPosition].title;
