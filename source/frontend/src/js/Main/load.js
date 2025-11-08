@@ -26,6 +26,7 @@ const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
+const canvasHTML = document.getElementById('bg');
 //let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
