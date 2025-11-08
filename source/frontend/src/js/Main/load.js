@@ -9,6 +9,7 @@ import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPre
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
 import { updateIndicators } from './indicator.js';
+import { i } from 'vite/dist/node/chunks/moduleRunnerTransport.js';
 
 
 //Putanje do modela i teksture
@@ -391,6 +392,11 @@ function onDocumentClick(event) {
             loginHTML.classList.remove('hidden');
             loginHTML.classList.add('visible');
             loginHTML.hidden = false;
+            if (checkIfLogedIn()) {
+              document.getElementById("logoutGumb").hidden = false;
+              
+            }
+            else
             document.getElementById("loginGumbi").hidden = false;
             //document.getElementById("google").hidden = false;
             //document.getElementById("github").hidden = false;
@@ -801,6 +807,11 @@ function povratak(){
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
             loginHTML.hidden = false;
+            if (checkIfLogedIn()) {
+              document.getElementById("logoutGumb").hidden = true;
+              
+            }
+            else
             document.getElementById("loginGumbi").hidden = true;
             //document.getElementById("google").hidden = true;
             //document.getElementById("github").hidden = true;
