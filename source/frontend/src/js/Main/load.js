@@ -43,6 +43,28 @@ let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
 
+
+function disableScroll() {
+    // Postavlja CSS svojstvo overflow na 'hidden' za body element.
+    // Time se sakrivaju scrollbarovi i onemogućuje skrolanje.
+    document.body.style.overflow = 'hidden';
+
+    // Također je dobra praksa postaviti overflow: hidden i na <html> element
+    // radi bolje konzistencije u različitim preglednicima, posebno mobilnim.
+    document.documentElement.style.overflow = 'hidden';
+}
+
+function enableScroll() {
+    // Vraća CSS svojstvo overflow na defaultnu vrijednost ('auto' ili 'initial' / prazan string)
+    // što ponovno omogućuje skrolanje.
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+}
+
+
+
+disableScroll();
+
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
     loadingScreen.hidden = false;
@@ -338,6 +360,7 @@ function onDocumentClick(event) {
             //document.getElementById("navDjelovi").hidden = false;
         } 
         stranicaUpaljena = true;
+        enableScroll();
       }, 1250);
     }
     if (firstHitName == "login") {
@@ -352,6 +375,7 @@ function onDocumentClick(event) {
             console.log("hidden false");
         } 
         stranicaUpaljena = true;
+        enableScroll();
       }, 700);
     }
     if (firstHitName.startsWith("loginNeeded")) {
@@ -459,6 +483,7 @@ function onKeydownEsc(event) {
             djeloviHTML.classList.remove('visible');
             djeloviHTML.classList.add('hidden');
             stranicaUpaljena = false;
+            disableScroll();
             //document.getElementById("navDjelovi").hidden = true;
             transitionTimeout = setTimeout(() => {
             transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
@@ -472,6 +497,7 @@ function onKeydownEsc(event) {
       }, 1000);
       }
       else if (cameraPosition == 2) {
+        disableScroll();
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
         if (loginHTML.classList.contains('visible')) {
@@ -762,3 +788,4 @@ if (import.meta.hot) {
     cleanup();
   });
 }
+

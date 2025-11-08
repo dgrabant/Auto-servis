@@ -107,9 +107,9 @@ footer{
 }
 header {
     right: 0;
-    top: 0;
+    top: 5px;
     display: flex;
-    position: fixed;
+    position: absolute;
     border-bottom-right-radius: 20px;
     justify-content: space-between;
     align-items: center;
@@ -271,7 +271,7 @@ nav ul li {
 .sidebar-info {
     text-align: center;
     align-self: center;
-    min-width: 300px;
+    min-width: 310px;
     border-radius: 20px;
     width: 22%;
     padding: 5px;
@@ -290,6 +290,7 @@ nav ul li {
 }
 
 main {
+    top: 50px;
     flex-grow: 1;
     padding: 20px;
 }

@@ -1,5 +1,5 @@
 // Funkcija za prebacivanje vidljivosti bočne trake (sidebar) i promjenu teksta na gumbu
-function toggleAside() {
+document.getElementById('drop').addEventListener("click", () => {
     // Dohvati elemente za padajući izbornik (drop) i bočnu traku (sidebar)
     let drop = document.getElementById("drop"); 
     let sidebar = document.getElementById("sidebar");
@@ -21,12 +21,15 @@ function toggleAside() {
         // Dodaj klasu 'hide' na sidebar, čineći ga nevidljivim
         sidebar.classList.add("hide");
     }
-}
+    }, { once: true });
 const kontaktHTML = document.getElementById('kontakt');
 const vrijemeHTML = document.getElementById('vrijeme');
 const miHTML = document.getElementById('mi');
 let scrollHeight = document.body.scrollHeight;
-function kontakt() {
+
+
+
+document.getElementById('kontakt').addEventListener("click", () => {
     scrollHeight = document.body.scrollHeight
     kontaktHTML.hidden = !(kontaktHTML.hidden);
     if (!(vrijemeHTML.hidden)) {
@@ -40,8 +43,8 @@ function kontakt() {
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}
-function RadnoVrijeme(){
+}, { once: true });
+document.getElementById('vrijeme').addEventListener("click", () => {
     scrollHeight = document.body.scrollHeight
     vrijemeHTML.hidden = !(vrijemeHTML.hidden);
     if (!(kontaktHTML.hidden)) {
@@ -55,9 +58,9 @@ function RadnoVrijeme(){
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}
+}, { once: true });
 
-function oNama(){
+document.getElementById('mi').addEventListener("click", () => {
     scrollHeight = document.body.scrollHeight
     miHTML.hidden = !(miHTML.hidden);
     if (!(vrijemeHTML.hidden)) {
@@ -71,4 +74,4 @@ function oNama(){
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}
+}, { once: true });
