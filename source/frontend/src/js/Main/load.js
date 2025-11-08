@@ -393,7 +393,7 @@ function onDocumentClick(event) {
             console.log("hidden false");
         } 
         stranicaUpaljena = true;
-        enableScroll();
+        //enableScroll();
       }, 700);
     }
     if (firstHitName.startsWith("loginNeeded")) {
@@ -790,7 +790,7 @@ function povratak(){
       }, 1000);
       }
       else if (cameraPosition == 2) {
-        disableScroll();
+        //disableScroll();
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
         if (loginHTML.classList.contains('visible')) {

@@ -1,0 +1,124 @@
+/* Globalni stilovi */
+@font-face {
+    font-family: 'Americorps'; 
+    src: url('../assets/fonts/spyagency3ital.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    /* Koristimo 'truetype' format jer je datoteka .ttf */
+    /* Dodajte 'font-display: swap;' za bolji performance ako je potrebno */
+}
+.page-wrapper {
+    margin: 0;
+    font-family: 'Americorps'; 
+    display: flex;
+    margin-left: 20%;
+    align-items: center;
+    min-height: 100vh;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.15); /* Poluprozirna pozadina kontejnera */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* Istaknuta sjena */
+    backdrop-filter: blur(10px); /* Efekt zamućenja za moderni izgled */
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18); /* Tanka obruba */
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.login-box h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.login-box p {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #e0e0e0;
+}
+
+.login-button {
+    font-family: 'Americorps'; 
+    display: flex; /* Fleksibilni layout za ikonu i tekst */
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: #fff; /* Default boja teksta za sve gumbe */
+}
+
+.login-button img {
+    width: 24px; /* Veličina ikone */
+    height: 24px;
+    margin-right: 15px;
+    backdrop-filter: blur(5px);
+    background-color: #ffffffda;
+    border-radius: 20px;
+}
+
+/* Specifični stilovi za Google gumb */
+.login-button.google {
+    background-color: #db4437; /* Google crvena */
+}
+
+.login-button.google:hover {
+    background-color: #c2382c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Specifični stilovi za GitHub gumb */
+.login-button.github {
+    background-color: #333; /* GitHub tamna */
+}
+
+.login-button.github:hover {
+    background-color: #222;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Responzivnost */
+@media (max-width: 600px) {
+    .login-container {
+        padding: 30px;
+        margin: 20px;
+    }
+    .login-box h2 {
+        font-size: 2rem;
+    }
+    .login-box p {
+        font-size: 1rem;
+    }
+    .login-button {
+        font-size: 1rem;
+        padding: 12px 15px;
+    }
+    .login-button img {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+}
+@media screen and (max-width: 1024px){
+    .page-wrapper{
+        margin-left: 0;
+        justify-content: center;
+    }
+}

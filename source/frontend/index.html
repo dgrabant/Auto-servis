@@ -11,6 +11,7 @@
     </noscript>
 
 
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
     <link rel="stylesheet" type="text/css" href="/css/hud.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,9 +35,23 @@
     </div>
 
     </div>
-    <div id="login" class="hidden" hidden>
-      <button id="google" type="button" hidden>google login</button>
-      <button id="github" type="button" hidden>github login</button>
+    <div  id="login" class="page-wrapper hidden" hidden >
+      <div class="products">
+        <div class="product">
+            <h2>Prijava</h2>
+            <p>Odaberite način prijave:</p>
+
+            <button class="login-button google" id="google" type="button" hidden>
+                <img src="./assets/pictures/login/google_icon.png" alt="Google ikona">
+                Prijavi se putem Google-a
+            </button>
+
+            <button class="login-button github" id="github" type="button" hidden>
+                <img src="./assets/pictures/login/github_icon.png" alt="GitHub ikona">
+                Prijavi se putem GitHub-a
+            </button>
+        </div>
+      </div>
     </div>
 
 
@@ -84,13 +99,13 @@
       <div class="glavni">
     <header>
         <a id="logo" href="index.html" class="logo" hidden>
-            <img src="./assets/pictures/logo.png"  alt="" class="logo_pic">
+            <img src="./assets/pictures/djelovi/logo.png"  alt="" class="logo_pic">
         </a>
         <div id="selected" class="selected">Harlemova kocija</div>
         <div class="icons">
         <div class = "back">
             <a id="back" hidden>
-                <img id="backPic" class="back_picture" src="/assets/pictures/back.png" alt="">
+                <img id="backPic" class="back_picture" src="/assets/pictures/djelovi/back.png" alt="">
             </a>
         </div>
                 
@@ -108,7 +123,7 @@
             <div class="banner">
                 <p class="baner-txt">Dobar dan, molim vas izaberite nešto iz naše ponude.</p>
                 <div class="image-present">
-                    <img src="/assets/pictures/audi.jpg" class="present_pict" alt=""></div>
+                    <img src="/assets/pictures/djelovi/audi.jpg" class="present_pict" alt=""></div>
             </div>
             <div class="products" id="product-container">
             </div>
