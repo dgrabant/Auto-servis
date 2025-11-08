@@ -536,7 +536,7 @@ function onKeydownQ(event) {
 let lastOnMouseMove;
 function onMouseMove(event) {
   lastOnMouseMove = event;
-  console.log("hover: ", hoverOn, !uTranziciji, isLoaded);
+  //console.log("hover: ", hoverOn, !uTranziciji, isLoaded);
   
   if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
@@ -654,7 +654,7 @@ animate(); // Pokreni render petlju
     
     //console.log("animate");
     setTimeout( function() {
-      console.log("animate: ", !uTranziciji, !stranicaUpaljena);
+      //console.log("animate: ", !uTranziciji, !stranicaUpaljena);
       
       if (!uTranziciji && !stranicaUpaljena) {
         if (isLoaded) hoverOn = true;
