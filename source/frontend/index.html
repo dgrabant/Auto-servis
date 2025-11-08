@@ -138,9 +138,9 @@
     <footer>
         
         <div class="sidebar-info">
-            <a id="kontakt" class="foot" onclick="kontakt()">Kontakt</a>
-            <a id="vrijeme" class="foot">Radno vrijeme</a>
-            <a id="mi" class="foot" >O nama</a>
+            <a class="foot" onclick="kontakt()">Kontakt</a>
+            <a class="foot" onclick="RadnoVrijeme()">Radno vrijeme</a>
+            <a class="foot" onclick="oNama()">O nama</a>
         </div>
     </footer>
     </div>
@@ -179,13 +179,59 @@
         window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/github';
     });
 </script>
-<script>
-  function kontakt(){
-    console.log("kontakt");
-    
-  }
-</script>
-  <canvas id="bg"></canvas>
-  </body>
+  <script>
+    const kontaktHTML = document.getElementById('kontakt');
+    const vrijemeHTML = document.getElementById('vrijeme');
+    const miHTML = document.getElementById('mi');
+    let scrollHeight = document.body.scrollHeight;
+    function kontakt() {
+      scrollHeight = document.body.scrollHeight
+      kontaktHTML.hidden = !(kontaktHTML.hidden);
+      if (!(vrijemeHTML.hidden)) {
+          vrijemeHTML.hidden = true;
+      }
+      if (!(miHTML.hidden)) {
+          miHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+    function RadnoVrijeme(){
+      scrollHeight = document.body.scrollHeight
+      vrijemeHTML.hidden = !(vrijemeHTML.hidden);
+      if (!(kontaktHTML.hidden)) {
+          kontaktHTML.hidden = true;
+      }
+      if (!(miHTML.hidden)) {
+          miHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+
+    function oNama(){
+      scrollHeight = document.body.scrollHeight
+      miHTML.hidden = !(miHTML.hidden);
+      if (!(vrijemeHTML.hidden)) {
+          vrijemeHTML.hidden = true;
+      }
+      if (!(kontaktHTML.hidden)) {
+          kontaktHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+  </script>
+<canvas id="bg"></canvas>
+</body>
 
 </html>
