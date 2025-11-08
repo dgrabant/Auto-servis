@@ -779,6 +779,10 @@ document.getElementById("backPic").addEventListener("click", () => {
   povratak();
 });
 
+document.getElementById("backPicLogin").addEventListener("click", () => {
+  povratak();
+});
+
 function povratak(){
   if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
       uTranziciji=true;
