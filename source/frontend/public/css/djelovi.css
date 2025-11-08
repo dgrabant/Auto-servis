@@ -19,9 +19,8 @@ body{
 }
 .glavni{
     height: 100%;
+    width: 100%;
     min-height: 100vh;
-    padding: 0;
-    margin: -10;
     background-color: #14364200;
     background-image: url(../assets/pictures/background.jpg);
 
