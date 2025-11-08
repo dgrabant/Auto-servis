@@ -89,8 +89,8 @@
         <div id="selected" class="selected">Harlemova kocija</div>
         <div class="icons">
         <div class = "back">
-            <a id="back" onclick="vrati()" hidden>
-                <img class="back_picture" src="/assets/pictures/back.png" alt="">
+            <a id="back" hidden>
+                <img id="backPic" class="back_picture" src="/assets/pictures/back.png" alt="">
             </a>
         </div>
                 
@@ -180,16 +180,10 @@
     });
 </script>
   <script>
-    import { povratak } from './src/js/Main/load.js';
     const kontaktHTML = document.getElementById('kontakt');
     const vrijemeHTML = document.getElementById('vrijeme');
     const miHTML = document.getElementById('mi');
     let scrollHeight = document.body.scrollHeight;
-
-    function vrati(){
-      povratak();
-    }
-
 
     function kontakt() {
       scrollHeight = document.body.scrollHeight

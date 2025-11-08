@@ -750,8 +750,11 @@ if (import.meta.hot) {
     cleanup();
   });
 }
+document.getElementById("backPic").addEventListener("click", () => {
+  povratak();
+});
 
-export function povratak(){
+function povratak(){
   if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);

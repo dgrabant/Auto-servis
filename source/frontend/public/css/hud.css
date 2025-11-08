@@ -10,8 +10,8 @@
         /* --- SPREMNIK ZA KRUŽNI INDIKATOR (FIKSIRAN) --- */
         .circular-indicator-container {
             position: fixed;
-            top: -103px;    /* Postavlja središte kruga u gornji desni kut ekrana */
-            right: -103px;  
+            top: -105px;    /* Postavlja središte kruga u gornji desni kut ekrana */
+            right: -105px;  
             z-index: 100; 
 
             width: 205px; 
