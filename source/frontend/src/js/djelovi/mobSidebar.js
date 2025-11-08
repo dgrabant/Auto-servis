@@ -1,9 +1,9 @@
 // Funkcija za prebacivanje vidljivosti bočne trake (sidebar) i promjenu teksta na gumbu
-document.getElementById('drop').addEventListener("click", () => {
+document.getElementById('drop').addEventListener('click', (event) => {
     // Dohvati elemente za padajući izbornik (drop) i bočnu traku (sidebar)
     let drop = document.getElementById("drop"); 
     let sidebar = document.getElementById("sidebar");
-
+    console.log("klik: ", sidebar.classList.contains("hide"));
     // Spremi trenutni tekst na gumbu
     let previousText = drop.innerHTML;
 
@@ -21,7 +21,7 @@ document.getElementById('drop').addEventListener("click", () => {
         // Dodaj klasu 'hide' na sidebar, čineći ga nevidljivim
         sidebar.classList.add("hide");
     }
-    }, { once: true });
+    });
 const kontaktHTML = document.getElementById('kontakt');
 const vrijemeHTML = document.getElementById('vrijeme');
 const miHTML = document.getElementById('mi');
@@ -29,7 +29,7 @@ let scrollHeight = document.body.scrollHeight;
 
 
 
-document.getElementById('kontakt').addEventListener("click", () => {
+document.getElementById('kontakt').addEventListener('click', (event) => {
     console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
     
     scrollHeight = document.body.scrollHeight
@@ -45,8 +45,8 @@ document.getElementById('kontakt').addEventListener("click", () => {
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}, { once: true });
-document.getElementById('vrijeme').addEventListener("click", () => {
+});
+document.getElementById('vrijeme').addEventListener("click", (event) => {
     console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
     scrollHeight = document.body.scrollHeight
     vrijemeHTML.hidden = !(vrijemeHTML.hidden);
@@ -61,9 +61,9 @@ document.getElementById('vrijeme').addEventListener("click", () => {
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}, { once: true });
+});
 
-document.getElementById('mi').addEventListener("click", () => {
+document.getElementById('mi').addEventListener("click", (event) => {
     console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
     scrollHeight = document.body.scrollHeight
     miHTML.hidden = !(miHTML.hidden);
@@ -78,4 +78,4 @@ document.getElementById('mi').addEventListener("click", () => {
         // Dodajemo "smooth" ponašanje za glatku animaciju
         behavior: 'smooth' 
     });
-}, { once: true });
+});
