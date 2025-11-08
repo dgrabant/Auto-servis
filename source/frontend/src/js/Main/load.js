@@ -388,8 +388,9 @@ function onDocumentClick(event) {
             loginHTML.classList.remove('hidden');
             loginHTML.classList.add('visible');
             loginHTML.hidden = false;
-            document.getElementById("google").hidden = false;
-            document.getElementById("github").hidden = false;
+            document.getElementById("loginGumbi").hidden = false;
+            //document.getElementById("google").hidden = false;
+            //document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
         stranicaUpaljena = true;
@@ -797,8 +798,9 @@ function povratak(){
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
             loginHTML.hidden = false;
-            document.getElementById("google").hidden = true;
-            document.getElementById("github").hidden = true;
+            document.getElementById("loginGumbi").hidden = true;
+            //document.getElementById("google").hidden = true;
+            //document.getElementById("github").hidden = true;
             stranicaUpaljena = false;
         }
         transitionTimeout = setTimeout(() => {
