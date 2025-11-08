@@ -72,6 +72,14 @@ function hide(stranica){
     document.getElementById('sidebarInfo').hidden = true;
     document.getElementById('category-select').hidden = true;
   }
+  if (stranica == "login") {
+    if (checkIfLogedIn()) {
+      document.getElementById("logoutGumb").hidden = true;
+    }
+    else
+    document.getElementById("loginGumbi").hidden = true;
+    document.getElementById("backLogin").hidden = true;
+  }
 }
 function unHide(stranica){
   if (stranica == "djelovi") {
@@ -79,6 +87,14 @@ function unHide(stranica){
     document.getElementById('back').hidden = false;
     document.getElementById('sidebarInfo').hidden = false;
     document.getElementById('category-select').hidden = false;
+  }
+  if (stranica == "login") {
+    if (checkIfLogedIn()) {
+      document.getElementById("logoutGumb").hidden = false;
+    }
+    else
+    document.getElementById("loginGumbi").hidden = false;
+    document.getElementById("backLogin").hidden = false;
   }
 }
 
@@ -391,17 +407,12 @@ function onDocumentClick(event) {
             loginHTML.classList.remove('hidden');
             loginHTML.classList.add('visible');
             loginHTML.hidden = false;
-            if (checkIfLogedIn()) {
-              document.getElementById("logoutGumb").hidden = false;
-              
-            }
-            else
-            document.getElementById("loginGumbi").hidden = false;
             //document.getElementById("google").hidden = false;
             //document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
         stranicaUpaljena = true;
+        unHide("login");
         //enableScroll();
       }, 700);
     }
@@ -806,12 +817,7 @@ function povratak(){
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
             loginHTML.hidden = false;
-            if (checkIfLogedIn()) {
-              document.getElementById("logoutGumb").hidden = true;
-              
-            }
-            else
-            document.getElementById("loginGumbi").hidden = true;
+            hide("login");
             //document.getElementById("google").hidden = true;
             //document.getElementById("github").hidden = true;
             stranicaUpaljena = false;
