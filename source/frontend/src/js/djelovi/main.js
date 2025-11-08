@@ -131,7 +131,7 @@ document.getElementById("category-select").addEventListener("change", function()
         baner.innerHTML = "Dobar dan, molim vas izaberite nešto iz naše ponude.";
         //document.getElementById('selected').innerText = 'Kategorija nije selektirana';
     } else {
-        baner.innerHTML = `Dobar dan, molim vas izaberite nešto iz naše ponude: ${this.options[this.selectedIndex].text}`;
+        baner.innerHTML = `Dobar dan, lista usluga za kategoriju: ${this.options[this.selectedIndex].text}`;
         //document.getElementById('selected').innerText = this.options[this.selectedIndex].text;
     }
 });
