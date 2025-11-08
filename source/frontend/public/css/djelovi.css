@@ -1,0 +1,624 @@
+/*ovaj import je ovdje samo za fontove i stranica bez njega radi u potpunosti isto */
+@font-face {
+    font-family: 'Americorps'; 
+    src: url('../assets/fonts/spyagency3ital.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    /* Koristimo 'truetype' format jer je datoteka .ttf */
+    /* Dodajte 'font-display: swap;' za bolji performance ako je potrebno */
+}
+body{
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
+}
+.glavni{
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #14364200;
+    background-image: url(../assets/pictures/background.jpg);
+
+    background-size:cover;
+
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-top: 20px;
+    z-index: 50;
+}
+.footclick{
+    text-align: center;
+    align-self: center;
+    min-width: 300px;
+    border-radius: 50px;
+    width: 22%;
+    padding: 5px;
+    padding-top: 0;
+    font-family: 'Americorps';
+    font-size: 20px;
+    color: #a1a1a1;
+    background: #00000038;
+    border: 1px solid #38bff88c;
+    backdrop-filter: blur(20px);
+    padding: 15px;
+    transition: transform 0.3s ease;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.foot:hover{
+    cursor: pointer;
+    color: #fbff00;
+}
+
+.price-tag{
+    top: 5%;
+    right: 5%;
+    display: block;
+    z-index: 100;
+    position: absolute;
+    color: #000000;
+    position: fixed;
+    background-color: #38bff8;
+    padding: 10px;
+    border-radius: 20px;
+}
+.foot{
+    color: #143642;
+    font-size: 15px;
+    padding: 10px;
+}
+footer{
+    background: transparent;
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    margin-top: auto;
+    border-top: 1px solid #38bff8a9;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
+}
+.main{
+    margin-top: 20px;
+    padding: 3%;
+}
+.banner{
+    margin-left: 10%;
+}
+.baner-txt{
+    font-family: 'Americorps';
+    position: absolute;
+    color: #000000;
+    font-size: 16px;
+    z-index: 10;
+    padding: 10px;
+    padding-left: 5px;
+    background: #38bff8d5;
+    backdrop-filter: blur(10px);
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
+}
+header {
+    right: 0;
+    top: 5px;
+    display: flex;
+    position: fixed;
+    border-bottom-right-radius: 20px;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100000;
+    width: 99%;
+    /* max-height: 30px;
+    min-height: 20px; */
+    height: 45px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.0);
+    backdrop-filter: blur(5px);
+    border-bottom: 1px solid #38bff8a9;
+}
+
+
+.selected {
+    font-family: 'Americorps';
+    font-size: 2rem;
+    color: #000000;
+    margin-bottom: 15px;
+    max-width: 50%;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background: #38bff8;
+    backdrop-filter: blur(30px);
+    padding: 10px;
+}
+
+.logo {
+    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background: #38bff8a9;
+    backdrop-filter: blur(30px);
+    padding: 10px;
+}
+
+.icons {
+    margin-bottom: 15px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    align-items: center;
+    background: #38bff8a9;
+    backdrop-filter: blur(30px);
+    padding: 10px 0px;
+}
+
+.icons span {
+    margin: 0 15px;
+    cursor: pointer;
+    position: relative;
+}
+
+.cart-icon {
+    position: relative;
+    left: 13%;
+}
+
+.cart_picture{
+    padding-right: 10px;
+    max-width: 25px;
+    max-height: 25px;
+}
+.cart_picture_2{
+    max-width: 50%;
+    max-height: 50%;
+    background: transparent;
+    backdrop-filter: blur(5px);
+    border: 1px solid #38bff88c;
+    border-radius: 10%;
+    cursor: pointer;
+    margin-top: 10%;
+    margin-bottom: 25%;
+    margin-left: 10%;
+    margin-right: 10%;
+    content: url("../assets/pictures/cart_proi.png");
+}
+.cart_picture_2:hover{
+    content: url("../assets/pictures/cart_proi.gif");
+}
+.cart_picture_2:active{
+    animation: growShrink 0.2s;
+}
+.proi-count:empty {
+    display: none;
+}
+.proi-count{
+    z-index: 100;
+    position: absolute;
+    bottom: 5px;
+    right: 0;
+    background: red;
+    color: #a1a1a1;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 15px;
+}
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 98.5%;
+}
+
+nav{
+    padding: 5px;
+    padding-top: 0;
+    font-family: 'Americorps';
+    font-size: 20px;
+    color: #a1a1a1;
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+    background: transparent;
+    border: 1px solid #38bff88c;
+    border-left: 0px;
+    backdrop-filter: blur(20px);
+}
+.oda_kat{
+    padding: 0;
+    margin: 0;
+    margin-top: 5px;
+}
+aside {
+    z-index: 10000;
+    margin-top: 60px;
+    width: 10%;
+    height: 30px;
+    position: fixed;
+    max-width: 250px;
+    background: transparent;
+    padding: 0px;
+    display:relative;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.present_pict{
+    border-radius: 20px;
+    width: 100%;
+    height: 100%;
+    max-height: 20vh;
+    object-fit: cover;
+}
+nav ul li {
+    padding: 10px 0;
+    cursor: pointer;
+    border-bottom: 1px solid #ff0000;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.sidebar-info {
+    text-align: center;
+    align-self: center;
+    min-width: 410px;
+    border-radius: 20px;
+    width: 22%;
+    padding: 5px;
+    padding-top: 0;
+    font-family: 'Americorps';
+    font-size: 20px;
+    color: #000000;
+    background: #38bff8;
+    border: 1px solid #38bff88c;
+    padding: 15px;
+    transition: transform 0.3s ease;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.banner {
+
+    margin-top: 0;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: 20px;
+}
+
+.image-present {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.products {
+    display: flex;
+    flex-wrap: wrap;
+    z-index: 60;
+    gap: 20px;
+    justify-content: left;
+}
+
+.product {
+    z-index: 60;
+    min-width: 300px;
+    border-radius: 50px;
+    width: 22%;
+    padding: 5px;
+    padding-top: 0;
+    font-family: 'Americorps';
+    font-size: 20px;
+    color: #a1a1a1;
+    background: #00000038;
+    border: 1px solid #38bff88c;
+    backdrop-filter: blur(20px);
+    padding: 15px;
+    text-align: center;
+    position: relative;
+    transition: transform 0.3s ease;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+}
+
+.product.hide{
+    display: none;
+}
+.product:hover {
+    transform: scale(1.05);
+}
+
+.image {
+    position: relative;
+
+}
+
+.back{
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0px 10px;
+}
+.back_picture{
+    max-height: 40px;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0px 0px;
+    margin-top: 0px;
+    margin-bottom: 0;
+}
+.add-to-cart {
+    border-radius: 50px;
+    z-index: 10000;
+    position: absolute;
+    font-size: 60px;
+    justify-content: center;
+    align-items: center;
+    top: 1px;
+    left: 1px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: rgba(0, 0, 0, 0.424);
+    backdrop-filter: blur(1px);
+    color: #a1a1a1;
+    display: none;
+    cursor:default;
+}
+/*
+.product:hover .add-to-cart {
+    display: block;
+}
+*/
+/* Stilizacija za drop-down izbornik */
+select {
+    width: 98%;
+    padding: 1%;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+select:focus {
+    outline: none;
+    border-color: #e0e1ddde;
+}
+
+/* Stilizacija za labelu */
+label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.slika{
+    border-radius: 50px;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    background: transparent;
+}
+
+.drop{
+    display: none;
+    padding: 10px;
+    margin-top: 60px;
+    margin-left: 0px;
+    border-radius: 30px;
+}
+.sidebar.hide{
+    display: block;
+}
+.back_picture{
+    content: url("../assets/pictures/back.png");
+}
+.back_picture:hover{
+    cursor: pointer;
+    content: url("../assets/pictures/back.gif");
+}
+
+.logo_pic{
+    content: url("../assets/pictures/logo.png");
+}
+.logo_pic:hover{
+    content: url("../assets/pictures/logo.gif");
+}
+
+.logo_pic{
+    max-width: 35px;
+    max-height: 35px;
+}
+
+#category-select {
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #d80303d2, #00D4FF);
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+#category-select:hover {
+    background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+#category-select option {
+    font-family: 'Americorps';
+    border-radius: 20px;
+    position: absolute;
+    color: #000000;
+    font-weight: normal;
+    background:#0092af; /* Lagano proziran meni */
+    padding: 10px;
+}
+
+
+/* Stilizacija menija koji se pojavljuje nakon klika */
+#category-select::-webkit-scrollbar {
+    width: 8px;
+}
+
+#category-select::-webkit-scrollbar-thumb {
+    background: #a4ad0099;
+    border-radius: 10px;
+}
+
+#category-select::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.select{
+    background-color: yellow; /* Proziran efekat na fokusiranom meniju */
+    color: rgb(255, 255, 255);
+    border-radius: 20px;
+}
+option:hover {
+    background-color: yellow;
+}
+
+
+
+@keyframes growShrink {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@media screen and (max-width: 1024px) {
+    .quantity{
+        font-size: 20px;
+        top: -5px;
+    }
+    nav{
+        margin-top: 45px;
+        margin-left: 0;
+        padding-left: 10px;
+        }
+    .drop{
+        z-index: 100000;
+        display:flex;
+        position: fixed;
+        padding: 10px;
+        margin-top: 70px;
+        border-radius: 50px;
+    }
+    .drop_down{
+        font-family: 'Americorps';
+        font-size: 14px;
+        color: #143642;
+        border-radius: 50px;
+        background: #38bff8a9;
+        backdrop-filter: blur(5px);
+        
+    }
+    .container {
+        flex-direction: column;
+    }
+    .main{
+        margin-top: 100px;
+        margin-left: 0;
+    }
+    header{
+        width: 96%;
+        padding-left: 2%;
+        padding-right: 2%;
+        margin-top: 10px;
+        border-radius: 30px;
+        border-bottom-right-radius: 30px;
+    }
+
+    .footer{
+        width: 100%;
+        margin-top: 10px;
+        border-radius: 30px;
+        border-bottom-right-radius: 30px;
+    }
+    .sidebar.hide{
+        display: none;
+        transition: opacity 0.5s ease, max-height 0.5s ease;
+    }
+    aside {
+        margin-top: 60px;
+        border-radius: 30%;
+        width: 50%;
+        padding: 0%;
+        text-align: center;
+        max-width: 100%;
+        height: 70px;
+        position:fixed;
+    }
+
+    .products {
+        justify-content: center;
+    }
+    .product {
+        width: 35%;
+    }
+    .selected {
+        font-size: 17px;
+        margin: 0;
+        max-width: 50%;
+        border-radius: 10px;
+        padding: 5px;
+    }
+    
+    .logo {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        border-radius: 0px;
+        background-color: #0066cc00;
+        padding: 0px;
+    }
+    
+    .icons {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        border-radius: 0px;
+        background-color: #0066cc00;
+        padding: 0px;
+    }
+    .banner{
+        margin-left: 0px;
+    }
+    .back_picture{
+        margin-top: 10px;
+    }
+}

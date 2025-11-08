@@ -2,17 +2,70 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
+
+    <link rel="preload" href="/css/djelovi.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <noscript>
+        <link rel="stylesheet" href="/css/djelovi.css">
+    </noscript>
+
+
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/hud.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>projekt_stranica</title>
 
     
   </head>
   <body>
-    <div id="login" class="hidden" hidden>
-      <button id="google" type="button" hidden>google login</button>
-      <button id="github" type="button" hidden>github login</button>
+    <div id="hud" hidden>
+      <div class="circular-indicator-container">
+        
+        <div class="indicator-dot dot-pos-1" data-position="1"></div>
+        <div class="indicator-dot dot-pos-2" data-position="2"></div>
+        <div class="indicator-dot dot-pos-3" data-position="3"></div>
+        
+        <div class="indicator-slider"></div>
+    </div>
+    
+    <div class="content-sections">
+        <h3 id="current-title">Djelovi</h3>
+    </div>
+
+    </div>
+    <div  id="login" class="page-wrapper hidden" hidden >
+      <div class="products">
+        <div id="logoutGumb" class="product" hidden>
+          <a href="/logout.html" class="login-button logout" hidden>
+            <img src="./assets/pictures/login/logout.gif" alt="logout">
+            <p>Logout</p>
+          </a>
+        </div>
+        <div id="loginGumbi" class="product" hidden>
+            <h2>Prijava</h2>
+            <p>Odaberite način prijave:</p>
+
+            <button class="login-button google" id="google" type="button">
+                <img src="./assets/pictures/login/google_icon.png" alt="Google ikona">
+                Prijavi se putem Google-a
+            </button>
+
+            <button class="login-button github" id="github" type="button">
+                <img src="./assets/pictures/login/github_icon.png" alt="GitHub ikona">
+                Prijavi se putem GitHub-a
+            </button>
+        </div>
+      </div>
+       <div class="iconsLogin">
+        <div class = "back">
+            <a id="backLogin" hidden>
+                <img id="backPic" class="back_picture" src="/assets/pictures/djelovi/back.png" alt="">
+            </a>
+        </div>
+                
+        </div>
     </div>
 
 
@@ -57,24 +110,85 @@
     
     <div id="pozadina"></div>
     <div id="djelovi" class="hidden">
-      <div id="sidebar"></div>
+      <div class="glavni">
+    <header>
+        <a id="logo" href="index.html" class="logo" hidden>
+            <img src="./assets/pictures/djelovi/logo.png"  alt="" class="logo_pic">
+        </a>
+        <div id="selected" class="selected">Harlemova kocija</div>
+        <div class="icons">
+        <div class = "back">
+            <a id="back" hidden>
+                <img id="backPic" class="back_picture" src="/assets/pictures/djelovi/back.png" alt="">
+            </a>
+        </div>
+                
+        </div>
+    </header>
+    
+    <div class="drop">
+        <button class="drop_down" id="drop" >Otvori izbornik</button>
+    </div>
+    <div class="container">
+        <aside id="sidebar" class="sidebar hide">
 
-      <div class="main-content">
-      <h1 class="baner-txt">Autoservis</h1>
-      <img class="present_pict" src="/assets/pictures/audi.jpg"  alt="Pocetna slika neka">
-      <p id="selected">Molimo odaberite kategoriju</p>
-      <div id="product-container"></div>
-      </div>
+        </aside>
+        <main class="main">
+            <div class="banner">
+                <p class="baner-txt">Dobar dan, molim vas izaberite nešto iz naše ponude.</p>
+                <div class="image-present">
+                    <img src="/assets/pictures/djelovi/audi.jpg" class="present_pict" alt=""></div>
+            </div>
+            <div class="products" id="product-container">
+            </div>
+        </main>
+    </div>
+    <div id="kontakt" class="footclick" hidden>
+            <h1>Kontakt</h1>
+            <br>
+            <p>Unska 3, 10000 Zagreb</p>
+    </div>
+    <div id="vrijeme" class="footclick" hidden>
+            <h1>Radno vrijeme</h1>
+            <br>
+            <p>Pon – Pet: 08:00 – 16:00</p>
+            <br>
+            <p>Subota: 08:00 – 14:00</p>
+            <br>
+            <p>Nedjelja: Zatvoreno</p>
+    </div>
+    <div id="mi" class="footclick" hidden>
+            <h1>O nama</h1>
+            <br>
+            <p>Mi smo mali ovljašteni servis za audi vozija.</p>
+            <br>
+            <p>Za sad imammo jedan servis u zagrebu.</p>
+    </div>
+    <footer>
+        
+        <div id="sidebarInfo" class="sidebar-info" hidden>
+            <a class="foot" onclick="kontakt()">Kontakt</a>
+            <a class="foot" onclick="RadnoVrijeme()">Radno vrijeme</a>
+            <a class="foot" onclick="oNama()">O nama</a>
+        </div>
+    </footer>
+    </div>
+
+    
     </div>
     
     
     
     <script type="text/javascript" src="/data.js"></script>
-    
-    
+
+
     <div id="container3D"></div>
     <script type="module" src="./src/js/Main/load.js"></script>
-    <script type="module" src="./src/js/Main/htmlPostava.js"></script>
+    <script type="module" src="./src/js/Main/indicator.js"></script>
+
+
+    <script type="module" src="./src/js/djelovi/main.js"></script>
+    <script type="module" src="./src/js/djelovi/mobSidebar.js"></script>
     <script>
     // Dohvaćamo gumb za Google koristeći njegov ID
     const googleButton = document.getElementById('google');
@@ -94,7 +208,60 @@
         window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/github';
     });
 </script>
-  <canvas id="bg"></canvas>
-  </body>
+  <script>
+    const kontaktHTML = document.getElementById('kontakt');
+    const vrijemeHTML = document.getElementById('vrijeme');
+    const miHTML = document.getElementById('mi');
+    let scrollHeight = document.body.scrollHeight;
+
+    function kontakt() {
+      scrollHeight = document.body.scrollHeight
+      kontaktHTML.hidden = !(kontaktHTML.hidden);
+      if (!(vrijemeHTML.hidden)) {
+          vrijemeHTML.hidden = true;
+      }
+      if (!(miHTML.hidden)) {
+          miHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+    function RadnoVrijeme(){
+      scrollHeight = document.body.scrollHeight
+      vrijemeHTML.hidden = !(vrijemeHTML.hidden);
+      if (!(kontaktHTML.hidden)) {
+          kontaktHTML.hidden = true;
+      }
+      if (!(miHTML.hidden)) {
+          miHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+
+    function oNama(){
+      scrollHeight = document.body.scrollHeight
+      miHTML.hidden = !(miHTML.hidden);
+      if (!(vrijemeHTML.hidden)) {
+          vrijemeHTML.hidden = true;
+      }
+      if (!(kontaktHTML.hidden)) {
+          kontaktHTML.hidden = true;
+      }
+      window.scrollTo({
+          top: scrollHeight,
+          // Dodajemo "smooth" ponašanje za glatku animaciju
+          behavior: 'smooth' 
+      });
+    }
+  </script>
+<canvas id="bg"></canvas>
+</body>
 
 </html>

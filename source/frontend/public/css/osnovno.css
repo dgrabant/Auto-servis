@@ -2,7 +2,7 @@ canvas {
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1;
+    z-index: -1;
 }
 #login {
   z-index: 100;
@@ -12,7 +12,7 @@ canvas {
 #tutorial {
   width: 100%;
   height: 100%;
-  position: absolute;
+  position: fixed;
   z-index: 100;
   background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
 }
@@ -21,12 +21,8 @@ canvas {
     height: 100%;
     position: absolute;
     z-index: 70;
-     background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
+    background: linear-gradient(120deg, #d0e9f4, #7e9bea, #f40808, #ee8f8f);
 }
-body {
-        margin: 0;
-      }
-
       .progress-bar-container {
         position: absolute;
         left: 50%;
@@ -51,13 +47,7 @@ body {
         color: white;
         font-size: 1.2rem;
       }
-#djelovi {
-  
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  z-index: 40;
-}
+
 .hidden {
   opacity: 0;
 }
@@ -69,9 +59,9 @@ body {
 #djelovi {
   /* This transition is key for a smooth fade effect */
   transition: opacity 1s ease-in-out; 
-  /* '1s' is the duration, 'ease-in-out' is the timing function */
-  
-  padding: 20px;
+    margin: 0;
+    padding: 0;
+    z-index: 600;
 }
 
 /* -------------------------------------- */

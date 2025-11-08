@@ -8,6 +8,7 @@ import { spawnMultipleModels, justLogedIn, justLogedOut, cleanupSpawnedModels } 
 import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
+import { updateIndicators } from './indicator.js';
 
 
 //Putanje do modela i teksture
@@ -20,17 +21,20 @@ const svjetlaPath = '/assets/models/svjetla.gltf';
 const djeloviHTML = document.getElementById("djelovi");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
+const hudHTML = document.getElementById("hud");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
-let navDjeloviHTML = document.getElementById("navDjelovi");
+const canvasHTML = document.getElementById('bg');
+//let navDjeloviHTML = document.getElementById("navDjelovi");
 let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
 let texturePath;
 let hoverOn = false;
 let fps;
+let stranicaUpaljena = true;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
@@ -39,6 +43,62 @@ const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
 //provjera na kojem uređaju se stranica ucita
+
+
+function disableScroll() {
+    // Postavlja CSS svojstvo overflow na 'hidden' za body element.
+    // Time se sakrivaju scrollbarovi i onemogućuje skrolanje.
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth' // Ključna riječ za glatku animaciju
+    });
+    document.body.style.overflow = 'hidden';
+    // Također je dobra praksa postaviti overflow: hidden i na <html> element
+    // radi bolje konzistencije u različitim preglednicima, posebno mobilnim.
+    document.documentElement.style.overflow = 'hidden';
+}
+
+function enableScroll() {
+    // Vraća CSS svojstvo overflow na defaultnu vrijednost ('auto' ili 'initial' / prazan string)
+    // što ponovno omogućuje skrolanje.
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+}
+
+function hide(stranica){
+  if (stranica == "djelovi") {
+    document.getElementById('logo').hidden = true;
+    document.getElementById('back').hidden = true;
+    document.getElementById('sidebarInfo').hidden = true;
+    document.getElementById('category-select').hidden = true;
+  }
+  if (stranica == "login") {
+    if (checkIfLogedIn()) {
+      document.getElementById("logoutGumb").hidden = true;
+    }
+    else
+    document.getElementById("loginGumbi").hidden = true;
+    document.getElementById("backLogin").hidden = true;
+  }
+}
+function unHide(stranica){
+  if (stranica == "djelovi") {
+    document.getElementById('logo').hidden = false;
+    document.getElementById('back').hidden = false;
+    document.getElementById('sidebarInfo').hidden = false;
+    document.getElementById('category-select').hidden = false;
+  }
+  if (stranica == "login") {
+    if (checkIfLogedIn()) {
+      document.getElementById("logoutGumb").hidden = false;
+    }
+    else
+    document.getElementById("loginGumbi").hidden = false;
+    document.getElementById("backLogin").hidden = false;
+  }
+}
+
+disableScroll();
 
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
@@ -262,6 +322,7 @@ loader.load(
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
+        hudHTML.hidden = false;
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -274,6 +335,8 @@ loader.load(
           
           setTimeout(() => {
             isLoaded = true;
+            stranicaUpaljena = false;
+            animate();
           },2000);
         }, 1000);
       }, 500);
@@ -297,10 +360,23 @@ let cameraPosition = cameraList.length - 1;
 let cameraPositionPrev;
 let firstHitName;
 
+function loginNeeded() {
+  cameraPositionPrev = cameraPosition;
+  cameraPosition = 6;
+  uTranziciji = true;
+  document.body.style.cursor = 'default';
+  transitionLight(cameraPosition, movingLight, mobileOptimization);
+  if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
+    }
+  else
+    transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+}
+
 
 // 🔸 Klik mišem
 function onDocumentClick(event) {
-  if (cameraPosition != 3 && !uTranziciji && cameraPosition != 2) {
+  if (!uTranziciji && !stranicaUpaljena) {
     // *** PROSLJEĐIVANJE 'event' OBJEKTA ***
     firstHitName = getFirstObjectHit(event, window, activeCamera, scene, 7); 
     console.log(firstHitName);
@@ -317,23 +393,33 @@ function onDocumentClick(event) {
         if (djeloviHTML.classList.contains('hidden')) {
             djeloviHTML.classList.remove('hidden');
             djeloviHTML.classList.add('visible'); 
-            document.getElementById("navDjelovi").hidden = false;
+            //document.getElementById("navDjelovi").hidden = false;
         } 
+        stranicaUpaljena = true;
+        unHide("djelovi");
+        enableScroll();
       }, 1250);
     }
-    if (firstHitName.startsWith("login")) {
+    if (firstHitName == "login") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 700);
       transitionTimeout = setTimeout(() => { 
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
             loginHTML.classList.add('visible');
             loginHTML.hidden = false;
-            document.getElementById("google").hidden = false;
-            document.getElementById("github").hidden = false;
+            //document.getElementById("google").hidden = false;
+            //document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
+        stranicaUpaljena = true;
+        unHide("login");
+        //enableScroll();
       }, 700);
     }
+    if (firstHitName.startsWith("loginNeeded")) {
+      loginNeeded();
+    }
+
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     /*transitionTimeout = setTimeout(() => { 
       if (cameraPosition == 4) {
@@ -369,15 +455,23 @@ function onWindowWheel(event) {
       if (event.deltaY < 0) {
         cameraPositionPrev = cameraPosition;
         cameraPosition = cameraPrev(cameraList, cameraPosition);
-        
       } else {
         cameraPositionPrev = cameraPosition;
         cameraPosition = cameraNext(cameraList, cameraPosition);
       }
+        if (cameraPosition == 7) {
+          updateIndicators(1);
+        }
+        if (cameraPosition == 6) {
+          updateIndicators(3); 
+        }
+        if (cameraPosition == 5) {
+          updateIndicators(2);
+        }
       uTranziciji = true;
       document.body.style.cursor = 'default';
       transitionLight(cameraPosition, movingLight, mobileOptimization);
-      if ((cameraPositionPrev == 4 && cameraPosition == 5) || (cameraPositionPrev == 5 && cameraPosition == 4)) {
+      if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
         transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
       }
       else
@@ -385,62 +479,34 @@ function onWindowWheel(event) {
     }
   }
 }
+export function inTransition(){
+  return uTranziciji;
+}
+export function indicatorClick(position){
+  cameraPositionPrev = cameraPosition;
+  if (position == 1) {
+      cameraPosition = 7;
+    }
+  if (position == 3) {
+      cameraPosition = 6;
+    }
+  if (position == 2) {
+      cameraPosition = 5;
+    }
+  uTranziciji = true;
+  document.body.style.cursor = 'default';
+  transitionLight(cameraPosition, movingLight, mobileOptimization);
+  if ((cameraPositionPrev == 5 && cameraPosition == 6) || (cameraPositionPrev == 6 && cameraPosition == 5)) {
+      transitionCamera(activeCamera, cameraList[cameraPosition], 1000);
+    }
+  else
+    transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+}
 
 // 🔸 Tipka "Escape"
 function onKeydownEsc(event) {
-  if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
     if (event.key === "Escape" || event.key === "Esc") {
-      uTranziciji=true;
-      console.log("esc", cameraPosition, uTranziciji);
-      
-      navDjeloviHTML = document.getElementById("navDjelovi");
-
-      console.log(djeloviHTML);
-      console.log(navDjeloviHTML);
-      
-      if (cameraPosition == 4) {
-        cameraPosition = returnToPrevCam(cameraPosition);
-        if (djeloviHTML.classList.contains('visible')) 
-            djeloviHTML.classList.remove('visible');
-            djeloviHTML.classList.add('hidden');
-            document.getElementById("navDjelovi").hidden = true;
-            transitionTimeout = setTimeout(() => {
-            transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
-        }, 1000);
-        }
-      else if (cameraPosition == 3) {
-        cameraPosition = returnToPrevCam(cameraPosition);
-        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-      }
-      else if (cameraPosition == 2) {
-        cameraPosition = returnToPrevCam(cameraPosition);
-        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        if (loginHTML.classList.contains('visible')) {
-            loginHTML.classList.remove('visible');
-            loginHTML.classList.add('hidden');
-            loginHTML.hidden = false;
-            document.getElementById("google").hidden = true;
-            document.getElementById("github").hidden = true;
-        }
-        transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
-        }, 700);
-      }
-        /*transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-        
-      }
-      else{
-      // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-      transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-    }*/
-    }
+      povratak();
   }
 }
 
@@ -490,6 +556,8 @@ function onKeydownQ(event) {
 let lastOnMouseMove;
 function onMouseMove(event) {
   lastOnMouseMove = event;
+  //console.log("hover: ", hoverOn, !uTranziciji, isLoaded);
+  
   if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
     //console.log("hoverd");
@@ -606,7 +674,9 @@ animate(); // Pokreni render petlju
     
     //console.log("animate");
     setTimeout( function() {
-      if (!uTranziciji) {
+      //console.log("animate: ", !uTranziciji, !stranicaUpaljena);
+      
+      if (!uTranziciji && !stranicaUpaljena) {
         if (isLoaded) hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
       }
@@ -705,3 +775,56 @@ if (import.meta.hot) {
     cleanup();
   });
 }
+document.getElementById("backPic").addEventListener("click", () => {
+  povratak();
+});
+
+function povratak(){
+  if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
+      uTranziciji=true;
+      console.log("esc", cameraPosition, uTranziciji);
+      
+      //navDjeloviHTML = document.getElementById("navDjelovi");
+
+      console.log(djeloviHTML);
+      //console.log(navDjeloviHTML);
+      
+      if (cameraPosition == 4) {
+        cameraPosition = returnToPrevCam(cameraPosition);
+        if (djeloviHTML.classList.contains('visible')) 
+            djeloviHTML.classList.remove('visible');
+            djeloviHTML.classList.add('hidden');
+            stranicaUpaljena = false;
+            disableScroll();
+            //document.getElementById("navDjelovi").hidden = true;
+            transitionTimeout = setTimeout(() => {
+            hide("djelovi");
+            transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
+        }, 1000);
+        }
+      else if (cameraPosition == 3) {
+        cameraPosition = returnToPrevCam(cameraPosition);
+        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+      }, 1000);
+      }
+      else if (cameraPosition == 2) {
+        //disableScroll();
+        cameraPosition = returnToPrevCam(cameraPosition);
+        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        if (loginHTML.classList.contains('visible')) {
+            loginHTML.classList.remove('visible');
+            loginHTML.classList.add('hidden');
+            loginHTML.hidden = false;
+            hide("login");
+            //document.getElementById("google").hidden = true;
+            //document.getElementById("github").hidden = true;
+            stranicaUpaljena = false;
+        }
+        transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
+        }, 700);
+      }
+    }
+  }
