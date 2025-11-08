@@ -7,7 +7,7 @@
     /* Koristimo 'truetype' format jer je datoteka .ttf */
     /* Dodajte 'font-display: swap;' za bolji performance ako je potrebno */
 }
-#djelovib{
+#djelovi{
     margin: 0;
     padding: 0;
     z-index: 600;
@@ -119,7 +119,7 @@ header {
     justify-content: space-between;
     align-items: center;
     z-index: 100000;
-    width: 96%;
+    width: 99%;
     /* max-height: 30px;
     min-height: 20px; */
     height: 45px;
