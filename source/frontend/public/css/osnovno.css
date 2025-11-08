@@ -59,9 +59,9 @@ canvas {
 #djelovi {
   /* This transition is key for a smooth fade effect */
   transition: opacity 1s ease-in-out; 
-  /* '1s' is the duration, 'ease-in-out' is the timing function */
-  
-  padding: 20px;
+    margin: 0;
+    padding: 0;
+    z-index: 600;
 }
 
 /* -------------------------------------- */

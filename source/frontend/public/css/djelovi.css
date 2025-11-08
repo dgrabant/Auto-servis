@@ -7,11 +7,6 @@
     /* Koristimo 'truetype' format jer je datoteka .ttf */
     /* Dodajte 'font-display: swap;' za bolji performance ako je potrebno */
 }
-#djelovi{
-    margin: 0;
-    padding: 0;
-    z-index: 600;
-}
 body{
     margin: 0;
     padding: 0;
