@@ -102,6 +102,7 @@ data.categories.forEach(category => {
     });
 });
 // Filtriranje proizvoda po kategoriji
+
 document.getElementById("category-select").addEventListener("change", function() {
     let selectedCategory = this.value;
     let present_pict = document.querySelector(".present_pict");
