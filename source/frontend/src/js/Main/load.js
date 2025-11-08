@@ -535,6 +535,8 @@ function onKeydownQ(event) {
 let lastOnMouseMove;
 function onMouseMove(event) {
   lastOnMouseMove = event;
+  console.log("hover: ", hoverOn, !uTranziciji, isLoaded);
+  
   if (hoverOn && !uTranziciji && isLoaded) {
     hoverOn = false;
     //console.log("hoverd");
