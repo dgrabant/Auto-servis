@@ -653,6 +653,8 @@ animate(); // Pokreni render petlju
     
     //console.log("animate");
     setTimeout( function() {
+      console.log("animate: ", !uTranziciji, !stranicaUpaljena);
+      
       if (!uTranziciji && !stranicaUpaljena) {
         if (isLoaded) hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
