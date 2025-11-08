@@ -83,13 +83,13 @@
     <div id="djelovi" class="hidden">
       <div class="glavni">
     <header>
-        <a href="index.html" class="logo">
+        <a id="logo" href="index.html" class="logo" hidden>
             <img src="./assets/pictures/logo.png"  alt="" class="logo_pic">
         </a>
         <div id="selected" class="selected">Harlemova kocija</div>
         <div class="icons">
         <div class = "back">
-            <a href="index.html">
+            <a id="back" onclick="vrati()" hidden>
                 <img class="back_picture" src="/assets/pictures/back.png" alt="">
             </a>
         </div>
@@ -137,7 +137,7 @@
     </div>
     <footer>
         
-        <div class="sidebar-info">
+        <div id="sidebarInfo" class="sidebar-info" hidden>
             <a class="foot" onclick="kontakt()">Kontakt</a>
             <a class="foot" onclick="RadnoVrijeme()">Radno vrijeme</a>
             <a class="foot" onclick="oNama()">O nama</a>
@@ -180,10 +180,17 @@
     });
 </script>
   <script>
+    import { povratak } from "./src/js/Main/load.js";
     const kontaktHTML = document.getElementById('kontakt');
     const vrijemeHTML = document.getElementById('vrijeme');
     const miHTML = document.getElementById('mi');
     let scrollHeight = document.body.scrollHeight;
+
+    function vrati(){
+      povratak();
+    }
+
+
     function kontakt() {
       scrollHeight = document.body.scrollHeight
       kontaktHTML.hidden = !(kontaktHTML.hidden);

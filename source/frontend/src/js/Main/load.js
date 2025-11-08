@@ -62,7 +62,22 @@ function enableScroll() {
     document.documentElement.style.overflow = '';
 }
 
-
+function hide(stranica){
+  if (stranica == "djelovi") {
+    document.getElementById('logo').hidden = true;
+    document.getElementById('back').hidden = true;
+    document.getElementById('sidebarInfo').hidden = true;
+    document.getElementById('category-select').hidden = true;
+  }
+}
+function unHide(stranica){
+  if (stranica == "djelovi") {
+    document.getElementById('logo').hidden = false;
+    document.getElementById('back').hidden = false;
+    document.getElementById('sidebarInfo').hidden = false;
+    document.getElementById('category-select').hidden = false;
+  }
+}
 
 disableScroll();
 
@@ -361,6 +376,7 @@ function onDocumentClick(event) {
             //document.getElementById("navDjelovi").hidden = false;
         } 
         stranicaUpaljena = true;
+        unHide("djelovi");
         enableScroll();
       }, 1250);
     }
@@ -468,63 +484,8 @@ export function indicatorClick(position){
 
 // 🔸 Tipka "Escape"
 function onKeydownEsc(event) {
-  if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
     if (event.key === "Escape" || event.key === "Esc") {
-      uTranziciji=true;
-      console.log("esc", cameraPosition, uTranziciji);
-      
-      //navDjeloviHTML = document.getElementById("navDjelovi");
-
-      console.log(djeloviHTML);
-      //console.log(navDjeloviHTML);
-      
-      if (cameraPosition == 4) {
-        cameraPosition = returnToPrevCam(cameraPosition);
-        if (djeloviHTML.classList.contains('visible')) 
-            djeloviHTML.classList.remove('visible');
-            djeloviHTML.classList.add('hidden');
-            stranicaUpaljena = false;
-            disableScroll();
-            //document.getElementById("navDjelovi").hidden = true;
-            transitionTimeout = setTimeout(() => {
-            transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
-        }, 1000);
-        }
-      else if (cameraPosition == 3) {
-        cameraPosition = returnToPrevCam(cameraPosition);
-        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-      }
-      else if (cameraPosition == 2) {
-        disableScroll();
-        cameraPosition = returnToPrevCam(cameraPosition);
-        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-        if (loginHTML.classList.contains('visible')) {
-            loginHTML.classList.remove('visible');
-            loginHTML.classList.add('hidden');
-            loginHTML.hidden = false;
-            document.getElementById("google").hidden = true;
-            document.getElementById("github").hidden = true;
-            stranicaUpaljena = false;
-        }
-        transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
-        }, 700);
-      }
-        /*transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-        
-      }
-      else{
-      // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
-      transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
-      }, 1000);
-    }*/
-    }
+      povratak();
   }
 }
 
@@ -790,3 +751,51 @@ if (import.meta.hot) {
   });
 }
 
+export function povratak(){
+  if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
+      uTranziciji=true;
+      console.log("esc", cameraPosition, uTranziciji);
+      
+      //navDjeloviHTML = document.getElementById("navDjelovi");
+
+      console.log(djeloviHTML);
+      //console.log(navDjeloviHTML);
+      
+      if (cameraPosition == 4) {
+        cameraPosition = returnToPrevCam(cameraPosition);
+        if (djeloviHTML.classList.contains('visible')) 
+            djeloviHTML.classList.remove('visible');
+            djeloviHTML.classList.add('hidden');
+            stranicaUpaljena = false;
+            disableScroll();
+            //document.getElementById("navDjelovi").hidden = true;
+            transitionTimeout = setTimeout(() => {
+            hide("djelovi");
+            transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
+        }, 1000);
+        }
+      else if (cameraPosition == 3) {
+        cameraPosition = returnToPrevCam(cameraPosition);
+        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+      }, 1000);
+      }
+      else if (cameraPosition == 2) {
+        disableScroll();
+        cameraPosition = returnToPrevCam(cameraPosition);
+        // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        if (loginHTML.classList.contains('visible')) {
+            loginHTML.classList.remove('visible');
+            loginHTML.classList.add('hidden');
+            loginHTML.hidden = false;
+            document.getElementById("google").hidden = true;
+            document.getElementById("github").hidden = true;
+            stranicaUpaljena = false;
+        }
+        transitionTimeout = setTimeout(() => {
+        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
+        }, 700);
+      }
+    }
+  }

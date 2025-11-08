@@ -16,6 +16,7 @@ categoryLabel.textContent = "Odaberite kategoriju:";
 let categorySelect = document.createElement("select");
 categorySelect.id = "category-select";
 categorySelect.className = "select";
+categorySelect.hidden = true;
 
 // Dodavanje "Sve kategorije" opcije
 let allOption = document.createElement("option");
