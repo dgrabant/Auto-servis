@@ -18,7 +18,7 @@ const texturePathPC = '/assets/textures/background.jpg'; // Putanja do panoramsk
 const texturePathMobile = '/assets/textures/backgroundMobile.jpg';
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
-const djeloviHTML = document.getElementById("djelovi");
+const dijeloviHTML = document.getElementById("dijelovi");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const hudHTML = document.getElementById("hud");
@@ -27,7 +27,7 @@ const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
 const canvasHTML = document.getElementById('bg');
-//let navDjeloviHTML = document.getElementById("navDjelovi");
+//let navDijeloviHTML = document.getElementById("navDijelovi");
 let uTranziciji=true;
 let mobileOptimization;
 let scenePath;
@@ -66,13 +66,14 @@ function enableScroll() {
 }
 
 function hide(stranica){
-  if (stranica == "djelovi") {
+  if (stranica == "dijelovi") {
     document.getElementById('logo').hidden = true;
     document.getElementById('back').hidden = true;
     document.getElementById('sidebarInfo').hidden = true;
     document.getElementById('category-select').hidden = true;
   }
   if (stranica == "login") {
+    document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
     if (checkIfLogedIn()) {
       document.getElementById("logoutGumb").hidden = true;
     }
@@ -82,13 +83,14 @@ function hide(stranica){
   }
 }
 function unHide(stranica){
-  if (stranica == "djelovi") {
+  if (stranica == "dijelovi") {
     document.getElementById('logo').hidden = false;
     document.getElementById('back').hidden = false;
     document.getElementById('sidebarInfo').hidden = false;
     document.getElementById('category-select').hidden = false;
   }
   if (stranica == "login") {
+    document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
     if (checkIfLogedIn()) {
       document.getElementById("logoutGumb").hidden = false;
     }
@@ -218,9 +220,9 @@ console.log("Tip uređaja:", tipUredjaja);
     
 
   }
-  navDjeloviHTML = document.getElementById("navDjelovi");
-  console.log(navDjeloviHTML);
-  djeloviHTML.hidden = true;
+  navDijeloviHTML = document.getElementById("navDijelovi");
+  console.log(navDijeloviHTML);
+  dijeloviHTML.hidden = true;
 };
 */
 
@@ -298,7 +300,7 @@ loader.load(
   
   texturePath,
   (texture) => {
-    loadingText.textContent = 'Loading textures....';
+    loadingText.textContent = 'Učitavanje tekstura...';
     texture.mapping = THREE.EquirectangularReflectionMapping;
     texture.colorSpace = THREE.SRGBColorSpace;
 
@@ -316,7 +318,7 @@ loader.load(
     console.log("Pozadina i refleksije su uspješno postavljene!");
     
     // *** SPREMANJE ID-A TIMERA 1 ***
-      loadingText.textContent = 'Almost done.....';
+      loadingText.textContent = 'Učitavanje...';
       initialLoadTimeout2 = setTimeout(() => {
         activeCamera=cameraList[1];
         renderer.render(scene, activeCamera);
@@ -387,16 +389,16 @@ function onDocumentClick(event) {
     if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
     }
-    if (firstHitName.startsWith("djelovi")) {
+    if (firstHitName.startsWith("djelovi") || firstHitName.startsWith("dijelovi")) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 1240);
       transitionTimeout = setTimeout(() => { 
-        if (djeloviHTML.classList.contains('hidden')) {
-            djeloviHTML.classList.remove('hidden');
-            djeloviHTML.classList.add('visible'); 
-            //document.getElementById("navDjelovi").hidden = false;
+        if (dijeloviHTML.classList.contains('hidden')) {
+            dijeloviHTML.classList.remove('hidden');
+            dijeloviHTML.classList.add('visible'); 
+            //document.getElementById("navDijelovi").hidden = false;
         } 
         stranicaUpaljena = true;
-        unHide("djelovi");
+        unHide("dijelovi");
         enableScroll();
       }, 1250);
     }
@@ -424,10 +426,10 @@ function onDocumentClick(event) {
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
     /*transitionTimeout = setTimeout(() => { 
       if (cameraPosition == 4) {
-        if (djeloviHTML.classList.contains('hidden')) {
-            djeloviHTML.classList.remove('hidden');
-            djeloviHTML.classList.add('visible'); 
-            document.getElementById("navDjelovi").hidden = false;
+        if (dijeloviHTML.classList.contains('hidden')) {
+            dijeloviHTML.classList.remove('hidden');
+            dijeloviHTML.classList.add('visible'); 
+            document.getElementById("navDijelovi").hidden = false;
         } 
       }
       if (cameraPosition == 2) {
@@ -789,21 +791,21 @@ function povratak(){
       uTranziciji=true;
       console.log("esc", cameraPosition, uTranziciji);
       
-      //navDjeloviHTML = document.getElementById("navDjelovi");
+      //navDijeloviHTML = document.getElementById("navDijelovi");
 
-      console.log(djeloviHTML);
-      //console.log(navDjeloviHTML);
+      console.log(dijeloviHTML);
+      //console.log(navDijeloviHTML);
       
       if (cameraPosition == 4) {
         cameraPosition = returnToPrevCam(cameraPosition);
-        if (djeloviHTML.classList.contains('visible')) 
-            djeloviHTML.classList.remove('visible');
-            djeloviHTML.classList.add('hidden');
+        if (dijeloviHTML.classList.contains('visible')) 
+            dijeloviHTML.classList.remove('visible');
+            dijeloviHTML.classList.add('hidden');
             stranicaUpaljena = false;
             disableScroll();
-            //document.getElementById("navDjelovi").hidden = true;
+            //document.getElementById("navDijelovi").hidden = true;
             transitionTimeout = setTimeout(() => {
-            hide("djelovi");
+            hide("dijelovi");
             transitionCamera(activeCamera, cameraList[cameraPosition], 1250);
         }, 1000);
         }

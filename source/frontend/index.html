@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
 
 
-    <link rel="preload" href="/css/djelovi.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="/css/dijelovi.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
     <noscript>
-        <link rel="stylesheet" href="/css/djelovi.css">
+        <link rel="stylesheet" href="/css/dijelovi.css">
     </noscript>
 
 
@@ -15,7 +15,7 @@
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
     <link rel="stylesheet" type="text/css" href="/css/hud.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>projekt_stranica</title>
+    <title>Auto-servis</title>
 
     
   </head>
@@ -31,11 +31,11 @@
     </div>
     
     <div class="content-sections">
-        <h3 id="current-title">Djelovi</h3>
+        <h3 id="current-title">Dijelovi</h3>
     </div>
 
     </div>
-    <div  id="login" class="page-wrapper hidden" hidden >
+    <div id="login" class="page-wrapper hidden" hidden >
       <div class="products">
         <div id="logoutGumb" class="product" hidden>
           <a href="/logout.html" class="login-button logout" hidden>
@@ -61,7 +61,7 @@
        <div class="iconsLogin">
         <div class = "back">
             <a id="backLogin" hidden>
-                <img id="backPicLogin" class="back_picture" src="/assets/pictures/djelovi/back.png" alt="">
+                <img id="backPicLogin" width="32" height="32" class="back_picture" src="/assets/pictures/dijelovi/back.png" alt="">
             </a>
         </div>
                 
@@ -71,7 +71,7 @@
 
     <div id="tutorial" hidden>
       <h1>Ovo je tutorijal, nije gotov jos</h1>
-      <button id="understood" type="button">I Understand</button>
+      <button id="understood" type="button">Razumijem</button>
     </div>
     <form id="performance" hidden>
     <label>
@@ -93,7 +93,7 @@
     <main>
       <div id="loading-screen" hidden>
         <div class="spinner"></div>
-        <div id="loadText" class="loading-text">Downloading random stuf...</div>
+        <div id="loadText" class="loading-text">Učitavanje...</div>
     </div>
     </main>
 
@@ -109,17 +109,17 @@
     
     
     <div id="pozadina"></div>
-    <div id="djelovi" class="hidden">
+    <div id="dijelovi" class="hidden">
       <div class="glavni">
     <header>
         <a id="logo" href="index.html" class="logo" hidden>
-            <img src="./assets/pictures/djelovi/logo.png"  alt="" class="logo_pic">
+            <img src="./assets/pictures/dijelovi/logo.png"  alt="" class="logo_pic">
         </a>
-        <div id="selected" class="selected">Harlemova kocija</div>
+        <div id="selected" class="selected">Harlemova kočija</div>
         <div class="icons">
         <div class = "back">
             <a id="back" hidden>
-                <img id="backPic" class="back_picture" src="/assets/pictures/djelovi/back.png" alt="">
+                <img id="backPic" class="back_picture" src="/assets/pictures/dijelovi/back.png" alt="">
             </a>
         </div>
                 
@@ -137,7 +137,7 @@
             <div class="banner">
                 <p class="baner-txt">Dobar dan, molim vas izaberite nešto iz naše ponude.</p>
                 <div class="image-present">
-                    <img src="/assets/pictures/djelovi/audi.jpg" class="present_pict" alt=""></div>
+                    <img src="/assets/pictures/dijelovi/audi.jpg" class="present_pict" alt=""></div>
             </div>
             <div class="products" id="product-container">
             </div>
@@ -160,9 +160,9 @@
     <div id="mi" class="footclick" hidden>
             <h1>O nama</h1>
             <br>
-            <p>Mi smo mali ovljašteni servis za audi vozija.</p>
+            <p>Mi smo mali ovlašteni servis za Audi vozila.</p>
             <br>
-            <p>Za sad imammo jedan servis u zagrebu.</p>
+            <p>Za sada imamo jedini servis u Zagrebu.</p>
     </div>
     <footer>
         
@@ -187,8 +187,8 @@
     <script type="module" src="./src/js/Main/indicator.js"></script>
 
 
-    <script type="module" src="./src/js/djelovi/main.js"></script>
-    <script type="module" src="./src/js/djelovi/mobSidebar.js"></script>
+    <script type="module" src="./src/js/dijelovi/main.js"></script>
+    <script type="module" src="./src/js/dijelovi/mobSidebar.js"></script>
     <script>
     // Dohvaćamo gumb za Google koristeći njegov ID
     const googleButton = document.getElementById('google');

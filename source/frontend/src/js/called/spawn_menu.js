@@ -9,9 +9,9 @@ const modelData = [
         name: 'login'
     },
     { 
-        path: '/assets/models/djelovi.glb', 
+        path: '/assets/models/dijelovi.glb', 
         position: { x: -5, y: 1.6, z: 0.1 }, 
-        name: 'djelovi'
+        name: 'dijelovi'
     },
     { 
         path: '/assets/models/servis.glb', 
@@ -32,9 +32,9 @@ const modelDataMob = [
         name: 'login'
     },
     { 
-        path: '/assets/models/djelovi_mobitel.glb', 
+        path: '/assets/models/dijelovi_mobitel.glb', 
         position: { x: -5, y: 1.6, z: 0.1 }, 
-        name: 'djelovi'
+        name: 'dijelovi'
     },
     { 
         path: '/assets/models/servis_mobitel.glb', 
@@ -50,7 +50,7 @@ const modelDataMob = [
 let models = [];
 
 export const spawnMultipleModels = (scene, isLogedIn = false, loadingText, mobileOptimization = false) =>{
-  loadingText.textContent = 'Loading main menu....';
+  loadingText.textContent = 'Učitavanje glavnog izbornika....';
   return new Promise(async (resolve, reject) => {
     console.log('Počinje učitavanje više modela sa DRACO kompresijom...');
 

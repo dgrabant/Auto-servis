@@ -70,7 +70,7 @@ export function setupRenderer(scene, renderer, mobileOptimization, pcPerformance
                 mat.side = THREE.DoubleSide; 
 
                 // Uključi dubinu za specifične objekte
-                if (isChildOfSteer || (object.name.toLowerCase().includes('login') || object.name.toLowerCase().includes('djelovi') || object.name.toLowerCase().includes('servis'))) {
+                if (isChildOfSteer || (object.name.toLowerCase().includes('login') || object.name.toLowerCase().includes('dijelovi') || object.name.toLowerCase().includes('servis'))) {
                     mat.depthWrite = true;
                     mat.depthTest = true;
                 }
