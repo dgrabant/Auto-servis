@@ -433,6 +433,7 @@ label {
     content: url("../assets/pictures/back.png");
 }
 .back_picture:hover{
+    cursor: pointer;
     content: url("../assets/pictures/back.gif");
 }
 
