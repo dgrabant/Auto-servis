@@ -418,6 +418,7 @@ function onDocumentClick(event) {
     }
     if (firstHitName.startsWith("loginNeeded")) {
       loginNeeded();
+      updateIndicators(3);
     }
 
     // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
