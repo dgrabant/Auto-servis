@@ -8,7 +8,7 @@ document.getElementById('drop').addEventListener("click", () => {
     let previousText = drop.innerHTML;
 
     // Provjera trenutnog teksta na gumbu
-    if (drop.innerHTML === "Otvori izbornik") {
+    if (!(sidebar.classList.contains("hide"))) {
         // Ako je tekst "Otvori izbornik", promijeni ga na "Zatvori izbornik"
         drop.innerHTML = "Zatvori izbornik";
         
@@ -30,6 +30,8 @@ let scrollHeight = document.body.scrollHeight;
 
 
 document.getElementById('kontakt').addEventListener("click", () => {
+    console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
+    
     scrollHeight = document.body.scrollHeight
     kontaktHTML.hidden = !(kontaktHTML.hidden);
     if (!(vrijemeHTML.hidden)) {
@@ -45,6 +47,7 @@ document.getElementById('kontakt').addEventListener("click", () => {
     });
 }, { once: true });
 document.getElementById('vrijeme').addEventListener("click", () => {
+    console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
     scrollHeight = document.body.scrollHeight
     vrijemeHTML.hidden = !(vrijemeHTML.hidden);
     if (!(kontaktHTML.hidden)) {
@@ -61,6 +64,7 @@ document.getElementById('vrijeme').addEventListener("click", () => {
 }, { once: true });
 
 document.getElementById('mi').addEventListener("click", () => {
+    console.log("klik: ", kontaktHTML, vrijemeHTML, miHTML);
     scrollHeight = document.body.scrollHeight
     miHTML.hidden = !(miHTML.hidden);
     if (!(vrijemeHTML.hidden)) {

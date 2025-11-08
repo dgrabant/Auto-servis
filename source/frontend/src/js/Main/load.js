@@ -10,7 +10,7 @@ import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup
 import { checkIfLogedIn } from '../called/loginCheck.js';
 import { updateIndicators } from './indicator.js';
 
-let stranicaUpaljena = true;
+
 //Putanje do modela i teksture
 const scenePathPC = '/assets/models/audi_scena.glb'; // Putanja do .gltf 3D scene
 const scenePathMoblie = '/assets/models/audi_scena_mobitel.glb';
@@ -34,6 +34,7 @@ let scenePath;
 let texturePath;
 let hoverOn = false;
 let fps;
+let stranicaUpaljena = true;
 const movingLight = new THREE.PointLight(0xffffff, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
@@ -340,7 +341,7 @@ function loginNeeded() {
 
 // 🔸 Klik mišem
 function onDocumentClick(event) {
-  if (cameraPosition != 3 && !uTranziciji && cameraPosition != 2) {
+  if (!uTranziciji && !stranicaUpaljena) {
     // *** PROSLJEĐIVANJE 'event' OBJEKTA ***
     firstHitName = getFirstObjectHit(event, window, activeCamera, scene, 7); 
     console.log(firstHitName);
