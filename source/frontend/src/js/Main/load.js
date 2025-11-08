@@ -9,7 +9,6 @@ import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPre
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
 import { updateIndicators } from './indicator.js';
-import { i } from 'vite/dist/node/chunks/moduleRunnerTransport.js';
 
 
 //Putanje do modela i teksture
