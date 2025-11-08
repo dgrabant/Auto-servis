@@ -94,6 +94,19 @@
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
+.login-button.logout {
+    background-color: #333;
+    align-self: center;
+    padding: 30px;
+    width: 50%;
+}
+
+.login-button.logout:hover {
+    background-color: #c2382c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
 /* Responzivnost */
 @media (max-width: 600px) {
     .login-container {
