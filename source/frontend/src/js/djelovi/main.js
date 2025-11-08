@@ -54,7 +54,7 @@ data.categories.forEach(category => {
 
         let img = document.createElement("img");
         img.className = "slika";
-        img.src = `../../../public/assets/pictures/${product.image}`;
+        img.src = `../../../assets/pictures/${product.image}`;
         img.alt = product.name;
         
         // --- DODAVANJE CIJENE (price) ---
@@ -74,7 +74,7 @@ data.categories.forEach(category => {
         addToCart.className = "add-to-cart";
 
         let cartImg = document.createElement("img");
-        cartImg.src = "../../../public/assets/pictures/cart_proi.png";
+        cartImg.src = "../../../assets/pictures/cart_proi.png";
         cartImg.id = idCounter;
         cartImg.alt = "Dodaj u košaricu";
         cartImg.className = "cart_picture_2";
@@ -111,7 +111,7 @@ document.getElementById("category-select").addEventListener("change", function()
 
     // Postavljanje slike za kategoriju prema odabranoj opciji
     if (selectedCategory === "all") {
-        present_pict.src = "../../../public/assets/pictures/audi.jpg"; // Slika za "Sve kategorije"
+        present_pict.src = "../../../assets/pictures/audi.jpg"; // Slika za "Sve kategorije"
     } else {
         present_pict.src = `pictures/${selectedImage}`; // Slika za odabranu kategoriju
     }
