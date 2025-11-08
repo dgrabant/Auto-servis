@@ -317,6 +317,7 @@ loader.load(
           setTimeout(() => {
             isLoaded = true;
             stranicaUpaljena = false;
+            animate();
           },2000);
         }, 1000);
       }, 500);
