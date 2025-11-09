@@ -46,12 +46,16 @@ function initializeProductListAndFilters() {
     let idCounter = 0;
 
     data.categories.forEach(category => {
+        console.log(category)
         // Provjeravamo ima li proizvoda; 'products' sada ne bi trebao biti null/undefined
         if (category.products && Array.isArray(category.products)) {
             category.products.forEach(product => {
+                
+                console.log(product);
+
                 let productDiv = document.createElement("div");
                 productDiv.className = "product";
-                productDiv.setAttribute("data-name", category.naziv.toLowerCase().replace(/\s+/g, "_"));
+                productDiv.setAttribute("data-name", category.name.toLowerCase().replace(/\s+/g, "_"));
 
                 let imageDiv = document.createElement("div");
                 imageDiv.className = "image";
@@ -101,6 +105,10 @@ function initializeProductListAndFilters() {
                 productDiv.appendChild(descriptionP);
                 
                 container.appendChild(productDiv);
+
+                console.log("CONTAINER:");
+                console.log(container);
+
                 idCounter++;
             });
         }
@@ -143,7 +151,7 @@ function initializeProductListAndFilters() {
 // --- Dohvaćanje podataka s API-ja ---
 
 // Pomoćna funkcija za fetch
-function fetchData(url) {
+async function fetchData(url) {
     return fetch(url, {
         method: "GET",
         headers: {
@@ -161,8 +169,8 @@ function fetchData(url) {
 
 // Koristimo Promise.all da dohvatimo oba seta podataka paralelno
 Promise.all([
-    fetchData("https://auto-servis.onrender.com/api/usluga"),  // Podaci za "Usluge"
-    fetchData("https://auto-servis.onrender.com/api/dijelovi") // Podaci za "Dijelovi"
+    await fetchData("https://auto-servis.onrender.com/api/usluga"),  // Podaci za "Usluge"
+    await fetchData("https://auto-servis.onrender.com/api/dijelovi") // Podaci za "Dijelovi"
 ])
 .then(([uslugeData, dijeloviData]) => {
     // Podaci su stigli
