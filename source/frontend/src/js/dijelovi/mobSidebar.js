@@ -1,5 +1,5 @@
 // Funkcija za prebacivanje vidljivosti bočne trake (sidebar) i promjenu teksta na gumbu
-document.getElementById('drop').addEventListener('click', (event) => {
+/*document.getElementById('drop').addEventListener('click', (event) => {
     // Dohvati elemente za padajući izbornik (drop) i bočnu traku (sidebar)
     let drop = document.getElementById("drop"); 
     let sidebar = document.getElementById("sidebar");
@@ -21,4 +21,4 @@ document.getElementById('drop').addEventListener('click', (event) => {
         // Dodaj klasu 'hide' na sidebar, čineći ga nevidljivim
         sidebar.classList.add("hide");
     }
-    });
+    });*/
