@@ -1,4 +1,4 @@
-const data = {
+let data = {
     "website": "Auto Servis",
     "categories": [
         { 

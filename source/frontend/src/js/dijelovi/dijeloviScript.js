@@ -1,4 +1,4 @@
-/*document.getElementById('category-select').addEventListener('change', function() {
+document.getElementById('category-select').addEventListener('change', function() {
     let selectedCategory = this.value; // Dobijanje izabrane kategorije
     let present_pict = document.querySelector(".present_pict");
     let baner = document.querySelector(".baner-txt");
@@ -32,4 +32,4 @@
             product.classList.add("hide"); // Sakrivanje proizvoda
         }
     });
-});*/
+});

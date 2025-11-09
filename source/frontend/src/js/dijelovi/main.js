@@ -188,65 +188,6 @@ Promise.all([
     // 3. Sada kada je 'data.products' popunjen, pozovi funkciju za generiranje
     initializeProductListAndFilters();
 
-    document.getElementById('category-select').addEventListener('change', function() {
-    let selectedCategory = this.value; // Dobijanje izabrane kategorije
-    let present_pict = document.querySelector(".present_pict");
-    let baner = document.querySelector(".baner-txt");
-    let filterableProducts = document.querySelectorAll(".product");
-
-    // Preuzimanje slike za odabranu kategoriju pomoću data-name atributa
-    let selectedOption = this.options[this.selectedIndex]; // Odabrana opcija
-    let selectedImage = selectedOption.getAttribute('data-name'); // Uzima data-name atribut iz odabrane opcije
-
-    // Ako je odabrana opcija "all", postavi default sliku
-    if (selectedCategory === "all") {
-        present_pict.src = "../../../public/assets/pictures/dijelovi/default_present.jpg";
-    } else {
-        present_pict.src = `../../../public/assets/pictures/dijelovi/${selectedImage}_present.jpg`; // Postavljanje slike iz foldera pictures
-    }
-
-    // Ažuriranje baner teksta
-    if (selectedCategory === "all") {
-        baner.innerHTML = "Dobar dan, molim vas izaberite nešto iz naše ponude.";
-        document.getElementById('selected').innerText = 'Kategorija nije selektirana';
-    } else {
-        baner.innerHTML = `Dobar dan, molim vas izaberite nešto iz naše ponude: ${this.options[this.selectedIndex].text}`;
-        document.getElementById('selected').innerText = this.options[this.selectedIndex].text;
-    }
-
-    // Filtriranje proizvoda
-    filterableProducts.forEach(product => {
-        if (selectedCategory === "all" || product.dataset.name === selectedCategory) {
-            product.classList.remove("hide"); // Prikaz proizvoda
-        } else {
-            product.classList.add("hide"); // Sakrivanje proizvoda
-        }
-    });
-});
-    // Funkcija za prebacivanje vidljivosti bočne trake (sidebar) i promjenu teksta na gumbu
-document.getElementById('drop').addEventListener('click', (event) => {
-    // Dohvati elemente za padajući izbornik (drop) i bočnu traku (sidebar)
-    let drop = document.getElementById("drop"); 
-    let sidebar = document.getElementById("sidebar");
-    console.log("klik: ", sidebar.classList.contains("hide"));
-    // Spremi trenutni tekst na gumbu
-    let previousText = drop.innerHTML;
-
-    // Provjera trenutnog teksta na gumbu
-    if (sidebar.classList.contains("hide")) {
-        // Ako je tekst "Otvori izbornik", promijeni ga na "Zatvori izbornik"
-        drop.innerHTML = "Zatvori izbornik";
-        
-        // Ukloni klasu 'hide' sa sidebar-a, čineći ga vidljivim
-        sidebar.classList.remove("hide");
-    } else {
-        // Ako je tekst već "Zatvori izbornik", promijeni ga natrag na "Otvori izbornik"
-        drop.innerHTML = "Otvori izbornik";
-        
-        // Dodaj klasu 'hide' na sidebar, čineći ga nevidljivim
-        sidebar.classList.add("hide");
-    }
-    });
 })
 .catch(error => {
     // Uhvati greške iz *bilo kojeg* fetch poziva
