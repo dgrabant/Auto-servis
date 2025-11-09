@@ -179,8 +179,6 @@ if (!(checkIfLogedIn()))
   
 
 if (!mobileOptimization){
-
-    disableScroll();
   if (checkIfLogedIn()) {
     forma.hidden = true;
     if (performanceMem == 1) {
@@ -201,6 +199,7 @@ if (!mobileOptimization){
   else
 
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
+  disableScroll();
 }
 else forma.hidden = true;
 // Tek nakon klika nastavljaš s ostatkom:
