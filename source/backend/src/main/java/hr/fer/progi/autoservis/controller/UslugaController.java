@@ -4,13 +4,11 @@ import hr.fer.progi.autoservis.model.Usluga;
 import hr.fer.progi.autoservis.repository.UslugaRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/usluga")
@@ -22,40 +20,29 @@ public class UslugaController {
         this.uslugaRepository = uslugaRepository;
     }
 
-    /*@GetMapping("")
-    public Map<String, Object> getAllServices(){
-        Map<String, Object> servicesDetails = new HashMap<>();
-        servicesDetails.put("status",200);
-
-        List<Usluga> services = servicesService.getAllServices();
-        servicesDetails.put("usluge", services);
-
-        return servicesDetails;
-    }*/
-
     @GetMapping
     public List<Usluga> getAllServices() {
         return uslugaRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usluga> getServiceById(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<Usluga> getServiceById(@PathVariable Integer id) {
         return uslugaRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
-    public Usluga create(@RequestBody Usluga newUsluga) {
-        return uslugaRepository.save(newUsluga);
+    public ResponseEntity<Usluga> createService(@RequestBody Usluga newUsluga, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(uslugaRepository.save(newUsluga));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
     public ResponseEntity<Usluga> updateService(@PathVariable Integer id, @RequestBody Usluga updated, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
         return uslugaRepository.findById(id)
                 .map(existing -> {
                     existing.setNaziv(updated.getNaziv());
@@ -68,11 +55,25 @@ public class UslugaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
     public ResponseEntity<Void> deleteService(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
         if (!uslugaRepository.existsById(id)) return ResponseEntity.notFound().build();
-        uslugaRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+
+        boolean success = false;
+        try{
+            uslugaRepository.deleteById(id);
+            success = true;
+        }
+        catch (Exception ignored){ }
+        return (success?ResponseEntity.ok():ResponseEntity.internalServerError()).build();
+    }
+
+    private boolean CheckAuthority(UserPrincipal userPrincipal){
+        return (userPrincipal!=null);
+    }
+
+    private boolean CheckAuthority(UserPrincipal userPrincipal, String role){
+        return (userPrincipal!=null && Objects.requireNonNull(userPrincipal.getAuthorities().stream().findFirst().orElse(null)).getAuthority().equals(role));
     }
 }

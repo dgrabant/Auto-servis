@@ -10,8 +10,8 @@ public class VrstaVozila {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idVrsta;
 
-    @Column(name="nazivMarke", nullable = false, length = 50)
-    private String nazivMarke;
+    @Column(name="nazivModela", nullable = false, length = 50)
+    private String nazivModela;
 
     @Column(name="opisVrste", nullable = false, length = 100)
     private String opisVrste;
@@ -20,19 +20,20 @@ public class VrstaVozila {
         return idVrsta;
     }
 
-    public String getNazivMarke() {
-        return nazivMarke;
+    public String getNazivModela() {
+        return nazivModela;
     }
-    public void setNazivMarke(String nazivMarke) {
-        if(nazivMarke.isEmpty() || nazivMarke.length()>50) throw new RuntimeException();
-        else this.nazivMarke = nazivMarke;
+    public void setNazivModela(String nazivModela) {
+        if(nazivModela==null) return;
+        if(nazivModela.isEmpty() || nazivModela.length()>50) throw new RuntimeException();
+        else this.nazivModela = nazivModela;
     }
 
     public String getOpisVrste() {
         return opisVrste;
     }
     public void setOpisVrste(String opisVrste) {
-        if(opisVrste.isEmpty() || opisVrste.length()>100) throw new RuntimeException();
+        if(opisVrste.length()>100) throw new RuntimeException();
         else this.opisVrste = opisVrste;
     }
 }

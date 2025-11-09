@@ -4,11 +4,11 @@ import hr.fer.progi.autoservis.model.Dijelovi;
 import hr.fer.progi.autoservis.repository.DijeloviRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/dijelovi")
@@ -20,29 +20,29 @@ public class DijeloviController {
         this.dijeloviRepository = dijeloviRepository;
     }
 
-    @GetMapping("")
+    @GetMapping
     public List<Dijelovi> getAllParts(){
         return dijeloviRepository.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Dijelovi> getPartById(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<Dijelovi> getPartById(@PathVariable Integer id){
         return dijeloviRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
-    public Dijelovi createPart(@RequestBody Dijelovi newPart) {
-        return dijeloviRepository.save(newPart);
+    public ResponseEntity<Dijelovi> createPart(@RequestBody Dijelovi newPart, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
+        return ResponseEntity.ok(dijeloviRepository.save(newPart));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
     public ResponseEntity<Dijelovi> updatePart(@PathVariable Integer id, @RequestBody Dijelovi updated, @AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
         return dijeloviRepository.findById(id)
                 .map(existing -> {
                     existing.setNaziv(updated.getNaziv());
@@ -55,13 +55,25 @@ public class DijeloviController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('RADNIK','UPRAVITELJ','ADMIN')")
     public ResponseEntity<Void> deletePart(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(userPrincipal==null) return ResponseEntity.badRequest().build();
-        if (!dijeloviRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
+            return ResponseEntity.status(401).build();
+        if (!dijeloviRepository.existsById(id)) return ResponseEntity.notFound().build();
+
+        boolean success = false;
+        try{
+            dijeloviRepository.deleteById(id);
+            success = true;
         }
-        dijeloviRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+        catch (Exception ignored){ }
+        return (success?ResponseEntity.ok():ResponseEntity.internalServerError()).build();
+    }
+
+    private boolean CheckAuthority(UserPrincipal userPrincipal){
+        return (userPrincipal!=null);
+    }
+
+    private boolean CheckAuthority(UserPrincipal userPrincipal, String role){
+        return (userPrincipal!=null && Objects.requireNonNull(userPrincipal.getAuthorities().stream().findFirst().orElse(null)).getAuthority().equals(role));
     }
 }
