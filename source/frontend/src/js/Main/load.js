@@ -100,8 +100,6 @@ function unHide(stranica){
   }
 }
 
-disableScroll();
-
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
     loadingScreen.hidden = false;
@@ -181,6 +179,8 @@ if (!(checkIfLogedIn()))
   
 
 if (!mobileOptimization){
+
+    disableScroll();
   if (checkIfLogedIn()) {
     forma.hidden = true;
     if (performanceMem == 1) {
@@ -199,6 +199,7 @@ if (!mobileOptimization){
       }
   }
   else
+
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
 }
 else forma.hidden = true;
