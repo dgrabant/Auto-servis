@@ -9,7 +9,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/korisnik")
@@ -27,6 +30,24 @@ public class KorisnikController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public List<Korisnik> getAllUsers(@AuthenticationPrincipal UserPrincipal userPrincipal){
         return userRepository.findAll();
+    }
+
+    @GetMapping("/about")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Map<String, Object>> getUserById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(userPrincipal==null) return ResponseEntity.badRequest().build();
+
+        Optional<Korisnik> userOptional = userRepository.findById(userPrincipal.getId());
+        if(userOptional.isEmpty()) return ResponseEntity.notFound().build();
+        Korisnik user = userOptional.get();
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("ime", user.getIme());
+        responseMap.put("prezime", user.getPrezime());
+        responseMap.put("email", user.getEmail());
+        responseMap.put("davateljUsluge", user.getDavateljUsluge());
+        responseMap.put("uloga", user.getUloga());
+
+        return ResponseEntity.ok(responseMap);
     }
 
     @GetMapping("/{id}")
