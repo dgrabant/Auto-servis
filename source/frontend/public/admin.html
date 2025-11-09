@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <title>Unos i slanje stavki</title>
+</head>
+<body>
+
+    <div id="app-container">
+        <form id="item-form">
+            <h2>Dodaj novu stavku</h2>
+
+            <div id="drop-zone">
+                Povucite sliku ovdje ili **kliknite za odabir**
+                <div id="image-preview"></div>
+            </div>
+            <input type="file" id="file-input" accept="image/*">
+
+            <div class="form-group">
+                <label for="name">Naziv:</label>
+                <input type="text" id="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Cijena (€):</label>
+                <input type="number" id="price" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Opis:</label>
+                <textarea id="description"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Tip unosa:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" id="type-service" name="item-type" value="usluga" checked>
+                        Usluga
+                    </label>
+                    <label>
+                        <input type="radio" id="type-part" name="item-type" value="dio">
+                        Dio
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" id="add-btn">Dodaj Stavku</button>
+        </form>
+
+        <div id="output-section">
+            <h3>Dodane stavke:</h3>
+            <ul id="item-list">
+                </ul>
+
+            <button id="send-data-btn">Pošalji podatke na Server</button>
+
+            <h3>Status Slanja:</h3>
+            <pre id="post-status" class="status-box">Kliknite na 'Pošalji podatke na Server' za početak slanja.</pre>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURACIJA API ENDPOINTA ---
+        const API_URLS = {
+            dio: "https://auto-servis.onrender.com/api/dijelovi",
+            usluga: "https://auto-servis.onrender.com/api/usluga"
+        };
+        // ------------------------------------
+        
+        // Globalno stanje aplikacije
+        let items = [];
+        let currentFileName = ""; 
+
+        // DOM Elementi
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+        
+        const form = document.getElementById('item-form');
+        const nameInput = document.getElementById('name');
+        const priceInput = document.getElementById('price');
+        const descriptionInput = document.getElementById('description');
+        
+        const itemList = document.getElementById('item-list');
+        const sendDataBtn = document.getElementById('send-data-btn');
+        const postStatus = document.getElementById('post-status');
+
+        // --- Logika za Drag & Drop i odabir datoteke ---
+
+        console.log("Aplikacija pokrenuta. Elementi inicijalizirani.");
+
+        // Logika za klik na Drop Zone
+        dropZone.addEventListener('click', (e) => {
+            console.log("Kliknuto na Drop Zone. Otvara se File Manager.");
+            e.preventDefault(); 
+            fileInput.click();
+        });
+        
+        // Logika kada se datoteka odabere
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            console.log(`Datoteka odabrana preko File Managera: ${file ? file.name : 'Nijedna'}`);
+            handleFile(file);
+        });
+
+        // Logika za Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            // console.log("DragOver aktiviran.");
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            // console.log("DragLeave aktiviran.");
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            console.log(`Datoteka ispuštena u Drop Zone: ${file ? file.name : 'Nijedna'}`);
+            handleFile(file);
+        });
+
+        function handleFile(file) {
+            console.log("Obrada datoteke započeta.");
+            const oldImg = imagePreview.querySelector('img');
+            if (oldImg && oldImg.src.startsWith('blob:')) {
+                URL.revokeObjectURL(oldImg.src);
+            }
+
+            if (file && file.type.startsWith('image/')) {
+                currentFileName = file.name; 
+                const previewUrl = URL.createObjectURL(file);
+                
+                imagePreview.innerHTML = `
+                    <img src="${previewUrl}" alt="Pregled slike">
+                    <p>${currentFileName}</p>
+                `;
+                console.log(`Slika uspješno odabrana. Ime datoteke: ${currentFileName}`);
+            } else {
+                alert("Molimo odaberite valjanu slikovnu datoteku.");
+                currentFileName = "";
+                imagePreview.innerHTML = "";
+                console.warn("Upozorenje: Pokušana je obrada ne-slikovne datoteke ili praznog unosa.");
+            }
+        }
+
+        // --- Logika forme ---
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault(); 
+            console.log("Pokušaj dodavanja nove stavke...");
+
+            const name = nameInput.value;
+            const price = parseFloat(priceInput.value); 
+            const description = descriptionInput.value;
+            const type = document.querySelector('input[name="item-type"]:checked').value;
+
+            if (!name || isNaN(price) || !currentFileName) {
+                console.error("VALIDACIJA NEUSPJELA: Nedostaje naziv, cijena ili slika.");
+                alert("Molimo popunite naziv, ispravnu cijenu i dodajte sliku.");
+                return;
+            }
+            
+            let newItem = {
+                name: name,
+                image: currentFileName, 
+                price: parseFloat(price.toFixed(2)), 
+                description: description,
+                type: type
+            };
+            
+            console.log("Nova stavka kreirana:", newItem);
+
+            items.push(newItem);
+            console.log(`Stavka dodana. Ukupan broj stavki: ${items.length}`);
+            renderItemsList();
+            resetForm();
+        });
+
+        function renderItemsList() {
+            itemList.innerHTML = "";
+            items.forEach(item => {
+                const li = document.createElement('li');
+                const typeText = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+                
+                li.innerHTML = `
+                    <span>${item.name} - ${item.price.toFixed(2)} €</span> 
+                    <span class="item-type">${typeText}</span>
+                `;
+                itemList.appendChild(li);
+            });
+            console.log("Popis stavki na UI-u je osvježen.");
+        }
+
+        function resetForm() {
+            form.reset();
+            const img = imagePreview.querySelector('img');
+            if (img && img.src.startsWith('blob:')) {
+                URL.revokeObjectURL(img.src);
+            }
+            imagePreview.innerHTML = "";
+            currentFileName = "";
+            fileInput.value = null; 
+            document.getElementById('type-service').checked = true;
+            nameInput.focus();
+            console.log("Forma resetirana na početno stanje.");
+        }
+
+        // --- Logika slanja podataka ---
+        
+        async function postItem(item) {
+            const endpoint = API_URLS[item.type];
+            console.log(`Priprema slanja stavke "${item.name}" na endpoint: ${endpoint}`);
+
+            const apiBody = {
+                naziv: item.name,
+                opis: item.description,
+                cijena: item.price,
+                slikaUrl: item.image
+            };
+            
+            console.log("Tijelo POST zahtjeva:", apiBody);
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+                console.error("AUTH ERROR: authToken nije pronađen u localStorage.");
+                return `GREŠKA: [${item.type.toUpperCase()}] "${item.name}". Detalji: AuthToken nije pronađen.`;
+            }
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(apiBody)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error(`API GREŠKA za "${item.name}": Status ${response.status}`, errorText);
+                    throw new Error(`HTTP error! Status: ${response.status}. Detalji: ${errorText.substring(0, 100)}...`);
+                }
+                
+                const data = await response.json();
+                console.log(`API USPJEH za "${item.name}". Odgovor servera:`, data);
+                return `USPJEH: [${item.type.toUpperCase()}] "${item.name}" poslan. (ID: ${data.id || 'N/A'})`;
+
+            } catch (error) {
+                console.error(`FATALNA GREŠKA pri slanju "${item.name}":`, error.message);
+                return `GREŠKA: [${item.type.toUpperCase()}] "${item.name}". Detalji: ${error.message}`;
+            }
+        }
+
+        sendDataBtn.addEventListener('click', async () => {
+            if (items.length === 0) {
+                postStatus.textContent = "Nema dodanih stavki za slanje.";
+                console.warn("KLIK: Nema stavki za slanje. Akcija prekinuta.");
+                return;
+            }
+
+            console.info(`KLIK: Počinje asinkrono slanje ${items.length} stavki...`);
+            postStatus.textContent = `Počinje slanje ${items.length} stavki...`;
+            sendDataBtn.disabled = true;
+            
+            let statusMessages = ["--- Status slanja ---"];
+
+            for (const item of items) {
+                const message = await postItem(item);
+                statusMessages.push(message);
+                postStatus.textContent = statusMessages.join('\n');
+            }
+
+            statusMessages.push("\n--- Slanje završeno ---");
+            postStatus.textContent = statusMessages.join('\n');
+            sendDataBtn.disabled = false;
+            console.info("SLANJE ZAVRŠENO. Gumb otključan.");
+        });
+
+    </script>
+</body>
+</html>

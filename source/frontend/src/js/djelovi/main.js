@@ -61,7 +61,7 @@ data.categories.forEach(category => {
         // --- DODAVANJE CIJENE (price) ---
         let priceTag = document.createElement("span");
         priceTag.className = "price-tag";
-        priceTag.textContent = product.price; // Dohvaća cijenu iz 'data'
+        priceTag.textContent = product.price + " €"; // Dohvaća cijenu iz 'data'
 
         let spanCount = document.createElement("span");
         spanCount.className = "proi-count";
