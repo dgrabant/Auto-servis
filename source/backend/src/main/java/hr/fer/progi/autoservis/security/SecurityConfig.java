@@ -32,7 +32,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/", "/error", "/login/oauth2/code/**","/oauth2/authorization/**","/oauth-redirect").permitAll()
-                    .requestMatchers("/api/**").authenticated()
+                    .requestMatchers("/api/**").permitAll()
                     .anyRequest().permitAll()
             )
             .oauth2Login(oauth2 -> oauth2
