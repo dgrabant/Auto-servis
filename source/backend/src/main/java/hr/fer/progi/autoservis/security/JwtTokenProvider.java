@@ -1,6 +1,6 @@
 package hr.fer.progi.autoservis.security;
 
-import hr.fer.progi.autoservis.model.User;
+import hr.fer.progi.autoservis.model.Korisnik;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -23,8 +23,8 @@ public class JwtTokenProvider {
     @Value("${app.jwt.expiration-ms:86400000}") // 24 sata
     private int jwtExpirationMs;
 
-    public String generateToken(User user) {
-        String subject = String.valueOf(user.getIdKorisnika());
+    public String generateToken(Korisnik user) {
+        String subject = String.valueOf(user.getIdKorisnik());
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
 
@@ -35,12 +35,12 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
-    public Long getUserIdFromToken(String token) {
+    public Integer getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
                 .verifyWith(key())
                 .build().parseSignedClaims(token).getPayload();
 
-        return Long.parseLong(claims.getSubject());
+        return Integer.parseInt(claims.getSubject());
     }
 
     public boolean validateToken(String authToken) {

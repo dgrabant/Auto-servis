@@ -1,6 +1,6 @@
 package hr.fer.progi.autoservis.security;
 
-import hr.fer.progi.autoservis.service.UserService;
+import hr.fer.progi.autoservis.service.KorisnikService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,12 +20,12 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider tokenProvider;
-    private final UserService userService;
+    private final KorisnikService userService;
 
     @Value("${app.oauth.logout-url}")
     String logoutUrl;
 
-    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, UserService userService) {
+    public JwtAuthenticationFilter(JwtTokenProvider tokenProvider, KorisnikService userService) {
         this.tokenProvider = tokenProvider;
         this.userService = userService;
     }
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (jwt != null && tokenProvider.validateToken(jwt)) {
-                Long userId = tokenProvider.getUserIdFromToken(jwt);
+                Integer userId = tokenProvider.getUserIdFromToken(jwt);
 
                 UserDetails userDetails = userService.loadUserById(userId);
 

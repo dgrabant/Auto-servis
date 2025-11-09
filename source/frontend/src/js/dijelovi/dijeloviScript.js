@@ -10,9 +10,9 @@ document.getElementById('category-select').addEventListener('change', function()
 
     // Ako je odabrana opcija "all", postavi default sliku
     if (selectedCategory === "all") {
-        present_pict.src = "../../../public/assets/pictures/djelovi/default_present.jpg";
+        present_pict.src = "../../../public/assets/pictures/dijelovi/default_present.jpg";
     } else {
-        present_pict.src = `../../../public/assets/pictures/djelovi/${selectedImage}_present.jpg`; // Postavljanje slike iz foldera pictures
+        present_pict.src = `../../../public/assets/pictures/dijelovi/${selectedImage}_present.jpg`; // Postavljanje slike iz foldera pictures
     }
 
     // Ažuriranje baner teksta

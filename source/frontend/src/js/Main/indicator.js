@@ -5,11 +5,11 @@ const dots = document.querySelectorAll('.indicator-dot');
 const contentTitle = document.getElementById('current-title');
         
         const sectionData = {
-            1: { title: "Djelovi"},
+            1: { title: "Dijelovi"},
             2: { title: "Servis"},
-            3: { title: "Login"},
-            4: { title: "Login needed"},
-            5: { title: "Account"}
+            3: { title: "Prijava"},
+            4: { title: "Potrebna prijava"},
+            5: { title: "Račun"}
         };
 
         /**

@@ -1,6 +1,6 @@
 package hr.fer.progi.autoservis.security;
 
-import hr.fer.progi.autoservis.model.User;
+import hr.fer.progi.autoservis.model.Korisnik;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,29 +11,29 @@ import java.util.List;
 
 public class UserPrincipal implements UserDetails {
 
-    private final Long id;
+    private final Integer id;
     private final String email;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String email, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Integer id, String email, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.email = email;
         this.authorities = authorities;
     }
 
-    public static UserPrincipal create(User user) {
+    public static UserPrincipal create(Korisnik user) {
         List<GrantedAuthority> authorities = Collections.singletonList(
                 new SimpleGrantedAuthority(user.getUloga())
         );
 
         return new UserPrincipal(
-                user.getIdKorisnika(),
+                user.getIdKorisnik(),
                 user.getEmail(),
                 authorities
         );
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

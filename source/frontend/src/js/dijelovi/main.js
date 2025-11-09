@@ -55,7 +55,7 @@ data.categories.forEach(category => {
 
         let img = document.createElement("img");
         img.className = "slika";
-        img.src = `/assets/pictures/djelovi/${product.image}`;
+        img.src = `/assets/pictures/dijelovi/${product.image}`;
         img.alt = product.name;
         
         // --- DODAVANJE CIJENE (price) ---
@@ -75,7 +75,7 @@ data.categories.forEach(category => {
         addToCart.className = "add-to-cart";
 
         let cartImg = document.createElement("img");
-        cartImg.src = "/assets/pictures/djelovi/cart_proi.png";
+        cartImg.src = "/assets/pictures/dijelovi/cart_proi.png";
         cartImg.id = idCounter;
         cartImg.alt = "Dodaj u košaricu";
         cartImg.className = "cart_picture_2";
@@ -112,9 +112,9 @@ document.getElementById("category-select").addEventListener("change", function()
 
     // Postavljanje slike za kategoriju prema odabranoj opciji
     if (selectedCategory === "all") {
-        present_pict.src = "/assets/pictures/djelovi/audi.jpg"; // Slika za "Sve kategorije"
+        present_pict.src = "/assets/pictures/dijelovi/audi.jpg"; // Slika za "Sve kategorije"
     } else {
-        present_pict.src = `/assets/pictures/djelovi/${selectedImage}`; // Slika za odabranu kategoriju
+        present_pict.src = `/assets/pictures/dijelovi/${selectedImage}`; // Slika za odabranu kategoriju
     }
 
     document.querySelectorAll(".product").forEach(product => {

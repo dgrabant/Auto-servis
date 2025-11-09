@@ -55,7 +55,7 @@ export function cameraPrev(cameraList, cameraPosition) {
 }
 
 export function clickTransition(cameraPosition, firstHitName) {
-  if (firstHitName.startsWith("djelovi")) {
+  if (firstHitName.startsWith("djelovi") || firstHitName.startsWith("dijelovi")) {
     if(hudHTML.classList.contains('visible')) {
       hudHTML.classList.remove('visible');
       hudHTML.classList.add('hidden');
@@ -116,7 +116,7 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
     movingLight.intensity = 2.5;
   }
   else{
-    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName == "servis" || firstHitButtonName.startsWith("login")) {
+    if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName.startsWith("dijelovi") || firstHitButtonName == "servis" || firstHitButtonName.startsWith("login")) {
       movingLight.intensity = 2.5;
       return true;
     }

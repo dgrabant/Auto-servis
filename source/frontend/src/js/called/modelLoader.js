@@ -21,7 +21,7 @@ export const LoadGLTFByPath = (scene, startingModelPath, loadingText) => {
       (xhr) => {
         if (xhr.total) {
           const progress = (xhr.loaded / xhr.total) * 100;
-          loadingText.textContent = `Loading model: ${progress.toFixed(1)}%`;
+          loadingText.textContent = `Učitavanje modela: ${progress.toFixed(1)}%`;
           //console.log(`Loading model: ${progress.toFixed(1)}%`);
         }
       },
@@ -35,7 +35,7 @@ export const LoadGLTFByPath = (scene, startingModelPath, loadingText) => {
 
 
 export const LoadSvjetlaPath = (scene, svjetlaPath, loadingText) => {
-  loadingText.textContent = 'Loading lights....';
+  loadingText.textContent = 'Učitavanje svjetala...';
     return new Promise((resolve, reject) => {
       
       // Create a loader
@@ -74,7 +74,7 @@ export const LoadSvjetlaPath = (scene, svjetlaPath, loadingText) => {
 };
 */
 export const LoadCameraPath = (scene, cameraPath, loadingText) => {
-  loadingText.textContent = 'Loading cameras....';
+  loadingText.textContent = 'Učitavanje kamera....';
     return new Promise((resolve, reject) => {
       
       // Create a loader

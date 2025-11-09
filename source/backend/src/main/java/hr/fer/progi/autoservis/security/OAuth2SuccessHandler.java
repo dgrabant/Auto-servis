@@ -1,7 +1,7 @@
 package hr.fer.progi.autoservis.security;
 
-import hr.fer.progi.autoservis.model.User;
-import hr.fer.progi.autoservis.service.UserService;
+import hr.fer.progi.autoservis.model.Korisnik;
+import hr.fer.progi.autoservis.service.KorisnikService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -16,10 +16,10 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserService userService;
+    private final KorisnikService userService;
     private final String frontendRedirectUrl;
 
-    public OAuth2SuccessHandler(JwtTokenProvider jwtTokenProvider, UserService userService,
+    public OAuth2SuccessHandler(JwtTokenProvider jwtTokenProvider, KorisnikService userService,
                                               @Value("${app.oauth.redirect-url}") String frontendRedirectUrl) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.userService = userService;
@@ -38,7 +38,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         OAuth2User oauthUser = (OAuth2User) authentication.getPrincipal();
 
-        User localUser = userService.processOAuth2User(oauthUser);
+        Korisnik localUser = userService.processOAuth2User(oauthUser);
         String token = jwtTokenProvider.generateToken(localUser);
         String targetUrl = UriComponentsBuilder.fromUriString(finalFrontendUrl)
                 .queryParam("token", token)
