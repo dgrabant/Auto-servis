@@ -46,12 +46,9 @@ function initializeProductListAndFilters() {
     let idCounter = 0;
 
     data.categories.forEach(category => {
-        console.log(category)
         // Provjeravamo ima li proizvoda; 'products' sada ne bi trebao biti null/undefined
         if (category.products && Array.isArray(category.products)) {
             category.products.forEach(product => {
-                
-                console.log(product);
 
                 let productDiv = document.createElement("div");
                 productDiv.className = "product";
@@ -105,9 +102,6 @@ function initializeProductListAndFilters() {
                 productDiv.appendChild(descriptionP);
                 
                 container.appendChild(productDiv);
-
-                console.log("CONTAINER:");
-                console.log(container);
 
                 idCounter++;
             });

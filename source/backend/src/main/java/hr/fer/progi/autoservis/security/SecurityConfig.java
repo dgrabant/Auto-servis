@@ -48,7 +48,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://autoservis-progi.onrender.com", "http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("https://autoservis-progi.onrender.com", "http://localhost:5173", "https://auto-servis-9wc2.onrender.com"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
         configuration.setAllowCredentials(true);
