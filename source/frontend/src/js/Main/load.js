@@ -107,7 +107,7 @@ if (!checkIfLogedIn()) {
     
 
   }
-
+disableScroll();
 
 
 function cekajPotvrdu(idGumba) {
@@ -199,7 +199,7 @@ if (!mobileOptimization){
   else
 
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
-  disableScroll();
+  
 }
 else forma.hidden = true;
 // Tek nakon klika nastavljaš s ostatkom:

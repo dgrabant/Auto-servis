@@ -241,6 +241,28 @@
             dio: "https://auto-servis.onrender.com/api/dijelovi",
             usluga: "https://auto-servis.onrender.com/api/usluga"
         };
+
+        fetch("https://auto-servis.onrender.com/api/korisnik/about", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer "+localStorage.getItem("authToken")
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+                return response.json();
+            })
+        .then(data => {
+            console.log("Response data:", data);
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+        });
+
+        
         // ------------------------------------
         
         // Globalno stanje aplikacije
