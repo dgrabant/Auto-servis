@@ -64,6 +64,30 @@ function enableScroll() {
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
 }
+if (checkIfLogedIn()) {
+  fetch("https://auto-servis.onrender.com/api/korisnik/about", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer "+localStorage.getItem("authToken")
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+                return response.json();
+            })
+        .then(data => {
+            console.log("Response data:", data);
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+        });
+      if (true) {
+        document.getElementById("logo").href = "/admin.html";
+      }
+}
 
 function hide(stranica){
   if (stranica == "dijelovi") {
