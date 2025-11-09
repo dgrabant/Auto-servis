@@ -1,7 +1,7 @@
 package hr.fer.progi.autoservis.service;
 
-import hr.fer.progi.autoservis.model.User;
-import hr.fer.progi.autoservis.repository.UserRepository;
+import hr.fer.progi.autoservis.model.Korisnik;
+import hr.fer.progi.autoservis.repository.KorisnikRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,20 +12,20 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class KorisnikService {
 
-    private final UserRepository userRepository;
+    private final KorisnikRepository korisnikRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public KorisnikService(KorisnikRepository korisnikRepository) {
+        this.korisnikRepository = korisnikRepository;
     }
 
-    public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Korisnik s idKorisnika "+id+" nije pronaden!"));
+    public UserDetails loadUserById(Integer id) {
+        Korisnik user = korisnikRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Korisnik s idKorisnika "+id+" nije pronaden!"));
         return UserPrincipal.create(user);
     }
 
-    public User processOAuth2User(OAuth2User oauthUser) {
+    public Korisnik processOAuth2User(OAuth2User oauthUser) {
         Map<String, Object> attributes = oauthUser.getAttributes();
 
         String email = getEmailFromAttributes(attributes);
@@ -37,8 +37,8 @@ public class UserService {
             throw new RuntimeException("Email nije pronaden kod korisnika!");
         }
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        User user;
+        Optional<Korisnik> userOptional = korisnikRepository.findByEmail(email);
+        Korisnik user;
 
         if (userOptional.isPresent()) {
             user = userOptional.get();
@@ -46,7 +46,7 @@ public class UserService {
             user.setPrezime(lastname);
             user.setDavateljUsluge(getProviderFromAttributes(attributes));
         } else {
-            user = new User();
+            user = new Korisnik();
             user.setEmail(email);
             user.setIme(firstname);
             user.setPrezime(lastname);
@@ -54,11 +54,11 @@ public class UserService {
             user.setUloga("KORISNIK");
         }
 
-        return userRepository.save(user);
+        return korisnikRepository.save(user);
     }
 
-    public User getUserById(Long id){
-        return userRepository.findById(id).orElseThrow(()->new RuntimeException("Korisnik (idKorisnika "+id+") je pronaden preko tokena, ali ne postoji u bazi podataka!"));
+    public Korisnik getUserById(Integer id){
+        return korisnikRepository.findById(id).orElseThrow(()->new RuntimeException("Korisnik (idKorisnika "+id+") je pronaden preko tokena, ali ne postoji u bazi podataka!"));
     }
 
     private String getEmailFromAttributes(Map<String, Object> attributes) {
