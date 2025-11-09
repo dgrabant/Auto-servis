@@ -51,7 +51,7 @@ function initializeProductListAndFilters() {
             category.products.forEach(product => {
                 let productDiv = document.createElement("div");
                 productDiv.className = "product";
-                productDiv.setAttribute("data-name", category.name.toLowerCase().replace(/\s+/g, "_"));
+                productDiv.setAttribute("data-name", category.naziv.toLowerCase().replace(/\s+/g, "_"));
 
                 let imageDiv = document.createElement("div");
                 imageDiv.className = "image";
@@ -59,12 +59,12 @@ function initializeProductListAndFilters() {
                 let img = document.createElement("img");
                 img.className = "slika";
                 // Prilagodite putanju ako je potrebno, npr. ako API ne vraća punu putanju
-                img.src = product.image.startsWith('http') ? product.image : `/assets/pictures/dijelovi/${product.image}`;
-                img.alt = product.name;
+                img.src = product.slikaUrl.startsWith('http') ? product.slikaUrl : `/assets/pictures/dijelovi/${product.slikaUrl}`;
+                img.alt = product.naziv;
                 
                 let priceTag = document.createElement("span");
                 priceTag.className = "price-tag";
-                priceTag.textContent = product.price + " €";
+                priceTag.textContent = product.cijena + " €";
 
                 let spanCount = document.createElement("span");
                 spanCount.className = "proi-count";
@@ -86,13 +86,13 @@ function initializeProductListAndFilters() {
                 addToCart.appendChild(cartImg);
 
                 let productName = document.createElement("h3");
-                productName.textContent = product.name;
+                productName.textContent = product.naziv;
                 let productClass = document.createElement("h4");
                 productClass.textContent = category.name_disp;
                 
                 let descriptionP = document.createElement("p");
                 descriptionP.className = "description";
-                descriptionP.textContent = product.description;
+                descriptionP.textContent = product.opis;
 
                 productDiv.appendChild(imageDiv);
                 productDiv.appendChild(addToCart);
