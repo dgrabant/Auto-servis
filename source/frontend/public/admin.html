@@ -3,9 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/css/login.css">
     <title>Unos i slanje stavki</title>
 </head>
+<style>
+     body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #app-container {
+            max-width: 700px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        #item-form {
+            padding: 25px;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2, h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        /* --- Drag and Drop Zona --- */
+        #drop-zone {
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            background: #fafdff;
+            color: #007bff;
+            margin-bottom: 20px;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        #drop-zone.dragover {
+            background-color: #e6f2ff;
+            border-color: #0056b3;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        #image-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            object-fit: cover;
+        }
+        #image-preview p {
+            font-size: 0.9em;
+            color: #555;
+            word-break: break-all;
+        }
+
+        /* --- Polja za unos --- */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        /* --- Gumbi --- */
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+
+        #add-btn {
+            background-color: #28a745;
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #add-btn:hover {
+            background-color: #218838;
+        }
+
+        #send-data-btn {
+            background-color: #007bff;
+            color: white;
+            display: block;
+            width: calc(100% - 50px);
+            margin: 25px;
+        }
+        #send-data-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* --- Izlaz i Status --- */
+        #output-section {
+            padding: 25px;
+        }
+
+        #item-list {
+            list-style-type: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        #item-list li {
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .item-type {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .status-box {
+            background: #2c3e50;
+            color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: "Courier New", Courier, monospace;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+</style>
 <body>
 
     <div id="app-container">
