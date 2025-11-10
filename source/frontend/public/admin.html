@@ -181,7 +181,7 @@
 </style>
 <body>
 
-    <div id="app-container">
+    <div id="app-container" hidden>
         <form id="item-form">
             <h2>Dodaj novu stavku</h2>
 
@@ -241,6 +241,9 @@
             dio: "https://auto-servis.onrender.com/api/dijelovi",
             usluga: "https://auto-servis.onrender.com/api/usluga"
         };
+        const REDIRECT_PAGE = '/index.html'; 
+            
+
 
         fetch("https://auto-servis.onrender.com/api/korisnik/about", {
         method: "GET",
@@ -256,10 +259,17 @@
                 return response.json();
             })
         .then(data => {
-            console.log("Response data:", data);
+            console.log("Response data:", data.uloga);
+            if (data.uloga != "ADMIN") {
+                document.getElementById("app-container").hidden = false;
+            }
+            else{
+                window.location.href = REDIRECT_PAGE;
+            }
         })
         .catch(error => {
             console.error("Fetch error:", error);
+            window.location.href = REDIRECT_PAGE;
         });
 
         

@@ -64,8 +64,10 @@ function enableScroll() {
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
 }
-if (checkIfLogedIn()) {
-  fetch("https://auto-servis.onrender.com/api/korisnik/about", {
+function provjera() {
+  return new Promise(resolve => {
+    loadingText.textContent = 'Čeka se odgovor servera...';
+    fetch("https://auto-servis.onrender.com/api/korisnik/about", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -76,17 +78,20 @@ if (checkIfLogedIn()) {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-                return response.json();
+            resolve();
             })
         .then(data => {
             console.log("Response data:", data);
+            if (truedata.uloga != "ADMIN") {
+              document.getElementById("logo").href = "/admin.html";
+            }
+            resolve();
         })
         .catch(error => {
             console.error("Fetch error:", error);
+            resolve();
         });
-      if (true) {
-        document.getElementById("logo").href = "/admin.html";
-      }
+  });
 }
 
 function hide(stranica){
@@ -226,6 +231,8 @@ if (!mobileOptimization){
   
 }
 else forma.hidden = true;
+
+await provjera();
 // Tek nakon klika nastavljaš s ostatkom:
 console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
 
