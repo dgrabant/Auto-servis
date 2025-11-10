@@ -883,7 +883,7 @@ function povratak(){
         // Ovdje možete dodati funkcije koje želite pokrenuti, npr.:
         // updateIndicators();
         // provjera();
-        animate();
+        window.location.href = 'https://autoservis-progi.onrender.com/';
 
     } else {
         // Stranica se učitava na uobičajeni način (prvi put, ili tvrdim reloadom)
