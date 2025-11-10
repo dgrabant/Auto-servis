@@ -94,7 +94,7 @@ function provjera() {
         });
   });
 }
-
+//const data = await response.json();
 function hide(stranica){
   if (stranica == "dijelovi") {
     document.getElementById('logo').hidden = true;
@@ -872,3 +872,21 @@ function povratak(){
       }
     }
   }
+
+  window.addEventListener('pageshow', function(event) {
+    // Svojstvo 'persisted' je true ako je stranica učitana iz bfcache memorije.
+    if (event.persisted) {
+        // --- KOD KOJI SE IZVRŠAVA NAKON KLIKA NA 'NAZAD' ---
+        
+        console.log('Stranica je učitana iz bfcache (korisnik se vratio sa "Nazad" gumbom)!');
+        
+        // Ovdje možete dodati funkcije koje želite pokrenuti, npr.:
+        // updateIndicators();
+        // provjera();
+        animate();
+
+    } else {
+        // Stranica se učitava na uobičajeni način (prvi put, ili tvrdim reloadom)
+        console.log('Stranica je učitana prvi put ili nakon klasičnog reloada.');
+    }
+});
