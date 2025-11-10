@@ -144,8 +144,6 @@ function cekajPotvrdu(idGumba) {
     document.getElementById(idGumba).addEventListener("click", () => {
       forma.hidden = false
       tutorial.hidden = true;
-      document.getElementById("logo_pic").src = "/assets/pictures/dijelovi/logo.png";
-      document.getElementById("backPic").src = "/assets/pictures/dijelovi/back.png";
       resolve();
     }, { once: true });
   });
@@ -207,8 +205,6 @@ function cekajKlik(idGumba) {
 const tipUredjaja = provjeriUredjaj();
 if (!(checkIfLogedIn())) 
   await cekajPotvrdu("understood");
-  
-
 if (!mobileOptimization){
   if (checkIfLogedIn()) {
     forma.hidden = true;
@@ -234,7 +230,13 @@ if (!mobileOptimization){
 }
 else forma.hidden = true;
 
+document.getElementById("logo_pic").src = "/assets/pictures/dijelovi/logo.gif";
+document.getElementById("backPic").src = "/assets/pictures/dijelovi/back.gif";
+
 await provjera();
+
+document.getElementById("logo_pic").src = "/assets/pictures/dijelovi/logo.png";
+document.getElementById("backPic").src = "/assets/pictures/dijelovi/back.png";
 // Tek nakon klika nastavljaš s ostatkom:
 console.log("Kliknuto — pokrećem učitavanje Three.js scene...");
 
