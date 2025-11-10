@@ -144,6 +144,8 @@ function cekajPotvrdu(idGumba) {
     document.getElementById(idGumba).addEventListener("click", () => {
       forma.hidden = false
       tutorial.hidden = true;
+      document.getElementById("logo_pic").src = "/assets/pictures/dijelovi/logo.png";
+      document.getElementById("backPic").src = "/assets/pictures/dijelovi/back.png";
       resolve();
     }, { once: true });
   });
