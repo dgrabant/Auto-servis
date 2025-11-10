@@ -118,13 +118,13 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
   }
   else{
     if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName.startsWith("dijelovi") || firstHitButtonName == "servis" || firstHitButtonName.startsWith("login")) {
-      movingLight.intensity = 2.5;
-      movingLight.color.set(0xffffff);
+      movingLight.intensity = 2;
+      movingLight.color.set(0x38bff8);
       return true;
     }
     else{
-      movingLight.intensity = 1.7;
-      movingLight.color.set(0x38bff8);
+      movingLight.intensity = 2.5;
+      movingLight.color.set(0xffffff);
       return false;
     }
   }
@@ -132,8 +132,8 @@ export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false
 
 export function transitionLight(cameraPosition, movingLight, mobileOptimization){
   if (!mobileOptimization) {
-    movingLight.intensity = 1.7;
-    movingLight.color.set(0x38bff8);
+    movingLight.intensity = 2.5;
+    movingLight.color.set(0xffffff);
   }
   if (cameraPosition == 7){
     movingLight.position.set(-4.654, 2.003, 0.1);

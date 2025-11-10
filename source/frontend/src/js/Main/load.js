@@ -327,8 +327,8 @@ scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
 if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
-movingLight.intensity = 1.7;
-movingLight.color.set(0x38bff8);
+movingLight.intensity = 2.5;
+movingLight.color.set(0xffffff);
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
