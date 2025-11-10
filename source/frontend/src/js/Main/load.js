@@ -35,7 +35,7 @@ let texturePath;
 let hoverOn = false;
 let fps;
 let stranicaUpaljena = true;
-const movingLight = new THREE.PointLight(0xffffff, 50, 0);
+const movingLight = new THREE.PointLight(0x38bff8, 50, 0);
 movingLight.position.set(-4.5, 1.6, 0.1);
 const maxFps = 60;//za animacije
 const fpsPC = 30;
@@ -328,7 +328,7 @@ renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
 if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
 movingLight.intensity = 1.7;
-movingLight.color.set('#38bff8');
+movingLight.color.set(0x38bff8);
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
