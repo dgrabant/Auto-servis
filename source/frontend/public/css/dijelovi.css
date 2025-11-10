@@ -17,7 +17,7 @@ body{
     width: 100%;
     min-height: 100vh;
     background-color: #14364200;
-    background-image: url(../assets/pictures/background.jpg);
+    background-image: url(../assets/pictures/dijelovi/background.jpg);
 
     background-size:cover;
 
@@ -188,10 +188,10 @@ header {
     margin-bottom: 25%;
     margin-left: 10%;
     margin-right: 10%;
-    content: url("../assets/pictures/cart_proi.png");
+    content: url("../assets/pictures/dijelovi/cart_proi.png");
 }
 .cart_picture_2:hover{
-    content: url("../assets/pictures/cart_proi.gif");
+    content: url("../assets/pictures/dijelovi/cart_proi.gif");
 }
 .cart_picture_2:active{
     animation: growShrink 0.2s;
@@ -430,18 +430,18 @@ label {
     display: block;
 }
 .back_picture{
-    content: url("../assets/pictures/back.png");
+    content: url("../assets/pictures/dijelovi/back.png");
 }
 .back_picture:hover{
     cursor: pointer;
-    content: url("../assets/pictures/back.gif");
+    content: url("../assets/pictures/dijelovi/back.gif");
 }
 
 .logo_pic{
-    content: url("../assets/pictures/logo.png");
+    content: url("../assets/pictures/dijelovi/logo.png");
 }
 .logo_pic:hover{
-    content: url("../assets/pictures/logo.gif");
+    content: url("../assets/pictures/dijelovi/logo.gif");
 }
 
 .logo_pic{
