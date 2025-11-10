@@ -114,15 +114,18 @@ export function returnToPrevCam(cameraPosition) {
 export function lightUpModel(firstHitButtonName, movingLight, lightUpAll = false){
   if (lightUpAll) {
     movingLight.intensity = 2.5;
+    movingLight.color.set('white');
   }
   else{
     if (firstHitButtonName.startsWith("djelovi") || firstHitButtonName.startsWith("dijelovi") || firstHitButtonName == "servis" || firstHitButtonName.startsWith("login")) {
       movingLight.intensity = 2.5;
+      movingLight.color.set('white');
       return true;
     }
     else{
       
-      movingLight.intensity = 0;
+      movingLight.intensity = 1.7;
+      movingLight.color.set('#38bff8');
       return false;
     }
   }

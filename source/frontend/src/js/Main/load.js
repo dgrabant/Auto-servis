@@ -327,7 +327,8 @@ scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
 if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
-movingLight.intensity = 2.5;
+movingLight.intensity = 1.7;
+movingLight.color.set('#38bff8');
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
@@ -715,7 +716,7 @@ animate(); // Pokreni render petlju
       //console.log("animate: ", !uTranziciji, !stranicaUpaljena);
       
       if (!uTranziciji && !stranicaUpaljena) {
-        if (isLoaded) hoverOn = true;
+        hoverOn = true;
         animationFrameId = requestAnimationFrame(animate); 
       }
       }, 1000 / fps );
