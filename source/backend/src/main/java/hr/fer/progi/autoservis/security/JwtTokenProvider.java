@@ -44,11 +44,11 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String authToken) {
+        logger.debug(authToken);
         try {
             Jwts.parser().verifyWith(key()).build().parse(authToken);
             return true;
-        } catch (MalformedJwtException ex) {
-            logger.error("Neispravan JWT token");
+        } catch (MalformedJwtException ignored) {
         } catch (ExpiredJwtException ex) {
             logger.error("JWT token je istekao");
         } catch (UnsupportedJwtException ex) {
