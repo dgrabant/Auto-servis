@@ -82,7 +82,7 @@ function provjera() {
             })
         .then(data => {
             console.log("Response data:", data);
-            if (truedata.uloga != "ADMIN") {
+            if (data.uloga == "ADMIN") {
               document.getElementById("logo").href = "/admin.html";
             }
             resolve();

@@ -260,7 +260,7 @@
             })
         .then(data => {
             console.log("Response data:", data.uloga);
-            if (data.uloga != "ADMIN") {
+            if (data.uloga == "ADMIN") {
                 document.getElementById("app-container").hidden = false;
             }
             else{
