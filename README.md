@@ -7,12 +7,31 @@ Cilj ovog projekta je razviti aplikaciju koja olakšava i prati rad auto servisa
 > Razvojem ovog projekta, tim je ostvario bolje razumijevanje stvarnoga svijeta, kao i naprdak svojih inženjerskih sposobnostima u svim mogućim aspektima.
 
 # Funkcijski zahtjevi
-> Navedite ključne zahtjeve Vašeg projekta.
+> Sustav mora omogućiti registraciju i prijavu korisnika putem vanjskog OAuth2 servisa (npr. Google, Microsoft), bez potrebe za lokalnom lozinkom.
+
+Registrirani korisnik mora moći unijeti osnovne podatke o vozilu, uključujući marku, model, godinu, registraciju i opis problema.
+
+Korisnik mora moći pregledati slobodne termine za servis, rezervirati termin i po potrebi zamjensko vozilo, uz automatsko slanje potvrde e-mailom.
+
+Sustav mora automatski generirati PDF obrazac prilikom predaje i preuzimanja vozila, koji sadrži potpise korisnika i servisera.
+
+Sustav mora omogućiti pregled statistike o radu servisa (broj zaprimljenih vozila, trajanje popravaka, zauzeće zamjenskih vozila) te izvoz podataka u PDF, XML i XLSX formatu.
+
+Aplikacija mora imati responzivan dizajn prilagođen različitim uređajima (računalo, tablet, mobitel) i prikazivati lokaciju servisa putem Google Maps servisa.
 
 
 # Tehnologije
 
-#Instalcija
+Node.JS za pokretanje front enda ( + three.js)
+Docker, Spring Boot (Java) za pokretanje back enda
+Render.com poslužitelj servisa
+Postgres baza podataka (SQL)
+OAuth2 servis za autorizaciju
+
+VS Code za razvoj front enda
+IntelliJ IDEA za razvoj back enda
+Blender, Three.js - za 3D modele
+
 # Članovi tima
 [Grabant	David](https://github.com/dgrabant) <br>
 [Nell	Dora](https://github.com/Doraa10) <br>
