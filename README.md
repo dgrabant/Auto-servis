@@ -1,5 +1,7 @@
 # Auto servis Web App
 
+>napomena: početna verzija README, sklona učestalim promjenama, projekt je u tijeku izrade
+
 # Opis projekta
 Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
 
@@ -7,7 +9,7 @@ Cilj ovog projekta je razviti aplikaciju koja olakšava i prati rad auto servisa
 > Razvojem ovog projekta, tim je ostvario bolje razumijevanje stvarnoga svijeta, kao i naprdak svojih inženjerskih sposobnostima u svim mogućim aspektima.
 
 # Funkcijski zahtjevi
-> Sustav mora omogućiti registraciju i prijavu korisnika putem vanjskog OAuth2 servisa (npr. Google, Microsoft), bez potrebe za lokalnom lozinkom.
+Sustav mora omogućiti registraciju i prijavu korisnika putem vanjskog OAuth2 servisa (npr. Google, Microsoft), bez potrebe za lokalnom lozinkom.
 
 Registrirani korisnik mora moći unijeti osnovne podatke o vozilu, uključujući marku, model, godinu, registraciju i opis problema.
 
@@ -23,14 +25,21 @@ Aplikacija mora imati responzivan dizajn prilagođen različitim uređajima (ra�
 # Tehnologije
 
 Node.JS za pokretanje front enda ( + three.js)
+
 Docker, Spring Boot (Java) za pokretanje back enda
+
 Render.com poslužitelj servisa
+
 Postgres baza podataka (SQL)
+
 OAuth2 servis za autorizaciju
 
 VS Code za razvoj front enda
+
 IntelliJ IDEA za razvoj back enda
+
 Blender, Three.js - za 3D modele
+
 
 # Članovi tima
 [Grabant	David](https://github.com/dgrabant) <br>
