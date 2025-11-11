@@ -575,7 +575,7 @@ option:hover {
         margin-left: 0;
     }
     header{
-        width: 80%;
+        width: 96%;
         margin: 0 2%;
         margin-top: 10px;
         border-radius: 30px;
@@ -583,7 +583,7 @@ option:hover {
     }
 
     .footer{
-        width: 80%;
+        width: 96%;
         margin-top: 10px;
         border-radius: 30px;
         border-bottom-right-radius: 30px;
