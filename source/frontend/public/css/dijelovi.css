@@ -576,7 +576,7 @@ option:hover {
     }
     header{
         width: 80%;
-        margin: 0 auto;
+        margin: 0 2%;
         margin-top: 10px;
         border-radius: 30px;
         border-bottom-right-radius: 30px;
@@ -587,7 +587,7 @@ option:hover {
         margin-top: 10px;
         border-radius: 30px;
         border-bottom-right-radius: 30px;
-        margin: 0 auto;
+        margin: 0 2%;
     }
     .sidebar.hide{
         display: none;
