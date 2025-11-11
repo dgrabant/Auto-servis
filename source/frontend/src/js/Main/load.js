@@ -327,9 +327,12 @@ await LoadSvjetlaPath(scene, svjetlaPath, loadingText)
 scene.add(movingLight);
 renderer = setupRenderer(scene, renderer, mobileOptimization, pcPerformance);
 
-if (mobileOptimization || pcPerformance) movingLight.castShadow = false;
-movingLight.intensity = 1.7;
-movingLight.color.set(0x38bff8);
+if (mobileOptimization || pcPerformance) {
+  movingLight.castShadow = false;
+  movingLight.color.set(0xffffff);
+}
+movingLight.intensity = 2.5;
+
 // 🔹 Učitavanje HDRI pozadine i refleksije
 const loader = new THREE.TextureLoader();
 
