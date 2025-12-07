@@ -228,6 +228,8 @@ if (!(checkIfLogedIn()))
 if (!mobileOptimization){
   if (checkIfLogedIn()) {
     forma.hidden = true;
+    loadingScreen.hidden = false;
+    loadingScreen.style.display = 'flex'
     if (performanceMem == 1) {
         pcPerformance = true;
         texturePath = texturePathMobile;

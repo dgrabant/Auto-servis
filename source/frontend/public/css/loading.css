@@ -22,7 +22,6 @@
     .scene-container {
         position: relative;
         width: 100%;
-        max-width: 600px;
         height: 180px;
         overflow: hidden;
         /* Perspektiva za bolji 3D osjećaj */
