@@ -291,18 +291,25 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Ime korisnika:</label>
-                        <input type="text" id="user-name" required maxlength="">
+                        <input type="text" id="user-name" required maxlength="50">
                     </div>
                     <div class="form-group">
                         <label>Prezime korisnika:</label>
-                        <input type="text" id="user-surname" required maxlength="">
+                        <input type="text" id="user-surname" required maxlength="50">
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Email:</label>
-                        <input type="email" id="user-email" required>
+                        <input type="email" id="user-email" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Davatelj usluge:</label>
+                        <select id="davUsluge">
+                            <option value="google">Google</option>
+                            <option value="github">Github</option>
+                        </select>
                     </div>
                 </div>
 
@@ -705,10 +712,11 @@
             e.preventDefault();
 
             const newUser = {
-                name: document.getElementById('user-name').value,
-                surname: document.getElementById('user-surname').value,
+                ime: document.getElementById('user-name').value,
+                prezime: document.getElementById('user-surname').value,
                 email: document.getElementById('user-email').value,
                 password: document.getElementById('user-password').value,
+                davateljUsluge: document.getElementById('davUsluge').value,
                 uloga: document.getElementById('user-role').value
             };
 
