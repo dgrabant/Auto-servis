@@ -5,7 +5,7 @@
     z-index: 100;
     background: linear-gradient(135deg, #d80303d2, #030303, #00D4FF, #d0e9f4);
 
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;

@@ -130,10 +130,13 @@ function unHide(stranica){
 
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
+    tutorial.style.display = 'flex'
     loadingScreen.hidden = false;
     console.log("maknut hidden");
-    
-
+  }
+  else{
+    loadingScreen.hidden = false;
+    loadingScreen.style.display = 'flex'
   }
 disableScroll();
 function provjeriUredjaj() {
@@ -606,7 +609,7 @@ function onKeydownE(event) {
 // 🔸 UI Izbornik - Tipka "Q"
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
-    //localStorage.setItem('authToken', "proba");
+    localStorage.setItem('authToken', "proba");
     console.log("token dodan");
     
     renderer.render(scene, activeCamera);
