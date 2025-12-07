@@ -613,10 +613,8 @@ function onKeydownE(event) {
 // 🔸 UI Izbornik - Tipka "Q"
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
-    localStorage.setItem('authToken', "proba");
-    console.log("token dodan");
-    
-    renderer.render(scene, activeCamera);
+    //localStorage.setItem('authToken', "proba");
+    //console.log("token dodan");
   }
 }
 let lastOnMouseMove;
