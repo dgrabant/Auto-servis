@@ -314,13 +314,13 @@
                 data.forEach(part => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${part.id}</td>
+                        <td>${part.idDijela}</td>
                         <td><strong>${part.naziv}</strong></td>
                         <td>${part.cijena} €</td>
                         <td>${part.slikaUrl ? 'Da' : 'Ne'}</td>
                         <td class="action-cell">
-                            <button class="btn-sm btn-edit" onclick="preparePartEdit(${part.id})">Uredi</button>
-                            <button class="btn-sm btn-delete" onclick="deletePart(${part.id})">Obriši</button>
+                            <button class="btn-sm btn-edit" onclick="preparePartEdit(${part.idDijela})">Uredi</button>
+                            <button class="btn-sm btn-delete" onclick="deletePart(${part.idDijela})">Obriši</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -362,13 +362,13 @@
             fetch(`${API_BASE}/dijelovi/${id}`, { headers: getAuthHeaders() })
             .then(res => res.json())
             .then(part => {
-                document.getElementById('part-id').value = part.id;
+                document.getElementById('part-id').value = part.idDijela;
                 document.getElementById('part-name').value = part.naziv;
                 document.getElementById('part-price').value = part.cijena;
                 document.getElementById('part-desc').value = part.opis || "";
                 document.getElementById('part-image').value = part.slikaUrl || "";
                 
-                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${part.id}`;
+                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${part.idDijela}`;
                 document.getElementById('part-save-btn').textContent = "Spremi izmjene";
                 document.getElementById('part-save-btn').style.backgroundColor = "#f1c40f";
                 document.getElementById('part-save-btn').style.color = "black";
@@ -422,17 +422,17 @@
                     const roleParam = isAdm ? 'USER' : 'ADMIN';
 
                     tr.innerHTML = `
-                        <td>${user.id}</td>
+                        <td>${user.idKorisnik}</td>
                         <td>
                             <strong>${user.username || 'No Name'}</strong><br>
                             <small>${user.email || ''}</small>
                         </td>
                         <td style="color:${roleColor}; font-weight:bold;">${user.uloga}</td>
                         <td class="action-cell">
-                             <button class="btn-sm btn-role" onclick="toggleUserRole(${user.id}, '${roleParam}')">
+                             <button class="btn-sm btn-role" onclick="toggleUserRole(${user.idKorisnik}, '${roleParam}')">
                                 ${toggleLabel}
                             </button>
-                            <button class="btn-sm btn-delete" onclick="deleteUser(${user.id})">
+                            <button class="btn-sm btn-delete" onclick="deleteUser(${user.idKorisnik})">
                                 Obriši
                             </button>
                         </td>
