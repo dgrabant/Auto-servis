@@ -184,9 +184,9 @@
         animation: trailMove linear infinite;
     }
     /* Različite linije brzine */
-    .trail:nth-child(1) { top: 60px; left: 100%; width: 100px; animation-duration: 1.2s; animation-delay: 0s; }
-    .trail:nth-child(2) { top: 80px; left: 110%; width: 60px;  animation-duration: 0.8s; animation-delay: 0.3s; }
-    .trail:nth-child(3) { top: 100px; left: 120%; width: 150px; animation-duration: 1.5s; animation-delay: 0.1s; }
+    .trail:nth-child(1) { top: 60px; left: 50%; width: 100px; animation-duration: 1.2s; animation-delay: 0s; }
+    .trail:nth-child(2) { top: 80px; left: 60%; width: 60px;  animation-duration: 0.8s; animation-delay: 0.3s; }
+    .trail:nth-child(3) { top: 100px; left: 70%; width: 150px; animation-duration: 1.5s; animation-delay: 0.1s; }
 
     /* --- 5. TEKST --- */
     .loading-text {

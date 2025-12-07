@@ -130,13 +130,13 @@ function unHide(stranica){
 
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
-    tutorial.style.display = 'flex'
+    tutorial.style.display = 'flex';
     loadingScreen.hidden = false;
     console.log("maknut hidden");
   }
   else{
     loadingScreen.hidden = false;
-    loadingScreen.style.display = 'flex'
+    loadingScreen.style.display = 'flex';
   }
 disableScroll();
 function provjeriUredjaj() {
@@ -228,8 +228,6 @@ if (!(checkIfLogedIn()))
 if (!mobileOptimization){
   if (checkIfLogedIn()) {
     forma.hidden = true;
-    loadingScreen.hidden = false;
-    loadingScreen.style.display = 'flex'
     if (performanceMem == 1) {
         pcPerformance = true;
         texturePath = texturePathMobile;
@@ -250,7 +248,11 @@ if (!mobileOptimization){
   await cekajKlik("submit"); // gumb s ID-jem "pokreniBtn"
   
 }
-else forma.hidden = true;
+else{
+  loadingScreen.hidden = false;
+  loadingScreen.style.display = 'flex';
+  forma.hidden = true;
+} 
 
 document.getElementById("logo_pic").src = "/assets/pictures/dijelovi/logo.gif";
 document.getElementById("backPic").src = "/assets/pictures/dijelovi/back.gif";
