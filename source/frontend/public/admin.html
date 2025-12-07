@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unos i slanje stavki</title>
-</head>
-<style>
-     body {
+    <title>Admin Panel - Auto Servis</title>
+    <style>
+        /* --- CSS STILOVI --- */
+        body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7f6;
             color: #333;
@@ -17,474 +17,510 @@
         }
 
         #app-container {
-            max-width: 700px;
+            max-width: 1000px; /* Malo šire zbog tablice korisnika */
             width: 100%;
             background: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             overflow: hidden;
-        }
-
-        #item-form {
-            padding: 25px;
-            border-bottom: 1px solid #eee;
-        }
-
-        h2, h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-
-        /* --- Drag and Drop Zona --- */
-        #drop-zone {
-            border: 2px dashed #007bff;
-            border-radius: 5px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            background: #fafdff;
-            color: #007bff;
-            margin-bottom: 20px;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        #drop-zone.dragover {
-            background-color: #e6f2ff;
-            border-color: #0056b3;
-        }
-
-        #file-input {
             display: none;
         }
 
-        #image-preview {
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        #image-preview img {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            object-fit: cover;
-        }
-        #image-preview p {
-            font-size: 0.9em;
-            color: #555;
-            word-break: break-all;
-        }
-
-        /* --- Polja za unos --- */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; 
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 20px;
-            margin-top: 10px;
-        }
-
-        /* --- Gumbi --- */
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: background-color 0.2s;
-        }
-
-        #add-btn {
-            background-color: #28a745;
+        .header {
+            background: #2c3e50;
+            padding: 20px;
             color: white;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        #add-btn:hover {
-            background-color: #218838;
-        }
-
-        #send-data-btn {
-            background-color: #007bff;
-            color: white;
-            display: block;
-            width: calc(100% - 50px);
-            margin: 25px;
-        }
-        #send-data-btn:hover {
-            background-color: #0056b3;
-        }
-
-        /* --- Izlaz i Status --- */
-        #output-section {
-            padding: 25px;
-        }
-
-        #item-list {
-            list-style-type: none;
-            padding: 0;
-            margin-bottom: 20px;
-        }
-        #item-list li {
-            background: #f9f9f9;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            border: 1px solid #eee;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .item-type {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #007bff;
-        }
 
-        .status-box {
-            background: #2c3e50;
-            color: #f8f8f8;
+        .header h2 { margin: 0; font-size: 1.5rem; }
+        #current-user-display { font-size: 0.9em; color: #bdc3c7; }
+
+        /* TABOVI */
+        .tabs {
+            display: flex;
+            background: #ecf0f1;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab-btn {
+            flex: 1;
             padding: 15px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: "Courier New", Courier, monospace;
-            max-height: 400px;
-            overflow-y: auto;
-            margin-bottom: 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        .tab-btn:hover { background: #e6e6e6; }
+        .tab-btn.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
         }
 
-</style>
+        /* SEKCIJE */
+        .content-section { padding: 25px; display: none; }
+        .content-section.active { display: block; }
+
+        /* FORME */
+        .admin-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 30px;
+        }
+
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-group { flex: 1; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
+        .form-group textarea { resize: vertical; height: 80px; }
+
+        /* GUMBI */
+        button {
+            padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .btn-primary { background-color: #3498db; color: white; width: 100%; }
+        .btn-primary:hover { background-color: #2980b9; }
+        
+        .btn-cancel { background-color: #95a5a6; color: white; width: 100%; margin-top: 10px; display: none; }
+        
+        /* Akcijski gumbi u tablici */
+        .btn-sm { padding: 6px 10px; font-size: 0.85em; margin-right: 5px; margin-bottom: 5px; display: inline-block;}
+        .btn-edit { background-color: #f1c40f; color: #333; }
+        .btn-delete { background-color: #e74c3c; color: white; }
+        .btn-role { background-color: #8e44ad; color: white; } /* Ljubičasta za uloge */
+
+        /* TABLICA */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #2c3e50; }
+        tr:hover { background-color: #f1f1f1; }
+        .action-cell { text-align: right; min-width: 180px; }
+
+        /* STATUS BOX */
+        .status-box {
+            background: #333; color: #00ff00; padding: 10px; border-radius: 4px;
+            font-family: monospace; font-size: 0.85em; margin-bottom: 20px;
+            min-height: 40px; display: flex; align-items: center;
+        }
+        
+        /* Login poruka */
+        #login-message { text-align:center; margin-top:50px; }
+        #login-message a { color: #3498db; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
 <body>
 
-    <div id="app-container" hidden>
-        <form id="item-form">
-            <h2>Dodaj novu stavku</h2>
+    <div id="login-message">
+        <h2>Provjera autorizacije...</h2>
+        <p>Učitavanje... Ako traje predugo, <a href="/index.html">prijavite se ponovno</a>.</p>
+    </div>
 
-            <div id="drop-zone">
-                Povucite sliku ovdje ili **kliknite za odabir**
-                <div id="image-preview"></div>
-            </div>
-            <input type="file" id="file-input" accept="image/*">
+    <div id="app-container">
+        <div class="header">
+            <h2>Auto Servis Admin</h2>
+            <div id="current-user-display">...</div>
+        </div>
 
-            <div class="form-group">
-                <label for="name">Naziv:</label>
-                <input type="text" id="name" required>
-            </div>
+        <div class="tabs">
+            <button id="btn-tab-parts" class="tab-btn active">Upravljanje Dijelovima</button>
+            <button id="btn-tab-users" class="tab-btn">Upravljanje Korisnicima</button>
+        </div>
 
-            <div class="form-group">
-                <label for="price">Cijena (€):</label>
-                <input type="number" id="price" step="0.01" required>
-            </div>
+        <div id="status-display" class="status-box">Sustav spreman.</div>
 
-            <div class="form-group">
-                <label for="description">Opis:</label>
-                <textarea id="description"></textarea>
-            </div>
+        <div id="parts-section" class="content-section active">
+            
+            <form id="part-form" class="admin-form">
+                <h3 id="part-form-title">Dodaj novi dio</h3>
+                <input type="hidden" id="part-id">
 
-            <div class="form-group">
-                <label>Tip unosa:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" id="type-service" name="item-type" value="usluga" checked>
-                        Usluga
-                    </label>
-                    <label>
-                        <input type="radio" id="type-part" name="item-type" value="dio">
-                        Dio
-                    </label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Naziv dijela:</label>
+                        <input type="text" id="part-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cijena (€):</label>
+                        <input type="number" id="part-price" step="0.01" required>
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" id="add-btn">Dodaj Stavku</button>
-        </form>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>URL Slike:</label>
+                    <input type="text" id="part-image" placeholder="https://..." required>
+                </div>
 
-        <div id="output-section">
-            <h3>Dodane stavke:</h3>
-            <ul id="item-list">
-                </ul>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Opis:</label>
+                    <textarea id="part-desc"></textarea>
+                </div>
 
-            <button id="send-data-btn">Pošalji podatke na Server</button>
+                <button type="submit" class="btn-primary" id="part-save-btn">Spremi Dio</button>
+                <button type="button" class="btn-cancel" id="part-cancel-btn" onclick="resetPartForm()">Odustani</button>
+            </form>
 
-            <h3>Status Slanja:</h3>
-            <pre id="post-status" class="status-box">Kliknite na 'Pošalji podatke na Server' za početak slanja.</pre>
+            <hr>
+            <h3>Popis dijelova</h3>
+            <table id="parts-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Naziv</th>
+                        <th>Cijena</th>
+                        <th>Slika</th>
+                        <th class="action-cell">Akcije</th>
+                    </tr>
+                </thead>
+                <tbody id="parts-table-body"></tbody>
+            </table>
+        </div>
+
+        <div id="users-section" class="content-section">
+            
+            <form id="user-form" class="admin-form">
+                <h3>Registriraj novog korisnika</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Korisničko ime:</label>
+                        <input type="text" id="user-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="user-email" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Lozinka:</label>
+                        <input type="password" id="user-password" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label>Uloga:</label>
+                        <select id="user-role">
+                            <option value="USER">Korisnik (USER)</option>
+                            <option value="ADMIN">Administrator (ADMIN)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">Kreiraj Korisnika</button>
+            </form>
+
+            <hr>
+            <h3>Popis svih korisnika</h3>
+            <button onclick="loadUsers()" class="btn-primary" style="width: auto; margin-bottom: 15px; background: #95a5a6;">Osvježi listu</button>
+            
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Korisnik / Email</th>
+                        <th>Uloga</th>
+                        <th class="action-cell">Akcije</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body"></tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        // --- KONFIGURACIJA API ENDPOINTA ---
-        const API_URLS = {
-            dio: "https://auto-servis.onrender.com/api/dijelovi",
-            usluga: "https://auto-servis.onrender.com/api/usluga"
-        };
-        const REDIRECT_PAGE = '/index.html'; 
-            
+        // --- KONFIGURACIJA ---
+        const API_BASE = "https://auto-servis.onrender.com/api";
+        const REDIRECT_ON_FAIL = "/index.html"; 
 
+        // DOM Elementi - Globalni
+        const appContainer = document.getElementById('app-container');
+        const loginMessage = document.getElementById('login-message');
+        const statusDisplay = document.getElementById('status-display');
+        
+        // --- AUTH & HELPERI ---
+        function getAuthHeaders() {
+            const token = localStorage.getItem("authToken");
+            return {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + token
+            };
+        }
 
-        fetch("https://auto-servis.onrender.com/api/korisnik/about", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer "+localStorage.getItem("authToken")
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-                return response.json();
+        function logStatus(msg, isError = false) {
+            statusDisplay.textContent = msg;
+            statusDisplay.style.color = isError ? "#ff6b6b" : "#00ff00";
+            if(isError) console.error(msg); else console.log(msg);
+        }
+
+        // --- INIT ---
+        function initApp() {
+            fetch(`${API_BASE}/korisnik/about`, {
+                method: "GET",
+                headers: getAuthHeaders()
             })
-        .then(data => {
-            console.log("Response data:", data.uloga);
-            if (data.uloga == "ADMIN") {
-                document.getElementById("app-container").hidden = false;
-            }
-            else{
-                window.location.href = REDIRECT_PAGE;
-            }
-        })
-        .catch(error => {
-            console.error("Fetch error:", error);
-            window.location.href = REDIRECT_PAGE;
-        });
-
-        
-        // ------------------------------------
-        
-        // Globalno stanje aplikacije
-        let items = [];
-        let currentFileName = ""; 
-
-        // DOM Elementi
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const imagePreview = document.getElementById('image-preview');
-        
-        const form = document.getElementById('item-form');
-        const nameInput = document.getElementById('name');
-        const priceInput = document.getElementById('price');
-        const descriptionInput = document.getElementById('description');
-        
-        const itemList = document.getElementById('item-list');
-        const sendDataBtn = document.getElementById('send-data-btn');
-        const postStatus = document.getElementById('post-status');
-
-        // --- Logika za Drag & Drop i odabir datoteke ---
-
-        console.log("Aplikacija pokrenuta. Elementi inicijalizirani.");
-
-        // Logika za klik na Drop Zone
-        dropZone.addEventListener('click', (e) => {
-            console.log("Kliknuto na Drop Zone. Otvara se File Manager.");
-            e.preventDefault(); 
-            fileInput.click();
-        });
-        
-        // Logika kada se datoteka odabere
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            console.log(`Datoteka odabrana preko File Managera: ${file ? file.name : 'Nijedna'}`);
-            handleFile(file);
-        });
-
-        // Logika za Drag & Drop
-        dropZone.addEventListener('dragover', (e) => {
-            // console.log("DragOver aktiviran.");
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-        dropZone.addEventListener('dragleave', (e) => {
-            // console.log("DragLeave aktiviran.");
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-        });
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            const file = e.dataTransfer.files[0];
-            console.log(`Datoteka ispuštena u Drop Zone: ${file ? file.name : 'Nijedna'}`);
-            handleFile(file);
-        });
-
-        function handleFile(file) {
-            console.log("Obrada datoteke započeta.");
-            const oldImg = imagePreview.querySelector('img');
-            if (oldImg && oldImg.src.startsWith('blob:')) {
-                URL.revokeObjectURL(oldImg.src);
-            }
-
-            if (file && file.type.startsWith('image/')) {
-                currentFileName = file.name; 
-                const previewUrl = URL.createObjectURL(file);
+            .then(res => {
+                if (!res.ok) throw new Error("Auth failed");
+                return res.json();
+            })
+            .then(user => {
+                loginMessage.style.display = "none";
+                appContainer.style.display = "block";
+                document.getElementById('current-user-display').textContent = `Prijavljen: ${user.username || user.email} (${user.uloga})`;
                 
-                imagePreview.innerHTML = `
-                    <img src="${previewUrl}" alt="Pregled slike">
-                    <p>${currentFileName}</p>
-                `;
-                console.log(`Slika uspješno odabrana. Ime datoteke: ${currentFileName}`);
-            } else {
-                alert("Molimo odaberite valjanu slikovnu datoteku.");
-                currentFileName = "";
-                imagePreview.innerHTML = "";
-                console.warn("Upozorenje: Pokušana je obrada ne-slikovne datoteke ili praznog unosa.");
-            }
-        }
-
-        // --- Logika forme ---
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault(); 
-            console.log("Pokušaj dodavanja nove stavke...");
-
-            const name = nameInput.value;
-            const price = parseFloat(priceInput.value); 
-            const description = descriptionInput.value;
-            const type = document.querySelector('input[name="item-type"]:checked').value;
-
-            if (!name || isNaN(price) || !currentFileName) {
-                console.error("VALIDACIJA NEUSPJELA: Nedostaje naziv, cijena ili slika.");
-                alert("Molimo popunite naziv, ispravnu cijenu i dodajte sliku.");
-                return;
-            }
-            
-            let newItem = {
-                name: name,
-                image: currentFileName, 
-                price: parseFloat(price.toFixed(2)), 
-                description: description,
-                type: type
-            };
-            
-            console.log("Nova stavka kreirana:", newItem);
-
-            items.push(newItem);
-            console.log(`Stavka dodana. Ukupan broj stavki: ${items.length}`);
-            renderItemsList();
-            resetForm();
-        });
-
-        function renderItemsList() {
-            itemList.innerHTML = "";
-            items.forEach(item => {
-                const li = document.createElement('li');
-                const typeText = item.type.charAt(0).toUpperCase() + item.type.slice(1);
-                
-                li.innerHTML = `
-                    <span>${item.name} - ${item.price.toFixed(2)} €</span> 
-                    <span class="item-type">${typeText}</span>
-                `;
-                itemList.appendChild(li);
+                // Učitaj početni tab
+                loadParts();
+            })
+            .catch(err => {
+                console.error(err);
+                loginMessage.innerHTML = `<h3 style="color:red">Pristup odbijen.</h3><p><a href="${REDIRECT_ON_FAIL}">Povratak</a></p>`;
             });
-            console.log("Popis stavki na UI-u je osvježen.");
         }
+        // --- TAB LOGIKA ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
 
-        function resetForm() {
-            form.reset();
-            const img = imagePreview.querySelector('img');
-            if (img && img.src.startsWith('blob:')) {
-                URL.revokeObjectURL(img.src);
+            if(tabName === 'parts') {
+                document.getElementById('parts-section').classList.add('active');
+                document.getElementById('btn-tab-parts').classList.add('active');
+                loadParts();
+            } else {
+                document.getElementById('users-section').classList.add('active');
+                document.getElementById('btn-tab-users').classList.add('active');
+                loadUsers();
             }
-            imagePreview.innerHTML = "";
-            currentFileName = "";
-            fileInput.value = null; 
-            document.getElementById('type-service').checked = true;
-            nameInput.focus();
-            console.log("Forma resetirana na početno stanje.");
         }
 
-        // --- Logika slanja podataka ---
+        // ==============================================
+        // --- 1. LOGIKA ZA DIJELOVE (PARTS) ---
+        // ==============================================
+        const partForm = document.getElementById('part-form');
         
-        async function postItem(item) {
-            const endpoint = API_URLS[item.type];
-            console.log(`Priprema slanja stavke "${item.name}" na endpoint: ${endpoint}`);
-
-            const apiBody = {
-                naziv: item.name,
-                opis: item.description,
-                cijena: item.price,
-                slikaUrl: item.image
-            };
-            
-            console.log("Tijelo POST zahtjeva:", apiBody);
-            const authToken = localStorage.getItem("authToken");
-            if (!authToken) {
-                console.error("AUTH ERROR: authToken nije pronađen u localStorage.");
-                return `GREŠKA: [${item.type.toUpperCase()}] "${item.name}". Detalji: AuthToken nije pronađen.`;
-            }
-
-            try {
-                const response = await fetch(endpoint, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(apiBody)
+        function loadParts() {
+            logStatus("Učitavam dijelove...");
+            fetch(`${API_BASE}/dijelovi`, { headers: getAuthHeaders() })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('parts-table-body');
+                tbody.innerHTML = "";
+                data.forEach(part => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${part.id}</td>
+                        <td><strong>${part.naziv}</strong></td>
+                        <td>${part.cijena} €</td>
+                        <td>${part.slikaUrl ? 'Da' : 'Ne'}</td>
+                        <td class="action-cell">
+                            <button class="btn-sm btn-edit" onclick="preparePartEdit(${part.id})">Uredi</button>
+                            <button class="btn-sm btn-delete" onclick="deletePart(${part.id})">Obriši</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
                 });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error(`API GREŠKA za "${item.name}": Status ${response.status}`, errorText);
-                    throw new Error(`HTTP error! Status: ${response.status}. Detalji: ${errorText.substring(0, 100)}...`);
-                }
-                
-                const data = await response.json();
-                console.log(`API USPJEH za "${item.name}". Odgovor servera:`, data);
-                return `USPJEH: [${item.type.toUpperCase()}] "${item.name}" poslan. (ID: ${data.id || 'N/A'})`;
-
-            } catch (error) {
-                console.error(`FATALNA GREŠKA pri slanju "${item.name}":`, error.message);
-                return `GREŠKA: [${item.type.toUpperCase()}] "${item.name}". Detalji: ${error.message}`;
-            }
+                logStatus(`Učitano ${data.length} dijelova.`);
+            })
+            .catch(err => logStatus("Greška dijelovi: " + err, true));
         }
 
-        sendDataBtn.addEventListener('click', async () => {
-            if (items.length === 0) {
-                postStatus.textContent = "Nema dodanih stavki za slanje.";
-                console.warn("KLIK: Nema stavki za slanje. Akcija prekinuta.");
-                return;
-            }
+        partForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('part-id').value;
+            const payload = {
+                naziv: document.getElementById('part-name').value,
+                cijena: parseFloat(document.getElementById('part-price').value),
+                opis: document.getElementById('part-desc').value,
+                slikaUrl: document.getElementById('part-image').value
+            };
 
-            console.info(`KLIK: Počinje asinkrono slanje ${items.length} stavki...`);
-            postStatus.textContent = `Počinje slanje ${items.length} stavki...`;
-            sendDataBtn.disabled = true;
-            
-            let statusMessages = ["--- Status slanja ---"];
+            const url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
+            const method = id ? "PUT" : "POST";
 
-            for (const item of items) {
-                const message = await postItem(item);
-                statusMessages.push(message);
-                postStatus.textContent = statusMessages.join('\n');
-            }
+            fetch(url, {
+                method: method,
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            })
+            .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
+            .then(() => {
+                logStatus(id ? "Dio ažuriran!" : "Dio dodan!");
+                resetPartForm();
+                loadParts();
+            })
+            .catch(err => logStatus("Greška spremanje: " + err, true));
+        });
 
-            statusMessages.push("\n--- Slanje završeno ---");
-            postStatus.textContent = statusMessages.join('\n');
-            sendDataBtn.disabled = false;
-            console.info("SLANJE ZAVRŠENO. Gumb otključan.");
+        // Globalne funkcije za onclick u HTML-u
+        window.preparePartEdit = function(id) {
+            fetch(`${API_BASE}/dijelovi/${id}`, { headers: getAuthHeaders() })
+            .then(res => res.json())
+            .then(part => {
+                document.getElementById('part-id').value = part.id;
+                document.getElementById('part-name').value = part.naziv;
+                document.getElementById('part-price').value = part.cijena;
+                document.getElementById('part-desc').value = part.opis || "";
+                document.getElementById('part-image').value = part.slikaUrl || "";
+                
+                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${part.id}`;
+                document.getElementById('part-save-btn').textContent = "Spremi izmjene";
+                document.getElementById('part-save-btn').style.backgroundColor = "#f1c40f";
+                document.getElementById('part-save-btn').style.color = "black";
+                document.getElementById('part-cancel-btn').style.display = "inline-block";
+                window.scrollTo(0, 0);
+            });
+        };
+
+        window.deletePart = function(id) {
+            if(!confirm("Sigurno obrisati dio?")) return;
+            fetch(`${API_BASE}/dijelovi/${id}`, { method: "DELETE", headers: getAuthHeaders() })
+            .then(() => { logStatus("Dio obrisan."); loadParts(); })
+            .catch(err => logStatus("Greška brisanje: " + err, true));
+        };
+
+        window.resetPartForm = function() {
+            partForm.reset();
+            document.getElementById('part-id').value = "";
+            document.getElementById('part-form-title').textContent = "Dodaj novi dio";
+            const btn = document.getElementById('part-save-btn');
+            btn.textContent = "Spremi Dio";
+            btn.style.backgroundColor = "#3498db";
+            btn.style.color = "white";
+            document.getElementById('part-cancel-btn').style.display = "none";
+        };
+
+        // ==============================================
+        // --- 2. LOGIKA ZA KORISNIKE (USERS) ---
+        // ==============================================
+        const userForm = document.getElementById('user-form');
+
+        // A) Učitavanje korisnika
+        window.loadUsers = function() {
+            logStatus("Učitavam korisnike...");
+            fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('users-table-body');
+                tbody.innerHTML = "";
+                const users = Array.isArray(data) ? data : [];
+                
+                users.forEach(user => {
+                    const tr = document.createElement('tr');
+                    
+                    // Logika za gumb "Postavi Admina/Usera"
+                    const isAdm = user.uloga === 'ADMIN';
+                    const toggleLabel = isAdm ? "Ukloni Admina" : "Postavi Admina";
+                    const roleColor = isAdm ? "red" : "green"; // Stil za tekst
+                    
+                    // Napomena: Escapeanje stringova u onclicku je važno
+                    const roleParam = isAdm ? 'USER' : 'ADMIN';
+
+                    tr.innerHTML = `
+                        <td>${user.id}</td>
+                        <td>
+                            <strong>${user.username || 'No Name'}</strong><br>
+                            <small>${user.email || ''}</small>
+                        </td>
+                        <td style="color:${roleColor}; font-weight:bold;">${user.uloga}</td>
+                        <td class="action-cell">
+                             <button class="btn-sm btn-role" onclick="toggleUserRole(${user.id}, '${roleParam}')">
+                                ${toggleLabel}
+                            </button>
+                            <button class="btn-sm btn-delete" onclick="deleteUser(${user.id})">
+                                Obriši
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                logStatus(`Učitano ${users.length} korisnika.`);
+            })
+            .catch(err => logStatus("Greška učitavanje korisnika: " + err, true));
+        };
+
+        // B) Dodavanje novog korisnika (POST)
+        userForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const newUser = {
+                username: document.getElementById('user-username').value,
+                email: document.getElementById('user-email').value,
+                password: document.getElementById('user-password').value,
+                uloga: document.getElementById('user-role').value
+            };
+
+            logStatus("Kreiram korisnika...");
+            fetch(`${API_BASE}/korisnik`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify(newUser)
+            })
+            .then(res => {
+                if(!res.ok) throw new Error("Neuspjelo kreiranje (možda username postoji?)");
+                return res.json();
+            })
+            .then(() => {
+                logStatus("Korisnik uspješno kreiran!");
+                userForm.reset();
+                loadUsers();
+            })
+            .catch(err => logStatus("Greška: " + err.message, true));
+        });
+
+        // C) Brisanje korisnika (DELETE)
+        window.deleteUser = function(id) {
+            if(!confirm("Jeste li sigurni da želite TRAJNO obrisati ovog korisnika?")) return;
+
+            fetch(`${API_BASE}/korisnik/${id}`, {
+                method: "DELETE",
+                headers: getAuthHeaders()
+            })
+            .then(res => {
+                if(!res.ok) throw new Error(res.status);
+                logStatus("Korisnik obrisan.");
+                loadUsers();
+            })
+            .catch(err => logStatus("Greška pri brisanju: " + err, true));
+        };
+
+        // D) Promjena uloge (PUT)
+        window.toggleUserRole = function(id, newRole) {
+            if(!confirm(`Promijeniti ulogu korisnika (ID: ${id}) u ${newRole}?`)) return;
+
+            // Pretpostavka API-ja: PUT na /api/korisnik/{id} s JSON tijelom
+            const payload = { uloga: newRole };
+
+            fetch(`${API_BASE}/korisnik/${id}`, {
+                method: "PUT",
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payload)
+            })
+            .then(res => {
+                if(!res.ok) throw new Error("Greška servera pri promjeni uloge");
+                return res.json();
+            })
+            .then(() => {
+                logStatus(`Uloga promijenjena u ${newRole}.`);
+                loadUsers();
+            })
+            .catch(err => logStatus("Greška: " + err.message, true));
+        };
+
+        // --- POKRETANJE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnParts = document.getElementById('btn-tab-parts');
+            const btnUsers = document.getElementById('btn-tab-users');
+
+            if(btnParts) btnParts.addEventListener('click', () => switchTab('parts'));
+            if(btnUsers) btnUsers.addEventListener('click', () => switchTab('users'));
+
+            initApp();
         });
 
     </script>
