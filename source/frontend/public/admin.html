@@ -512,7 +512,7 @@
                         <td><strong>${part.naziv}</strong></td>
                         <td>${part.cijena} €</td>
                         <td>${part.slikaUrl ? 'Da' : 'Ne'}</td>
-                        <td style="color:${roleColor}; font-weight:bold;">DIO</td>
+                        <td style="color: green; font-weight:bold;">DIO</td>
                         <td class="action-cell">
                             <button class="btn-sm btn-edit" onclick="preparePartEdit(${part.idDijela})">Uredi</button>
                             <button class="btn-sm btn-delete" onclick="deletePart(${part.idDijela})">Obriši</button>
@@ -537,7 +537,7 @@
                         <td><strong>${service.naziv}</strong></td>
                         <td>${service.cijena} €</td>
                         <td>${service.slikaUrl ? 'Da' : 'Ne'}</td>
-                        <td style="color:${roleColor}; font-weight:bold;">USLUGA</td>
+                        <td style="color: red; font-weight:bold;">USLUGA</td>
                         <td class="action-cell">
                             <button class="btn-sm btn-edit" onclick="prepareServiceEdit(${service.idDijela})">Uredi</button>
                             <button class="btn-sm btn-delete" onclick="deleteService(${service.idDijela})">Obriši</button>
