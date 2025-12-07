@@ -238,7 +238,7 @@
     <script>
         // --- KONFIGURACIJA ---
         const API_BASE = "https://auto-servis.onrender.com/api";
-        const REDIRECT_PAGE = '/index.html'; 
+        const REDIRECT_ON_FAIL = "/index.html"; 
 
         // DOM Elementi - Globalni
         const appContainer = document.getElementById('app-container');
@@ -261,39 +261,27 @@
         }
 
         // --- INIT ---
-
         function initApp() {
-        fetch("https://auto-servis.onrender.com/api/korisnik/about", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer "+localStorage.getItem("authToken")
-                }
+            fetch(`${API_BASE}/korisnik/about`, {
+                method: "GET",
+                headers: getAuthHeaders()
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                    return response.json();
-                })
-            .then(data => {
-                console.log("Response data:", data.uloga);
-                if (data.uloga == "ADMIN") {
-                    loginMessage.style.display = "none";
-                    appContainer.style.display = "block";
-                    document.getElementById('current-user-display').textContent = `Prijavljen: ${user.username || user.email} (${user.uloga})`;
-
-                    // Učitaj početni tab
-                    loadParts();
-                }
-                else{
-                    window.location.href = REDIRECT_PAGE;
-                }
+            .then(res => {
+                if (!res.ok) throw new Error("Auth failed");
+                return res.json();
             })
-            .catch(error => {
-                console.error("Fetch error:", error);
-                window.location.href = REDIRECT_PAGE;
-        });
+            .then(user => {
+                loginMessage.style.display = "none";
+                appContainer.style.display = "block";
+                document.getElementById('current-user-display').textContent = `Prijavljen: ${user.username || user.email} (${user.uloga})`;
+                
+                // Učitaj početni tab
+                loadParts();
+            })
+            .catch(err => {
+                console.error(err);
+                loginMessage.innerHTML = `<h3 style="color:red">Pristup odbijen.</h3><p><a href="${REDIRECT_ON_FAIL}">Povratak</a></p>`;
+            });
         }
         // --- TAB LOGIKA ---
         function switchTab(tabName) {
