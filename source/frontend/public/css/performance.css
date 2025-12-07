@@ -55,22 +55,28 @@
 
 /* Stiliziranje labele (koja sada glumi gumb/karticu) */
 .radio-card {
-    display: block; /* Osigurava da svaka labela zauzme svoj red */
+    display: block;
+    align-self: center;
     cursor: pointer;
     margin-bottom: 10px;
-    font-size: 1rem; /* Može biti manji font od parenta */
-    color: #e0e0e0; /* Default boja teksta */
+    font-size: 1rem;
+    color: #e0e0e0;
+    width: 50%; /* Osigurava da labela zauzme cijelu širinu */
+    box-sizing: border-box;
 }
 
 /* Stiliziranje vizualnog dijela kartice (SPAN) */
 .radio-label-text {
     display: block;
     justify-self: center;
-    width: 50%;
+    /* Postavka širine je uklonjena/maknuta na 100% da zauzme cijeli performanceBox */
+    width: 100%; 
     padding: 12px 20px;
     border-radius: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    background-color: rgba(0, 0, 0, 0.2);
+    /* Povećan kontrast granice u defaultnom stanju */
+    border: 2px solid rgba(255, 255, 255, 0.4); 
+    /* Svjetlija defaultna pozadina za bolji kontrast s tamnim boxom */
+    background-color: rgba(255, 255, 255, 0.1); 
     transition: all 0.2s ease;
     text-align: center;
     font-weight: 500;
@@ -78,16 +84,17 @@
 
 /* Efekt prelaska mišem na kartici */
 .radio-card:hover .radio-label-text {
-    background-color: rgba(255, 255, 255, 0.1);
+    /* Poboljšan hover efekt */
+    background-color: rgba(255, 255, 255, 0.2); 
     border-color: #00a8ca;
 }
 
 /* STANJE ODABRANOSTI: Kada je input checked, stilizira susjedni span */
 .radio-card input[type="radio"]:checked + .radio-label-text {
-    background-color: #00a8ca; /* Istaknuta pozadina */
+    background-color: #00a8ca; /* Istaknuta pozadina (plava) */
     color: white;
     border-color: #00D4FF;
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.6); /* Izraženiji sjaj */
     font-weight: 700;
 }
 

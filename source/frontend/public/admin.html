@@ -6,45 +6,119 @@
     <title>Admin Panel - Auto Servis</title>
     <style>
         /* --- CSS STILOVI --- */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f4f7f6;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
 
-        #app-container {
-            max-width: 1000px; /* Malo šire zbog tablice korisnika */
-            width: 100%;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            display: none;
-        }
+    /* Osigurava da radio kartice budu jedna do druge */
+    .radio-row {
+        display: flex;
+        gap: 15px; /* Razmak između kartica */
+    }
 
-        .header {
-            background: #2c3e50;
-            padding: 20px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* Sakrivanje originalnog radio gumba */
+    .radio-card input[type="radio"] {
+        display: none;
+    }
 
-        .header h2 { margin: 0; font-size: 1.5rem; }
-        #current-user-display { font-size: 0.9em; color: #bdc3c7; }
+    /* Stiliziranje labele (koja sada glumi gumb/karticu) */
+    .radio-card {
+        display: block;
+        cursor: pointer;
+        margin-bottom: 0; 
+        font-size: 1rem;
+        flex-grow: 1; 
+    }
 
-        /* TABOVI */
-        .tabs {
+    /* Stiliziranje vizualnog dijela kartice (SPAN) */
+    .radio-label-text {
+        display: block;
+        width: 100%; 
+        padding: 12px 20px;
+        border-radius: 4px;
+        border: 1px solid #ccc; 
+        background-color: white; 
+        transition: all 0.2s ease;
+        text-align: center;
+        font-weight: 500;
+        color: #333; 
+        box-sizing: border-box; 
+    }
+
+    /* Efekt prelaska mišem na kartici */
+    .radio-card:hover .radio-label-text {
+        background-color: #f1f1f1;
+        border-color: #3498db; /* Plava boja pri prelasku mišem */
+    }
+
+    /* STANJE ODABRANOSTI: Kada je input checked, stilizira susjedni span */
+    .radio-card input[type="radio"]:checked + .radio-label-text {
+        background-color: #3498db; /* Plava boja iz dizajna */
+        color: white;
+        border-color: #2980b9;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Plavi shadow */
+        font-weight: 700;
+    }
+
+
+    #drop-zone {
+        border: 2px dashed #007bff;
+        border-radius: 5px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        background: #fafdff;
+        color: #007bff;
+        margin-bottom: 20px;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+    #drop-zone.dragover {
+        background-color: #e6f2ff;
+        border-color: #0056b3;
+    }
+    #file-input {
+        display: none;
+    }
+    #image-preview img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        object-fit: cover;
+    }
+    #app-container {
+        max-width: 1000px; /* Malo šire zbog tablice korisnika */
+        width: 100%;
+        background: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        display: none;
+    }
+    .header {
+        background: #2c3e50;
+        padding: 20px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .header h2 { margin: 0; font-size: 1.5rem; }
+
+    #current-user-display { font-size: 0.9em; color: #bdc3c7; }
+    /* TABOVI */
+    .tabs {
             display: flex;
             background: #ecf0f1;
             border-bottom: 1px solid #ddd;
         }
-        .tab-btn {
+    .tab-btn {
             flex: 1;
             padding: 15px;
             border: none;
@@ -54,68 +128,72 @@
             color: #7f8c8d;
             transition: 0.3s;
             font-size: 1rem;
-        }
-        .tab-btn:hover { background: #e6e6e6; }
-        .tab-btn.active {
+    }
+    .tab-btn:hover { 
+        background: #e6e6e6; 
+    }
+    .tab-btn.active {
             background: white;
             color: #2c3e50;
             border-bottom: 3px solid #3498db;
-        }
+    }
 
-        /* SEKCIJE */
-        .content-section { padding: 25px; display: none; }
-        .content-section.active { display: block; }
+    /* SEKCIJE */
+    .content-section { padding: 25px; display: none; }
+    .content-section.active { display: block; }
+    /* FORME */
+    .admin-form {
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        margin-bottom: 30px;
+    }
+    .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
 
-        /* FORME */
-        .admin-form {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            margin-bottom: 30px;
-        }
+    .form-group { flex: 1; }
 
-        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
-        }
-        .form-group textarea { resize: vertical; height: 80px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9em; }
 
-        /* GUMBI */
-        button {
-            padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s;
-        }
-        .btn-primary { background-color: #3498db; color: white; width: 100%; }
-        .btn-primary:hover { background-color: #2980b9; }
-        
-        .btn-cancel { background-color: #95a5a6; color: white; width: 100%; margin-top: 10px; display: none; }
-        
-        /* Akcijski gumbi u tablici */
-        .btn-sm { padding: 6px 10px; font-size: 0.85em; margin-right: 5px; margin-bottom: 5px; display: inline-block;}
-        .btn-edit { background-color: #f1c40f; color: #333; }
-        .btn-delete { background-color: #e74c3c; color: white; }
-        .btn-role { background-color: #8e44ad; color: white; } /* Ljubičasta za uloge */
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
 
-        /* TABLICA */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background-color: #f8f9fa; color: #2c3e50; }
-        tr:hover { background-color: #f1f1f1; }
-        .action-cell { text-align: right; min-width: 180px; }
+    .form-group textarea { resize: vertical; height: 80px; }
 
-        /* STATUS BOX */
-        .status-box {
-            background: #333; color: #00ff00; padding: 10px; border-radius: 4px;
-            font-family: monospace; font-size: 0.85em; margin-bottom: 20px;
-            min-height: 40px; display: flex; align-items: center;
-        }
-        
-        /* Login poruka */
-        #login-message { text-align:center; margin-top:50px; }
-        #login-message a { color: #3498db; text-decoration: none; font-weight: bold; }
-    </style>
+
+    /* GUMBI */
+    button {
+        padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.2s;
+    }
+    .btn-primary { background-color: #3498db; color: white; width: 100%; }
+
+    .btn-primary:hover { background-color: #2980b9; }
+    
+    .btn-cancel { background-color: #95a5a6; color: white; width: 100%; margin-top: 10px; display: none; }
+    
+    /* Akcijski gumbi u tablici */
+    .btn-sm { padding: 6px 10px; font-size: 0.85em; margin-right: 5px; margin-bottom: 5px; display: inline-block;}
+    .btn-edit { background-color: #f1c40f; color: #333; }
+    .btn-delete { background-color: #e74c3c; color: white; }
+    .btn-role { background-color: #8e44ad; color: white; } /* Ljubičasta za uloge */
+    /* TABLICA */
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background-color: #f8f9fa; color: #2c3e50; }
+    tr:hover { background-color: #f1f1f1; }
+    .action-cell { text-align: right; min-width: 180px; }
+    /* STATUS BOX */
+    .status-box {
+        background: #333; color: #00ff00; padding: 10px; border-radius: 4px;
+        font-family: monospace; font-size: 0.85em; margin-bottom: 20px;
+        min-height: 40px; display: flex; align-items: center;
+    }
+    
+    /* Login poruka */
+    #login-message { text-align:center; margin-top:50px; }
+    #login-message a { color: #3498db; text-decoration: none; font-weight: bold; }
+</style>
 </head>
 <body>
 
@@ -131,7 +209,7 @@
         </div>
 
         <div class="tabs">
-            <button id="btn-tab-parts" class="tab-btn active">Upravljanje Dijelovima</button>
+            <button id="btn-tab-parts" class="tab-btn active">Upravljanje Dijelovima i Uslugama</button>
             <button id="btn-tab-users" class="tab-btn">Upravljanje Korisnicima</button>
         </div>
 
@@ -141,12 +219,21 @@
             
             <form id="part-form" class="admin-form">
                 <h3 id="part-form-title">Dodaj novi dio</h3>
+                
+                <div id="drop-zone">
+                Povucite sliku ovdje ili **kliknite za odabir**
+                <div id="image-preview"></div>
+                </div>
+                <input type="file" id="file-input" accept="image/*">
+
+
+
                 <input type="hidden" id="part-id">
 
                 <div class="form-row">
                     <div class="form-group">
                         <label>Naziv dijela:</label>
-                        <input type="text" id="part-name" required>
+                        <input type="text" id="part-name" required maxlength="50">
                     </div>
                     <div class="form-group">
                         <label>Cijena (€):</label>
@@ -154,9 +241,18 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label>URL Slike:</label>
-                    <input type="text" id="part-image" placeholder="https://..." required>
+                <div class="form-group radio-group">
+                    <label>Tip unosa:</label>
+                    <div class="radio-row">
+                        <label class="radio-card">
+                            <input type="radio" id="type-service" name="item-type" value="usluga" checked>
+                            <span class="radio-label-text">Usluga</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" id="type-part" name="item-type" value="dio">
+                            <span class="radio-label-text">Dio</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
@@ -169,7 +265,10 @@
             </form>
 
             <hr>
-            <h3>Popis dijelova</h3>
+            <h3>Popis dijelova i usluga</h3>
+            <button onclick="loadParts()" class="btn-primary" style="width: auto; margin-bottom: 15px;">Dijelovi</button>
+            <button onclick="loadServices()" class="btn-primary" style="width: auto; margin-bottom: 15px;">Usluge</button>
+            <button onclick="loadAll()" class="btn-primary" style="width: auto; margin-bottom: 15px;">Sve</button>
             <table id="parts-table">
                 <thead>
                     <tr>
@@ -177,6 +276,7 @@
                         <th>Naziv</th>
                         <th>Cijena</th>
                         <th>Slika</th>
+                        <th>Dio/Usluga</th>
                         <th class="action-cell">Akcije</th>
                     </tr>
                 </thead>
@@ -188,12 +288,18 @@
             
             <form id="user-form" class="admin-form">
                 <h3>Registriraj novog korisnika</h3>
-                
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Korisničko ime:</label>
-                        <input type="text" id="user-username" required>
+                        <label>Ime korisnika:</label>
+                        <input type="text" id="user-name" required maxlength="">
                     </div>
+                    <div class="form-group">
+                        <label>Prezime korisnika:</label>
+                        <input type="text" id="user-surname" required maxlength="">
+                    </div>
+                </div>
+                
+                <div class="form-row">
                     <div class="form-group">
                         <label>Email:</label>
                         <input type="email" id="user-email" required>
@@ -208,10 +314,11 @@
                     <div class="form-group">
                         <label>Uloga:</label>
                         <select id="user-role">
-                            <option value="USER">Korisnik (USER)</option>
+                            <option value="KORISNIK">Korisnik (KORISNIK)</option>
                             <option value="ADMIN">Administrator (ADMIN)</option>
                         </select>
                     </div>
+                    
                 </div>
 
                 <button type="submit" class="btn-primary">Kreiraj Korisnika</button>
@@ -219,7 +326,7 @@
 
             <hr>
             <h3>Popis svih korisnika</h3>
-            <button onclick="loadUsers()" class="btn-primary" style="width: auto; margin-bottom: 15px; background: #95a5a6;">Osvježi listu</button>
+            <button onclick="loadUsers()" class="btn-primary" style="width: auto; margin-bottom: 15px;">Osvježi listu</button>
             
             <table id="users-table">
                 <thead>
@@ -240,12 +347,19 @@
         const API_BASE = "https://auto-servis.onrender.com/api";
         const REDIRECT_ON_FAIL = "/index.html"; 
 
+        const partRadio = document.getElementById('type-part')
+        const serviceRadio = document.getElementById('type-service')
+
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const imagePreview = document.getElementById('image-preview');
+
         // DOM Elementi - Globalni
         const appContainer = document.getElementById('app-container');
         const loginMessage = document.getElementById('login-message');
         const statusDisplay = document.getElementById('status-display');
-        
-        // --- AUTH & HELPERI ---
+
+       // --- AUTH & HELPERI ---
         function getAuthHeaders() {
             const token = localStorage.getItem("authToken");
             return {
@@ -273,16 +387,92 @@
             .then(user => {
                 loginMessage.style.display = "none";
                 appContainer.style.display = "block";
-                document.getElementById('current-user-display').textContent = `Prijavljen: ${user.username || user.email} (${user.uloga})`;
+                document.getElementById('current-user-display').textContent = `Prijavljen: ${user.ime || user.username || user.email} (${user.uloga})`;
                 
                 // Učitaj početni tab
-                loadParts();
+                switchTab('parts'); 
             })
             .catch(err => {
                 console.error(err);
                 loginMessage.innerHTML = `<h3 style="color:red">Pristup odbijen.</h3><p><a href="${REDIRECT_ON_FAIL}">Povratak</a></p>`;
             });
         }
+
+        //RADIO SELEKTOR LOGIKA
+
+        function getSelectedType() {
+            const selectedInput = document.querySelector('input[name="item-type"]:checked');
+
+            if (selectedInput) {
+                return selectedInput.value;
+            }
+        
+            return null;
+        }
+
+        // --- Logika za Drag & Drop i odabir datoteke ---
+
+        console.log("Aplikacija pokrenuta. Elementi inicijalizirani.");
+        let currentFileName = ""; // Globalna varijabla za praćenje odabrane datoteke
+
+        // Logika za klik na Drop Zone
+        dropZone.addEventListener('click', (e) => {
+            console.log("Kliknuto na Drop Zone. Otvara se File Manager.");
+            e.preventDefault(); 
+            fileInput.click();
+        });
+        
+        // Logika kada se datoteka odabere
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            console.log(`Datoteka odabrana preko File Managera: ${file ? file.name : 'Nijedna'}`);
+            handleFile(file);
+        });
+
+        // Logika za Drag & Drop
+        dropZone.addEventListener('dragover', (e) => {
+            // console.log("DragOver aktiviran.");
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', (e) => {
+            // console.log("DragLeave aktiviran.");
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            console.log(`Datoteka ispuštena u Drop Zone: ${file ? file.name : 'Nijedna'}`);
+            handleFile(file);
+        });
+
+        function handleFile(file) {
+            console.log("Obrada datoteke započeta.");
+            const oldImg = imagePreview.querySelector('img');
+            if (oldImg && oldImg.src.startsWith('blob:')) {
+                URL.revokeObjectURL(oldImg.src);
+            }
+
+            if (file && file.type.startsWith('image/')) {
+                currentFileName = file.name; 
+                const previewUrl = URL.createObjectURL(file);
+                
+                imagePreview.innerHTML = `
+                    <img src="${previewUrl}" alt="Pregled slike">
+                    <p>${currentFileName}</p>
+                `;
+                console.log(`Slika uspješno odabrana. Ime datoteke: ${currentFileName}`);
+            } else {
+                alert("Molimo odaberite valjanu slikovnu datoteku.");
+                currentFileName = "";
+                imagePreview.innerHTML = "";
+                console.warn("Upozorenje: Pokušana je obrada ne-slikovne datoteke ili praznog unosa.");
+            }
+        }
+
+        
         // --- TAB LOGIKA ---
         function switchTab(tabName) {
             document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
@@ -291,7 +481,7 @@
             if(tabName === 'parts') {
                 document.getElementById('parts-section').classList.add('active');
                 document.getElementById('btn-tab-parts').classList.add('active');
-                loadParts();
+                loadAll();
             } else {
                 document.getElementById('users-section').classList.add('active');
                 document.getElementById('btn-tab-users').classList.add('active');
@@ -304,13 +494,13 @@
         // ==============================================
         const partForm = document.getElementById('part-form');
         
-        function loadParts() {
+        
+        function OnlyLoadParts() {
             logStatus("Učitavam dijelove...");
             fetch(`${API_BASE}/dijelovi`, { headers: getAuthHeaders() })
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('parts-table-body');
-                tbody.innerHTML = "";
                 data.forEach(part => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
@@ -318,9 +508,35 @@
                         <td><strong>${part.naziv}</strong></td>
                         <td>${part.cijena} €</td>
                         <td>${part.slikaUrl ? 'Da' : 'Ne'}</td>
+                        <td style="color:${roleColor}; font-weight:bold;">DIO</td>
                         <td class="action-cell">
                             <button class="btn-sm btn-edit" onclick="preparePartEdit(${part.idDijela})">Uredi</button>
                             <button class="btn-sm btn-delete" onclick="deletePart(${part.idDijela})">Obriši</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                logStatus(`Učitano ${data.length} dijelova.`);
+            })
+            .catch(err => logStatus("Greška dijelovi: " + err, true));
+        }
+        function OnlyLoadServices() {
+            logStatus("Učitavam usluge...");
+            fetch(`${API_BASE}/usluga`, { headers: getAuthHeaders() })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('parts-table-body');
+                data.forEach(service => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${service.idDijela}</td>
+                        <td><strong>${service.naziv}</strong></td>
+                        <td>${service.cijena} €</td>
+                        <td>${service.slikaUrl ? 'Da' : 'Ne'}</td>
+                        <td style="color:${roleColor}; font-weight:bold;">USLUGA</td>
+                        <td class="action-cell">
+                            <button class="btn-sm btn-edit" onclick="prepareServiceEdit(${service.idDijela})">Uredi</button>
+                            <button class="btn-sm btn-delete" onclick="deleteService(${service.idDijela})">Obriši</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -337,10 +553,16 @@
                 naziv: document.getElementById('part-name').value,
                 cijena: parseFloat(document.getElementById('part-price').value),
                 opis: document.getElementById('part-desc').value,
-                slikaUrl: document.getElementById('part-image').value
+                slikaUrl: currentFileName
             };
 
-            const url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
+            if (getSelectedType()=="usluga") {
+                const url = id ? `${API_BASE}/usluga/${id}` : `${API_BASE}/usluga`;
+            }
+            else{
+                const url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
+            }
+            
             const method = id ? "PUT" : "POST";
 
             fetch(url, {
@@ -352,7 +574,7 @@
             .then(() => {
                 logStatus(id ? "Dio ažuriran!" : "Dio dodan!");
                 resetPartForm();
-                loadParts();
+                loadAll();
             })
             .catch(err => logStatus("Greška spremanje: " + err, true));
         });
@@ -365,10 +587,38 @@
                 document.getElementById('part-id').value = part.idDijela;
                 document.getElementById('part-name').value = part.naziv;
                 document.getElementById('part-price').value = part.cijena;
+                partRadio.checked = true;
+                serviceRadio.checked = false;
                 document.getElementById('part-desc').value = part.opis || "";
-                document.getElementById('part-image').value = part.slikaUrl || "";
+                imagePreview.innerHTML = `
+                    <img src="https://autoservis-progi.onrender.com/assets/pictures/djelovi/${part.slikaUrl}" alt="Pregled slike">
+                    <p>${part.slikaUrl}</p>
+                `; ;
                 
                 document.getElementById('part-form-title').textContent = `Uredi dio ID: ${part.idDijela}`;
+                document.getElementById('part-save-btn').textContent = "Spremi izmjene";
+                document.getElementById('part-save-btn').style.backgroundColor = "#f1c40f";
+                document.getElementById('part-save-btn').style.color = "black";
+                document.getElementById('part-cancel-btn').style.display = "inline-block";
+                window.scrollTo(0, 0);
+            });
+        };
+            window.prepareServiceEdit = function(id) {
+            fetch(`${API_BASE}/usluga/${id}`, { headers: getAuthHeaders() })
+            .then(res => res.json())
+            .then(service => {
+                document.getElementById('part-id').value = service.idDijela;
+                document.getElementById('part-name').value = service.naziv;
+                document.getElementById('part-price').value = service.cijena;
+                partRadio.checked = false;
+                serviceRadio.checked = true;
+                document.getElementById('part-desc').value = service.opis || "";
+                imagePreview.innerHTML = `
+                    <img src="https://autoservis-progi.onrender.com/assets/pictures/djelovi/${service.slikaUrl}" alt="Pregled slike">
+                    <p>${service.slikaUrl}</p>
+                `; ;
+                
+                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${service.idDijela}`;
                 document.getElementById('part-save-btn').textContent = "Spremi izmjene";
                 document.getElementById('part-save-btn').style.backgroundColor = "#f1c40f";
                 document.getElementById('part-save-btn').style.color = "black";
@@ -380,7 +630,13 @@
         window.deletePart = function(id) {
             if(!confirm("Sigurno obrisati dio?")) return;
             fetch(`${API_BASE}/dijelovi/${id}`, { method: "DELETE", headers: getAuthHeaders() })
-            .then(() => { logStatus("Dio obrisan."); loadParts(); })
+            .then(() => { logStatus("Dio obrisan."); loadAll(); })
+            .catch(err => logStatus("Greška brisanje: " + err, true));
+        };
+        window.deleteService = function(id) {
+            if(!confirm("Sigurno obrisati dio?")) return;
+            fetch(`${API_BASE}/usluga/${id}`, { method: "DELETE", headers: getAuthHeaders() })
+            .then(() => { logStatus("Usluga obrisana."); loadAll(); })
             .catch(err => logStatus("Greška brisanje: " + err, true));
         };
 
@@ -419,17 +675,17 @@
                     const roleColor = isAdm ? "red" : "green"; // Stil za tekst
                     
                     // Napomena: Escapeanje stringova u onclicku je važno
-                    const roleParam = isAdm ? 'USER' : 'ADMIN';
+                    const roleParam = isAdm ? 'KORISNIK' : 'ADMIN';
 
                     tr.innerHTML = `
                         <td>${user.idKorisnik}</td>
                         <td>
-                            <strong>${user.username || 'No Name'}</strong><br>
+                            <strong>${(user.ime + ' ' + user.prezime) || 'No Name'}</strong><br>
                             <small>${user.email || ''}</small>
                         </td>
                         <td style="color:${roleColor}; font-weight:bold;">${user.uloga}</td>
                         <td class="action-cell">
-                             <button class="btn-sm btn-role" onclick="toggleUserRole(${user.idKorisnik}, '${roleParam}')">
+                            <button class="btn-sm btn-role" onclick="toggleUserRole(${user.idKorisnik}, '${roleParam}')">
                                 ${toggleLabel}
                             </button>
                             <button class="btn-sm btn-delete" onclick="deleteUser(${user.idKorisnik})">
@@ -449,7 +705,8 @@
             e.preventDefault();
 
             const newUser = {
-                username: document.getElementById('user-username').value,
+                name: document.getElementById('user-name').value,
+                surname: document.getElementById('user-surname').value,
                 email: document.getElementById('user-email').value,
                 password: document.getElementById('user-password').value,
                 uloga: document.getElementById('user-role').value
@@ -522,6 +779,23 @@
 
             initApp();
         });
+
+        function loadAll(){
+            const tbod = document.getElementById('parts-table-body');
+            tbod.innerHTML="";
+            OnlyLoadParts();
+            OnlyLoadServices();
+        }
+        function loadParts(){
+            const tbod = document.getElementById('parts-table-body');
+            tbod.innerHTML="";
+            OnlyLoadParts();
+        }
+        function loadServices(){
+            const tbod = document.getElementById('parts-table-body');
+            tbod.innerHTML="";
+            OnlyLoadServices();
+        }
 
     </script>
 </body>
