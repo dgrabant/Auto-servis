@@ -1,0 +1,129 @@
+
+#performance {
+    width: 100%;
+    height: 100%;
+    position: fixed; /* Fiksira ga preko cijelog ekrana */
+    top: 0;
+    left: 0;
+    z-index: 100;
+    
+    /* Pozadina */
+    background: linear-gradient(135deg, #d80303d2, #030303, #00D4FF, #d0e9f4);
+
+    /* Centriranje sadržaja (performanceBox, itd.) u stupcu */
+    display: none; /* Skriveno po defaultu, nadjačava HTML atribut 'hidden' */
+    flex-direction: column;
+    justify-content: center; /* Vertikalno centriranje */
+    align-items: center;     /* Horizontalno centriranje */
+}
+
+.performanceBox {
+    /* Flexbox za unutarnje elemente (radio gumbe i tekst) */
+    display: flex; 
+    flex-direction: column; 
+    
+    /* Stilovi za stakleni efekt */
+    background: rgba(0, 0, 0, 0.15); /* Poluprozirna pozadina */
+    backdrop-filter: blur(10px); /* Efekt zamućenja */
+    -webkit-backdrop-filter: blur(10px); /* Za Safari */
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    
+    /* Veličina i pozicioniranje */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    max-width: 400px;
+    width: 90%; /* Koristite % da bude responzivno */
+    max-height: 600px;
+    /* Tekst i font */
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.performanceBox:hover {
+    background: rgba(0, 0, 0, 0.377); 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Sakrivanje originalnog radio gumba */
+.radio-card input[type="radio"] {
+    display: none;
+}
+
+/* Stiliziranje labele (koja sada glumi gumb/karticu) */
+.radio-card {
+    display: block; /* Osigurava da svaka labela zauzme svoj red */
+    cursor: pointer;
+    margin-bottom: 10px;
+    font-size: 1rem; /* Može biti manji font od parenta */
+    color: #e0e0e0; /* Default boja teksta */
+}
+
+/* Stiliziranje vizualnog dijela kartice (SPAN) */
+.radio-label-text {
+    display: block;
+    justify-self: center;
+    width: 50%;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Efekt prelaska mišem na kartici */
+.radio-card:hover .radio-label-text {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #00a8ca;
+}
+
+/* STANJE ODABRANOSTI: Kada je input checked, stilizira susjedni span */
+.radio-card input[type="radio"]:checked + .radio-label-text {
+    background-color: #00a8ca; /* Istaknuta pozadina */
+    color: white;
+    border-color: #00D4FF;
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    font-weight: 700;
+}
+
+/* Stil za kratke opisne paragrafe */
+.performanceBox p {
+    font-size: 1rem;
+    color: white;
+    margin-top: 1px;
+    margin-bottom: 10px;
+    line-height: 1;
+}
+
+.performance {
+    font-family: 'Americorps'; 
+    
+    /* Gumb centriramo unutar performanceBoxa */
+    display: block; 
+    margin: 25px auto 0 auto; /* Gornja margina i automatske bočne za centriranje */
+    width: 50%; 
+    min-width: 170px;
+    
+    /* Stilovi */
+    padding: 15px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    color: white;
+    background-color: #00a8ca;
+}
+
+.performance:hover {
+    background-color: #c2382c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}

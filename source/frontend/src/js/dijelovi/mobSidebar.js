@@ -1,11 +1,9 @@
 // Funkcija za prebacivanje vidljivosti bočne trake (sidebar) i promjenu teksta na gumbu
-document.getElementById('drop').addEventListener('click', (event) => {
+document.getElementById('drop').addEventListener('click', () => {
     // Dohvati elemente za padajući izbornik (drop) i bočnu traku (sidebar)
     let drop = document.getElementById("drop"); 
     let sidebar = document.getElementById("sidebar");
     console.log("klik: ", sidebar.classList.contains("hide"));
-    // Spremi trenutni tekst na gumbu
-    let previousText = drop.innerHTML;
 
     // Provjera trenutnog teksta na gumbu
     if (sidebar.classList.contains("hide")) {

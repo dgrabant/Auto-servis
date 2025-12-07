@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { LoadGLTFByPath, LoadCameraPath, LoadSvjetlaPath } from '../called/modelLoader.js'; // Funkcija za učitavanje .gltf modela
 import { setupRenderer } from '../called/rendererSetup.js'; // Funkcija za postavljanje renderera
 // *** NOVO: Uvoz cleanupSpawnedModels za čišćenje statičkih referenci ***
-import { spawnMultipleModels, justLogedIn, justLogedOut, cleanupSpawnedModels } from '../called/spawn_menu.js'; 
+import { spawnMultipleModels, cleanupSpawnedModels } from '../called/spawn_menu.js'; 
 import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
@@ -26,7 +26,6 @@ const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
 const performanceMem = localStorage.getItem('performance');
-const canvasHTML = document.getElementById('bg');
 //let navDijeloviHTML = document.getElementById("navDijelovi");
 let uTranziciji=true;
 let mobileOptimization;
@@ -77,7 +76,6 @@ function provjera() {
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
-                resolve();
             }
               return response.json();
             })
@@ -138,18 +136,6 @@ if (!checkIfLogedIn()) {
 
   }
 disableScroll();
-
-
-function cekajPotvrdu(idGumba) {
-  return new Promise(resolve => {
-    document.getElementById(idGumba).addEventListener("click", () => {
-      forma.hidden = false
-      tutorial.hidden = true;
-      resolve();
-    }, { once: true });
-  });
-
-}
 function provjeriUredjaj() {
 
     const imaDodir = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -173,6 +159,31 @@ function provjeriUredjaj() {
         return 'Desktop';
     }
 }
+const tipUredjaja = provjeriUredjaj();
+
+
+if (tipUredjaja == "Desktop") {
+  document.getElementById("tutorialPC").hidden = false;
+}
+else
+{
+  document.getElementById("tutorialMob").hidden = false;
+}
+
+
+function cekajPotvrdu(idGumba) {
+  return new Promise(resolve => {
+    document.getElementById(idGumba).addEventListener("click", () => {
+      forma.hidden = false
+      if (tipUredjaja=="Desktop") forma.style.display = 'flex';
+      tutorial.hidden = true;
+      tutorial.style.display = 'none'
+      resolve();
+    }, { once: true });
+  });
+
+}
+
 function cekajKlik(idGumba) {
   return new Promise(resolve => {
     if (mobileOptimization) {
@@ -182,6 +193,11 @@ function cekajKlik(idGumba) {
       const odabrano = document.querySelector('input[name="odgovor"]:checked');
       console.log(forma, odabrano.value);
       forma.hidden = true;
+      forma.style.display = 'none'
+      
+      loadingScreen.hidden = false;
+      loadingScreen.style.display = 'flex'
+
       if (odabrano.value == 'true') {
         pcPerformance = true;
         texturePath = texturePathMobile;
@@ -203,7 +219,7 @@ function cekajKlik(idGumba) {
     }, { once: true });
   });
 }
-const tipUredjaja = provjeriUredjaj();
+
 if (!(checkIfLogedIn())) 
   await cekajPotvrdu("understood");
 if (!mobileOptimization){
@@ -568,7 +584,7 @@ function onTouchMove(e) {
 }
 
 // 🔸 Mobilni touch - End
-function onTouchEnd(e) {
+function onTouchEnd() {
   const deltaX = touchStartX - touchEndX;
   const elapsed = Date.now() - touchStartTime;
 

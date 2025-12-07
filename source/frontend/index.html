@@ -12,6 +12,8 @@
 
 
     <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" type="text/css" href="/css/tutorial.css">
+    <link rel="stylesheet" type="text/css" href="/css/performance.css">
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
     <link rel="stylesheet" type="text/css" href="/css/hud.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -73,31 +75,85 @@
 
 
     <div id="tutorial" hidden>
-      <h1>Ovo je tutorijal, nije gotov jos</h1>
-      <button id="understood" type="button">Razumijem</button>
+      <div class="tutorialBox" id="tutorialBox">
+      <div id="tutorialMob" class="tuto" hidden>
+        <h1>Kako koristiti stranicu</h1>
+        <h2>Swipe za sljedeću opciju</h2>
+        <img class="tutImg" src="/assets/pictures/tutorial/swipe.gif" alt="">
+        <h2>Elementi osvijetljeni bijelom bojom su klikabilni</h2>
+        <img class="tutImg"  src="/assets/pictures/tutorial/clickMob.gif" alt="">
+      </div>
+      <div id="tutorialPC"  class="tuto" hidden>
+        <h1>Kako koristiti stranicu</h1>
+        <h2>Scroll za sljedeću opciju</h2>
+        <img class="tutImg" src="/assets/pictures/tutorial/scroll.gif" alt="">
+        <h2>Elementi osvijetljeni plavom bojom su klikabilni</h2>
+        <img class="tutImg"  src="/assets/pictures/tutorial/click.gif" alt="">
+      </div>
+      <button id="understood" type="button" class="understood">Razumijem</button>
+      </div>
     </div>
+
+
+
     <form id="performance" hidden>
-    <label>
-      <input type="radio" name="odgovor" value="false"> Fidelity
-    </label>
-    <br>
-    <label>
-      <input type="radio" name="odgovor" value="true"> Performance
-    </label>
-    <br>
-    <label>
-      <input type="radio" name="odgovor" value="ultra" checked> Ultra Performance
-    </label>
+    <div class="performanceBox">
+    <label class="radio-card">
+            <input type="radio" name="odgovor" value="false">
+            <span class="radio-label-text">Fidelity</span> 
+        </label>
+        
+        <label class="radio-card">
+            <input type="radio" name="odgovor" value="true" checked>
+            <span class="radio-label-text">Performance</span>
+        </label>
+        
+        <label class="radio-card">
+            <input type="radio" name="odgovor" value="ultra">
+            <span class="radio-label-text">Ultra Performance</span>
+        </label>
     <br><br>
-    <p>Performance mode is recomended for integrated graphics and PC's with 8GB or les of ram.</p>
-    <p>If you need more performance pick ultra performance. Models made for mobile phone will be loaded insted of PC models.</p>
-    <button id="submit" type="button">Start loading</button>
-  </form>
-    <main>
-      <div id="loading-screen" hidden>
-        <div class="spinner"></div>
-        <div id="loadText" class="loading-text">Učitavanje...</div>
+    <p>PERFORMANCE je za računala sa integriranom grafičkom karticom ili 8 i manje gigabajta rama.</p>
+    <p>Ako vam je potrebno više optimizacije odaberite ULTRA PERFORMANCE, tada će se učitati modeli napravljeni za mobitele.</p>
+    <button id="submit" type="button" class="performance" >Start loading</button>
     </div>
+    </form>
+    
+
+
+
+    <main>
+
+
+      <div id="loading-screen" hidden>
+        <div class="scene-container">
+            <div class="speed-trails">
+                <div class="trail"></div>
+                <div class="trail"></div>
+                <div class="trail"></div>
+            </div>
+            
+            <div class="road"></div>
+            
+            <div class="car-wrapper">
+                <div class="car-shadow"></div>
+                <div class="car">
+                    <div class="car-top"></div>
+                    <div class="car-window"></div>
+                    <div class="car-body"></div>
+                    <div class="light-front"></div>
+                    <div class="light-back"></div>
+                    <div class="wheel bac"></div>
+                    <div class="wheel front"></div>
+                </div>
+            </div>
+        </div>
+        <div id="loadText" class="loading-text">
+            Učitavanje<span class="dots">...</span>
+        </div>
+    </div>
+
+
     </main>
 
     <script type="importmap">

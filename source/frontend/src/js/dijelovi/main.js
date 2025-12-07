@@ -1,11 +1,4 @@
-// main.js
 
-// Učitavanje podataka iz data.js
-// Ovdje pretpostavljamo da je data.js ispravno učitan na stranici
-
-// --- Generiranje navigacije u sidebar-u ---
-// Ovaj dio može ostati kakav jest, jer ovisi samo o 'data.categories',
-// a ne o 'data.products' koji se tek trebaju dohvatiti.
 let sidebar = document.getElementById("sidebar");
 let nav = document.createElement("nav");
 
@@ -24,7 +17,7 @@ allOption.textContent = "Sve kategorije";
 allOption.setAttribute("data-name", "all");
 allOption.selected = true;
 categorySelect.appendChild(allOption);
-
+/*
 data.categories.forEach(category => {
     let option = document.createElement("option");
     option.value = category.name.toLowerCase().replace(/\s+/g, "_");
@@ -32,7 +25,7 @@ data.categories.forEach(category => {
     option.setAttribute("data-name", category.image);
     categorySelect.appendChild(option);
 });
-
+*/
 nav.appendChild(categoryLabel);
 nav.appendChild(categorySelect);
 sidebar.appendChild(nav);
