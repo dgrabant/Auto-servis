@@ -543,7 +543,7 @@
                         <td><strong>${service.naziv}</strong></td>
                         <td>${service.cijena} €</td>
                         <td>${service.slikaUrl ? 'Da' : 'Ne'}</td>
-                        <td style="color: red; font-weight:bold;">USLUGA</td>
+                        <td style="color: blue; font-weight:bold;">USLUGA</td>
                         <td class="action-cell">
                             <button class="btn-sm btn-edit" onclick="prepareServiceEdit(${service.idUsluge})">Uredi</button>
                             <button class="btn-sm btn-delete" onclick="deleteService(${service.idUsluge})">Obriši</button>
@@ -567,19 +567,24 @@
                 slikaUrl: currentFileName
             };
 
-            const method = id ? "PUT" : "POST";
+            let method = id ? "PUT" : "POST";
 
             if (getSelectedType()=="usluga") {
                 if (dioIliUsluga = "dio" && method == "PUT") {
                     deletePart(id);
+                    method = "POST";
+                    url = `${API_BASE}/usluga`;
                 }
-                url = id ? `${API_BASE}/usluga/${id}` : `${API_BASE}/usluga`;
+                else url = `${API_BASE}/usluga/${id}`;
+                
             }
             else{
                 if (dioIliUsluga = "usluga" && method == "PUT") {
                     deleteService(id);
+                    method = "POST";
+                    url = `${API_BASE}/dijelovi`;
                 }
-                url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
+                else `${API_BASE}/dijelovi/${id}`;
             }
 
             fetch(url, {
@@ -661,6 +666,7 @@
 
         window.resetPartForm = function() {
             partForm.reset();
+            imagePreview.innerHTML = ``;
             document.getElementById('part-id').value = "";
             document.getElementById('part-form-title').textContent = "Dodaj novi dio";
             const btn = document.getElementById('part-save-btn');
