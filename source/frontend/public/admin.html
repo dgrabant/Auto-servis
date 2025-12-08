@@ -586,7 +586,7 @@
                 }
                 else `${API_BASE}/dijelovi/${id}`;
             }
-
+            console.log("url:", url);
             fetch(url, {
                 method: method,
                 headers: getAuthHeaders(),
