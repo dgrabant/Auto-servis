@@ -567,17 +567,20 @@
                 slikaUrl: currentFileName
             };
 
+            const method = id ? "PUT" : "POST";
+
             if (getSelectedType()=="usluga") {
-                if (dioIliUsluga = "dio") {
+                if (dioIliUsluga = "dio" && method == "PUT") {
                     deletePart(id);
                 }
                 url = id ? `${API_BASE}/usluga/${id}` : `${API_BASE}/usluga`;
             }
             else{
+                if (dioIliUsluga = "usluga" && method == "PUT") {
+                    deleteService(id);
+                }
                 url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
             }
-            
-            const method = id ? "PUT" : "POST";
 
             fetch(url, {
                 method: method,
