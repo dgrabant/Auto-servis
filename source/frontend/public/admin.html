@@ -584,7 +584,7 @@
                     method = "POST";
                     url = `${API_BASE}/dijelovi`;
                 }
-                else `${API_BASE}/dijelovi/${id}`;
+                else url = `${API_BASE}/dijelovi/${id}`;
             }
             console.log("url:", url);
             fetch(url, {
