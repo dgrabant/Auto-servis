@@ -354,6 +354,8 @@
         const partRadio = document.getElementById('type-part')
         const serviceRadio = document.getElementById('type-service')
 
+        let dioIliUsluga = '';
+
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const imagePreview = document.getElementById('image-preview');
@@ -405,13 +407,17 @@
         //RADIO SELEKTOR LOGIKA
 
         function getSelectedType() {
-            const selectedInput = document.querySelector('input[name="item-type"]:checked');
+            const odabraniElement = document.querySelector('input[name="item-type"]:checked');
 
-            if (selectedInput) {
-                return selectedInput.value;
+            if (odabraniElement) {
+                // Vraća vrijednost (value) odabranog radio gumba: 'usluga' ili 'dio'
+                const odabranaVrijednost = odabraniElement.value;
+                console.log(`Odabrana opcija je: ${odabranaVrijednost}`);
+                return odabranaVrijednost;
+            } else {
+                console.log('Nijedna opcija nije odabrana.');
+                return null;
             }
-        
-            return null;
         }
 
         // --- Logika za Drag & Drop i odabir datoteke ---
@@ -533,14 +539,14 @@
                 data.forEach(service => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td>${service.idDijela}</td>
+                        <td>${service.idUsluge}</td>
                         <td><strong>${service.naziv}</strong></td>
                         <td>${service.cijena} €</td>
                         <td>${service.slikaUrl ? 'Da' : 'Ne'}</td>
                         <td style="color: red; font-weight:bold;">USLUGA</td>
                         <td class="action-cell">
-                            <button class="btn-sm btn-edit" onclick="prepareServiceEdit(${service.idDijela})">Uredi</button>
-                            <button class="btn-sm btn-delete" onclick="deleteService(${service.idDijela})">Obriši</button>
+                            <button class="btn-sm btn-edit" onclick="prepareServiceEdit(${service.idUsluge})">Uredi</button>
+                            <button class="btn-sm btn-delete" onclick="deleteService(${service.idUsluge})">Obriši</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -553,6 +559,7 @@
         partForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = document.getElementById('part-id').value;
+            let url = '';
             const payload = {
                 naziv: document.getElementById('part-name').value,
                 cijena: parseFloat(document.getElementById('part-price').value),
@@ -561,10 +568,13 @@
             };
 
             if (getSelectedType()=="usluga") {
-                const url = id ? `${API_BASE}/usluga/${id}` : `${API_BASE}/usluga`;
+                if (dioIliUsluga = "dio") {
+                    deletePart(id);
+                }
+                url = id ? `${API_BASE}/usluga/${id}` : `${API_BASE}/usluga`;
             }
             else{
-                const url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
+                url = id ? `${API_BASE}/dijelovi/${id}` : `${API_BASE}/dijelovi`;
             }
             
             const method = id ? "PUT" : "POST";
@@ -585,6 +595,7 @@
 
         // Globalne funkcije za onclick u HTML-u
         window.preparePartEdit = function(id) {
+            dioIliUsluga = "dio";
             fetch(`${API_BASE}/dijelovi/${id}`, { headers: getAuthHeaders() })
             .then(res => res.json())
             .then(part => {
@@ -607,11 +618,12 @@
                 window.scrollTo(0, 0);
             });
         };
-            window.prepareServiceEdit = function(id) {
+        window.prepareServiceEdit = function(id) {
+            dioIliUsluga = "usluga";
             fetch(`${API_BASE}/usluga/${id}`, { headers: getAuthHeaders() })
             .then(res => res.json())
             .then(service => {
-                document.getElementById('part-id').value = service.idDijela;
+                document.getElementById('part-id').value = service.idUsluge;
                 document.getElementById('part-name').value = service.naziv;
                 document.getElementById('part-price').value = service.cijena;
                 partRadio.checked = false;
@@ -622,7 +634,7 @@
                     <p>${service.slikaUrl}</p>
                 `; ;
                 
-                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${service.idDijela}`;
+                document.getElementById('part-form-title').textContent = `Uredi dio ID: ${service.idUsluge}`;
                 document.getElementById('part-save-btn').textContent = "Spremi izmjene";
                 document.getElementById('part-save-btn').style.backgroundColor = "#f1c40f";
                 document.getElementById('part-save-btn').style.color = "black";
