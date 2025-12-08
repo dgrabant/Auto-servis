@@ -568,25 +568,30 @@
             };
 
             let method = id ? "PUT" : "POST";
-
+            console.log("method:", method);
             if (getSelectedType()=="usluga") {
+                console.log("getSelectedType() je usluga");
                 if (dioIliUsluga = "dio" && method == "PUT") {
                     deletePart(id);
                     method = "POST";
                     url = `${API_BASE}/usluga`;
+                    console.log("promjena dio -> usluga");
                 }
                 else url = `${API_BASE}/usluga/${id}`;
                 
             }
             else{
+                console.log("getSelectedType() nije usluga");
                 if (dioIliUsluga = "usluga" && method == "PUT") {
                     deleteService(id);
                     method = "POST";
                     url = `${API_BASE}/dijelovi`;
+                    console.log("promjena usluga -> dio");
                 }
                 else url = `${API_BASE}/dijelovi/${id}`;
             }
             console.log("url:", url);
+            console.log("selektirano:", getSelectedType());
             fetch(url, {
                 method: method,
                 headers: getAuthHeaders(),
