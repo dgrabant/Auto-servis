@@ -574,10 +574,13 @@
                 if (dioIliUsluga = "dio" && method == "PUT") {
                     deletePart(id);
                     method = "POST";
-                    url = `${API_BASE}/usluga/${id}`;
+                    url = `${API_BASE}/usluga`;
                     console.log("promjena dio -> usluga");
                 }
-                else url = `${API_BASE}/usluga`;
+                else if (method == "POST") {
+                    url = `${API_BASE}/usluga`;
+                }
+                else url = `${API_BASE}/usluga/${id}`;
                 
             }
             else{
@@ -588,7 +591,10 @@
                     url = `${API_BASE}/dijelovi/${id}`;
                     console.log("promjena usluga -> dio");
                 }
-                else url = `${API_BASE}/dijelovi`;
+                else if (method == "POST") {
+                    url = `${API_BASE}/usluga`;
+                }
+                else url = `${API_BASE}/usluga/${id}`;
             }
             console.log("url:", url);
             console.log("selektirano:", getSelectedType());
