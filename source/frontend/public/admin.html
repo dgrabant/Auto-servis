@@ -301,7 +301,7 @@
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Email:</label>
+                        <label id="mailText">Email:</label>
                         <input type="email" id="user-email" required maxlength="100">
                     </div>
 
@@ -729,6 +729,20 @@
             })
             .catch(err => logStatus("Greška učitavanje korisnika: " + err, true));
         };
+
+        document.getElementById('davUsluge').addEventListener('change', (e) => {
+            if (document.getElementById('davUsluge').value == "github") {
+                document.getElementById('mailText').innerHTML = '';
+                document.getElementById('mailText').innerHTML = 'Username';
+                document.getElementById('user-email').type = 'text';
+            }
+            else{
+                document.getElementById('mailText').innerHTML = '';
+                document.getElementById('mailText').innerHTML = 'Email';
+                document.getElementById('user-email').type = 'email';
+
+            }
+        });
 
         // B) Dodavanje novog korisnika (POST)
         userForm.addEventListener('submit', (e) => {
