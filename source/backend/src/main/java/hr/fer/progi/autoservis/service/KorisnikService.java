@@ -62,7 +62,9 @@ public class KorisnikService {
     }
 
     private String getEmailFromAttributes(Map<String, Object> attributes) {
-        return (String) attributes.get("email");
+        String candidate = (String) attributes.get("email");
+        if(candidate == null) candidate = (String) attributes.get("login");
+        return candidate;
     }
 
     private String getProviderFromAttributes(Map<String, Object> attributes) {
