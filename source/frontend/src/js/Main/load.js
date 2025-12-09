@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { LoadGLTFByPath, LoadCameraPath, LoadSvjetlaPath } from '../called/modelLoader.js'; // Funkcija za učitavanje .gltf modela
 import { setupRenderer } from '../called/rendererSetup.js'; // Funkcija za postavljanje renderera
 // *** NOVO: Uvoz cleanupSpawnedModels za čišćenje statičkih referenci ***
-import { spawnMultipleModels, cleanupSpawnedModels } from '../called/spawn_menu.js'; 
+import { spawnMultipleModels, cleanupSpawnedModels, justLogedIn, justLogedOut } from '../called/spawn_menu.js'; 
 import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
@@ -92,6 +92,16 @@ function provjera() {
         });
   });
 }
+
+function LogedOut(){
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('performance');
+  console.log('Logged out...');
+  hide("login");
+  unHide("login");
+  justLogedOut(scene);
+}
+
 //const data = await response.json();
 function hide(stranica){
   if (stranica == "dijelovi") {
@@ -127,6 +137,7 @@ function unHide(stranica){
     document.getElementById("backLogin").hidden = false;
   }
 }
+
 
 if (!checkIfLogedIn()) {
     tutorial.hidden = false;
@@ -186,6 +197,10 @@ function cekajPotvrdu(idGumba) {
   });
 
 }
+
+document.getElementById("logoutGumb").addEventListener("click", () => {
+  LogedOut();
+});
 
 function cekajKlik(idGumba) {
   return new Promise(resolve => {
