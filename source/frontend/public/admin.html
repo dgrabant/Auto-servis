@@ -577,7 +577,7 @@
                     url = `${API_BASE}/usluga`;
                     console.log("promjena dio -> usluga");
                 }
-                else url = `${API_BASE}/usluga`;
+                else url = `${API_BASE}/usluga/${id}`;
                 
             }
             else{
@@ -588,7 +588,7 @@
                     url = `${API_BASE}/dijelovi`;
                     console.log("promjena usluga -> dio");
                 }
-                else url = `${API_BASE}/usluga/${id}`;
+                else url = `${API_BASE}/dijelovi/${id}`;
             }
             console.log("url:", url);
             console.log("selektirano:", getSelectedType());
@@ -601,7 +601,8 @@
             .then(() => {
                 logStatus(id ? "Dio ažuriran!" : "Dio dodan!");
                 resetPartForm();
-                loadAll();
+                setTimeout(() => loadAll(),1000);
+                
             })
             .catch(err => logStatus("Greška spremanje: " + err, true));
         });
