@@ -571,28 +571,22 @@
             console.log("method:", method);
             if (getSelectedType()=="usluga") {
                 console.log("getSelectedType() je usluga");
-                if (dioIliUsluga = "dio" && method == "PUT") {
-                    deletePart(id);
+                if (dioIliUsluga == "dio" && method == "PUT") {
+                    deletePartNoAsk(id);
                     method = "POST";
                     url = `${API_BASE}/usluga`;
                     console.log("promjena dio -> usluga");
                 }
-                else if (method == "POST") {
-                    url = `${API_BASE}/usluga`;
-                }
-                else url = `${API_BASE}/usluga/${id}`;
+                else url = `${API_BASE}/usluga`;
                 
             }
             else{
                 console.log("getSelectedType() nije usluga");
-                if (dioIliUsluga = "usluga" && method == "PUT") {
-                    deleteService(id);
+                if (dioIliUsluga == "usluga" && method == "PUT") {
+                    deleteServiceNoAsk(id);
                     method = "POST";
-                    url = `${API_BASE}/dijelovi/${id}`;
+                    url = `${API_BASE}/dijelovi`;
                     console.log("promjena usluga -> dio");
-                }
-                else if (method == "POST") {
-                    url = `${API_BASE}/usluga`;
                 }
                 else url = `${API_BASE}/usluga/${id}`;
             }
@@ -670,6 +664,16 @@
         };
         window.deleteService = function(id) {
             if(!confirm("Sigurno obrisati dio?")) return;
+            fetch(`${API_BASE}/usluga/${id}`, { method: "DELETE", headers: getAuthHeaders() })
+            .then(() => { logStatus("Usluga obrisana."); loadAll(); })
+            .catch(err => logStatus("Greška brisanje: " + err, true));
+        };
+        window.deletePartNoAsk = function(id) {
+            fetch(`${API_BASE}/dijelovi/${id}`, { method: "DELETE", headers: getAuthHeaders() })
+            .then(() => { logStatus("Dio obrisan."); loadAll(); })
+            .catch(err => logStatus("Greška brisanje: " + err, true));
+        };
+        window.deleteServiceNoAsk = function(id) {
             fetch(`${API_BASE}/usluga/${id}`, { method: "DELETE", headers: getAuthHeaders() })
             .then(() => { logStatus("Usluga obrisana."); loadAll(); })
             .catch(err => logStatus("Greška brisanje: " + err, true));
