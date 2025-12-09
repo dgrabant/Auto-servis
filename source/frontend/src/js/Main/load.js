@@ -94,11 +94,11 @@ function provjera() {
 }
 
 function LogedOut(){
+  hide("login");
   localStorage.removeItem('authToken');
   localStorage.removeItem('performance');
   console.log('Logged out...');
-  hide("login");
-  unHide("login");
+    unHide("login");
   justLogedOut(scene);
 }
 
