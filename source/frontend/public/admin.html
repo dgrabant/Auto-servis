@@ -577,8 +577,10 @@
                     url = `${API_BASE}/usluga`;
                     console.log("promjena dio -> usluga");
                 }
-                else url = `${API_BASE}/usluga/${id}`;
-                
+                else if (method == "PUT") {
+                    url = `${API_BASE}/usluga/${id}`;
+                } 
+                else url = `${API_BASE}/usluga`;
             }
             else{
                 console.log("getSelectedType() nije usluga");
@@ -588,7 +590,10 @@
                     url = `${API_BASE}/dijelovi`;
                     console.log("promjena usluga -> dio");
                 }
-                else url = `${API_BASE}/dijelovi/${id}`;
+                else if (method == "PUT") {
+                    url = `${API_BASE}/dijelovi/${id}`;
+                } 
+                else url = `${API_BASE}/dijelovi`;
             }
             console.log("url:", url);
             console.log("selektirano:", getSelectedType());
