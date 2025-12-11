@@ -17,7 +17,7 @@ allOption.textContent = "Sve kategorije";
 allOption.setAttribute("data-name", "all");
 allOption.selected = true;
 categorySelect.appendChild(allOption);
-/*
+
 data.categories.forEach(category => {
     let option = document.createElement("option");
     option.value = category.name.toLowerCase().replace(/\s+/g, "_");
@@ -25,7 +25,7 @@ data.categories.forEach(category => {
     option.setAttribute("data-name", category.image);
     categorySelect.appendChild(option);
 });
-*/
+
 nav.appendChild(categoryLabel);
 nav.appendChild(categorySelect);
 sidebar.appendChild(nav);
