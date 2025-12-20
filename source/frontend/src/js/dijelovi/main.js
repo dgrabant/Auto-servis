@@ -25,7 +25,6 @@ data.categories.forEach(category => {
     option.setAttribute("data-name", category.image);
     categorySelect.appendChild(option);
 });
-
 nav.appendChild(categoryLabel);
 nav.appendChild(categorySelect);
 sidebar.appendChild(nav);

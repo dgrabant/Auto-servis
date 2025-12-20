@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { LoadGLTFByPath, LoadCameraPath, LoadSvjetlaPath } from '../called/modelLoader.js'; // Funkcija za učitavanje .gltf modela
 import { setupRenderer } from '../called/rendererSetup.js'; // Funkcija za postavljanje renderera
 // *** NOVO: Uvoz cleanupSpawnedModels za čišćenje statičkih referenci ***
-import { spawnMultipleModels, cleanupSpawnedModels, justLogedIn, justLogedOut } from '../called/spawn_menu.js'; 
+import { spawnMultipleModels, cleanupSpawnedModels, justLogedOut } from '../called/spawn_menu.js'; 
 import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPrevCam, lightUpModel, transitionLight } from '../called/controls.js'; // Funkcije za kontrole kamere i interakciju
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
@@ -19,6 +19,7 @@ const texturePathMobile = '/assets/textures/backgroundMobile.jpg';
 const cameraPath = '/assets/models/kamere.gltf';
 const svjetlaPath = '/assets/models/svjetla.gltf';
 const dijeloviHTML = document.getElementById("dijelovi");
+const servisHTML = document.getElementById("servis");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const hudHTML = document.getElementById("hud");
@@ -110,6 +111,11 @@ function hide(stranica){
     document.getElementById('sidebarInfo').hidden = true;
     document.getElementById('category-select').hidden = true;
   }
+  if (stranica == "servis") {
+    document.getElementById('logoServis').hidden = true;
+    document.getElementById('backServis').hidden = true;
+    document.getElementById('sidebarInfoServis').hidden = true;
+  }
   if (stranica == "login") {
     document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
     if (checkIfLogedIn()) {
@@ -126,6 +132,11 @@ function unHide(stranica){
     document.getElementById('back').hidden = false;
     document.getElementById('sidebarInfo').hidden = false;
     document.getElementById('category-select').hidden = false;
+  }
+  if (stranica == "servis") {
+    document.getElementById('logoServis').hidden = false;
+    document.getElementById('backServis').hidden = false;
+    document.getElementById('sidebarInfoServis').hidden = false;
   }
   if (stranica == "login") {
     document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
@@ -466,6 +477,16 @@ function onDocumentClick(event) {
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
     if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
+      transitionTimeout = setTimeout(() => { 
+        if (servisHTML.classList.contains('hidden')) {
+            servisHTML.classList.remove('hidden');
+            servisHTML.classList.add('visible'); 
+            //document.getElementById("navDijelovi").hidden = false;
+        } 
+        stranicaUpaljena = true;
+        unHide("servis");
+        enableScroll();
+      }, 2000);
     }
     if (firstHitName.startsWith("djelovi") || firstHitName.startsWith("dijelovi")) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 1240);
@@ -628,8 +649,8 @@ function onKeydownE(event) {
 // 🔸 UI Izbornik - Tipka "Q"
 function onKeydownQ(event) {
   if (event.key === "q" || event.key === "Q") {
-    //localStorage.setItem('authToken', "proba");
-    //console.log("token dodan");
+    localStorage.setItem('authToken', "proba");
+    console.log("token dodan");
   }
 }
 let lastOnMouseMove;
@@ -888,8 +909,13 @@ function povratak(){
       else if (cameraPosition == 3) {
         cameraPosition = returnToPrevCam(cameraPosition);
         // *** SPREMANJE ID-A TIMERA ZA PRIJELAZ ***
+        servisHTML.classList.remove('visible');
+        servisHTML.classList.add('hidden');
+        stranicaUpaljena = false;
+        disableScroll();
         transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
+          hide("servis");
+          transitionCamera(activeCamera, cameraList[cameraPosition], 1500);
       }, 1000);
       }
       else if (cameraPosition == 2) {
