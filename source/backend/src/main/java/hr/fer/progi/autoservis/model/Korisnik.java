@@ -1,6 +1,11 @@
 package hr.fer.progi.autoservis.model;
 
+import hr.fer.progi.autoservis.service.KorisnikUloga;
+import hr.fer.progi.autoservis.service.PopravakStatus;
 import jakarta.persistence.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name="korisnik")
@@ -20,9 +25,9 @@ public class Korisnik {
     private String email;
 
     @Column(name="davateljUsluge", nullable = false, length = 20)
-    private String davateljUsluge;
+    private String davateljUsluge = "unknown";
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 20)
     private String uloga;
 
     public Integer getIdKorisnik() {
@@ -65,12 +70,26 @@ public class Korisnik {
         else this.davateljUsluge = davateljUsluge;
     }
 
-    public String getUloga() {
+    public KorisnikUloga getUloga() {
+        KorisnikUloga uloga;
+
+        try{
+            uloga = KorisnikUloga.valueOf(this.uloga);
+        }
+        catch (Exception e){
+            throw new RuntimeException();
+        }
+
         return uloga;
     }
-    public void setUloga(String uloga) {
+    public void setUloga(KorisnikUloga uloga) {
         if(uloga==null) return;
-        if(uloga.isEmpty() || uloga.length()>10) throw new RuntimeException();
-        else this.uloga = uloga;
+
+        List<String> values = Arrays.stream(KorisnikUloga.values()).map(KorisnikUloga::getValue).toList();
+        String strStatus = uloga.getValue();
+
+        if(values.contains(strStatus)){
+            this.uloga = strStatus;
+        } else throw new RuntimeException();
     }
 }

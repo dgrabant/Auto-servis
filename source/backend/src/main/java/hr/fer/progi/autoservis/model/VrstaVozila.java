@@ -14,7 +14,7 @@ public class VrstaVozila {
     private String nazivModela;
 
     @Column(name="opisVrste", nullable = false, length = 100)
-    private String opisVrste;
+    private String opisVrste = "";
 
     public Integer getIdVrsta() {
         return idVrsta;

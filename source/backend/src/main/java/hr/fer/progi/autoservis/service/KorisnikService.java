@@ -51,7 +51,7 @@ public class KorisnikService {
             user.setIme(firstname);
             user.setPrezime(lastname);
             user.setDavateljUsluge(getProviderFromAttributes(attributes));
-            user.setUloga("KORISNIK");
+            user.setUloga(KorisnikUloga.KORISNIK);
         }
 
         return korisnikRepository.save(user);

@@ -18,17 +18,17 @@ public class Vozilo {
     @JoinColumn(name="idVrsta",referencedColumnName="idVrsta", nullable = false)
     private VrstaVozila vrstaVozila;
 
-    @Column(name="regOznaka", nullable = false, length = 10)
+    @Column(name="regOznaka", nullable = false, length = 10, unique = true)
     private String regOznaka;
 
-    @Column(name="godinaProizvodnje", nullable = false)
+    @Column(name="godinaProizvodnje")
     private Short godinaProizvodnje;
 
-    @Column(name="serijskiBr", nullable = false, length = 100)
-    private String serijskiBr;
+    @Column(name="serijskiBroj", length = 100)
+    private String serijskiBroj;
 
     @Column(name="jeZamjensko", nullable = false)
-    private Boolean jeZamjensko;
+    private Boolean jeZamjensko = false;
 
     public Integer getIdVozila() {
         return idVozila;
@@ -63,17 +63,15 @@ public class Vozilo {
         return godinaProizvodnje;
     }
     public void setGodinaProizvodnje(Short godinaProizvodnje) {
-        if(godinaProizvodnje==null) return;
         this.godinaProizvodnje = godinaProizvodnje;
     }
 
-    public String getSerijskiBr() {
-        return serijskiBr;
+    public String getSerijskiBroj() {
+        return serijskiBroj;
     }
-    public void setSerijskiBr(String serijskiBr) {
-        if(serijskiBr==null) return;
-        if(serijskiBr.isEmpty() || serijskiBr.length()>100) throw new RuntimeException();
-        else this.serijskiBr = serijskiBr;
+    public void setSerijskiBroj(String serijskiBroj) {
+        if(serijskiBroj.length()>100) throw new RuntimeException();
+        else this.serijskiBroj = serijskiBroj;
     }
 
     public Boolean getJeZamjensko() {

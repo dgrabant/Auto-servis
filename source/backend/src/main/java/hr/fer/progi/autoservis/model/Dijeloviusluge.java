@@ -3,27 +3,30 @@ package hr.fer.progi.autoservis.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="dijelovi")
-public class Dijelovi {
+@Table(name="dijeloviusluge")
+public class Dijeloviusluge {
     @Id
-    @Column(name="idDijela")
+    @Column(name="idDijelausluge")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idDijela;
+    private Integer idDijelausluge;
+
+    @Column(name="vrsta", nullable = false, length = 10)
+    private String vrsta;
 
     @Column(name="naziv", nullable = false, length = 50)
     private String naziv;
 
-    @Column(name="cijena", nullable = false)
+    @Column(name="cijena")
     private Double cijena;
 
-    @Column(name="opis", nullable = false, length = 500)
-    private String opis;
+    @Column(name="opis", length = 500)
+    private String opis = "";
 
-    @Column(name="slikaUrl", nullable = false, length = 200)
-    private String slikaUrl;
+    @Column(name="slikaUrl", length = 200)
+    private String slikaUrl = "";
 
-    public Integer getIdDijela() {
-        return idDijela;
+    public Integer getIdDijelausluge() {
+        return idDijelausluge;
     }
 
     public String getNaziv() {
@@ -35,11 +38,20 @@ public class Dijelovi {
         else this.naziv = naziv;
     }
 
+    public String getVrsta() {
+        return vrsta;
+    }
+
+    public void setVrsta(String vrsta) {
+        if(vrsta == null) return;
+        if(vrsta.isEmpty() || vrsta.length()>10) throw new RuntimeException();
+        this.vrsta = vrsta;
+    }
+
     public Double getCijena() {
         return cijena;
     }
     public void setCijena(Double cijena) {
-        if(cijena==null) return;
         this.cijena = cijena;
     }
 
@@ -47,7 +59,6 @@ public class Dijelovi {
         return opis;
     }
     public void setOpis(String opis) {
-        if(opis==null) return;
         if(opis.length()>500) throw new RuntimeException();
         else this.opis = opis;
     }
@@ -56,7 +67,6 @@ public class Dijelovi {
         return slikaUrl;
     }
     public void setSlikaUrl(String slikaUrl) {
-        if(slikaUrl==null) return;
         if(slikaUrl.length()>200) throw new RuntimeException();
         else this.slikaUrl = slikaUrl;
     }

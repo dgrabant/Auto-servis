@@ -10,25 +10,26 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/usluga")
-public class UslugaController {
+@RequestMapping("/api/dijeloviusluge")
+public class DijeloviuslugeController {
+
     private final DijeloviuslugeRepository dijeloviuslugeRepository;
 
-    public UslugaController(DijeloviuslugeRepository dijeloviRepository){
+    public DijeloviuslugeController(DijeloviuslugeRepository dijeloviRepository){
         this.dijeloviuslugeRepository = dijeloviRepository;
     }
 
     @GetMapping
     public List<Dijeloviusluge> getAll(){
-        return dijeloviuslugeRepository.findAll().stream().filter(du -> du.getVrsta().equalsIgnoreCase("usluga")).toList();
+        return dijeloviuslugeRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Dijeloviusluge> getById(@PathVariable Integer id){
         return dijeloviuslugeRepository.findById(id)
-                .filter(du -> du.getVrsta().equals("usluga"))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -38,8 +39,6 @@ public class UslugaController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(!newPart.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
-
         return ResponseEntity.ok(dijeloviuslugeRepository.save(newPart));
     }
 
@@ -48,11 +47,9 @@ public class UslugaController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(!updated.getVrsta().equalsIgnoreCase("usluga")) return ResponseEntity.badRequest().build();
-
         return dijeloviuslugeRepository.findById(id)
-                .filter(du -> du.getVrsta().equalsIgnoreCase("dio"))
                 .map(existing -> {
+                    existing.setVrsta(updated.getVrsta());
                     existing.setNaziv(updated.getNaziv());
                     existing.setCijena(updated.getCijena());
                     existing.setOpis(updated.getOpis());
@@ -68,8 +65,6 @@ public class UslugaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if (!dijeloviuslugeRepository.existsById(id)) return ResponseEntity.notFound().build();
-        if(dijeloviuslugeRepository.findById(id).isPresent() && !dijeloviuslugeRepository.findById(id).get().getVrsta().equalsIgnoreCase("usluga"))
-            return ResponseEntity.badRequest().build();
 
         boolean success = false;
         try{

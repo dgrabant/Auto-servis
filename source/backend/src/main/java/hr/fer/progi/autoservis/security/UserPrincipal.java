@@ -23,7 +23,7 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(Korisnik user) {
         List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(user.getUloga())
+                new SimpleGrantedAuthority(user.getUloga().getValue())
         );
 
         return new UserPrincipal(
@@ -44,7 +44,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        // U slucaju ako ce se koristiti first-party autentifikacija
         return null;
     }
 
