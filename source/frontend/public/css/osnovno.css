@@ -64,3 +64,12 @@ canvas {
     padding: 0;
     z-index: 50;
 }
+
+#servis {
+  /* This transition is key for a smooth fade effect */
+    width: 100%;
+    transition: opacity 1s ease-in-out; 
+    margin: 0;
+    padding: 0;
+    z-index: 50;
+}

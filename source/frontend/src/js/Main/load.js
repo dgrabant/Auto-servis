@@ -106,12 +106,14 @@ function LogedOut(){
 //const data = await response.json();
 function hide(stranica){
   if (stranica == "dijelovi") {
+    dijeloviHTML.hidden = true;
     document.getElementById('logo').hidden = true;
     document.getElementById('back').hidden = true;
     document.getElementById('sidebarInfo').hidden = true;
     document.getElementById('category-select').hidden = true;
   }
   if (stranica == "servis") {
+    servisHTML.hidden = true;
     document.getElementById('logoServis').hidden = true;
     document.getElementById('backServis').hidden = true;
     document.getElementById('sidebarInfoServis').hidden = true;
@@ -128,12 +130,14 @@ function hide(stranica){
 }
 function unHide(stranica){
   if (stranica == "dijelovi") {
+    dijeloviHTML.hidden = false;
     document.getElementById('logo').hidden = false;
     document.getElementById('back').hidden = false;
     document.getElementById('sidebarInfo').hidden = false;
     document.getElementById('category-select').hidden = false;
   }
   if (stranica == "servis") {
+    servisHTML.hidden = false;
     document.getElementById('logoServis').hidden = false;
     document.getElementById('backServis').hidden = false;
     document.getElementById('sidebarInfoServis').hidden = false;
@@ -477,27 +481,30 @@ function onDocumentClick(event) {
     console.log(cameraPosition, activeCamera, cameraList[cameraPosition]);
     if (firstHitName == "servis") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 2000);
-      transitionTimeout = setTimeout(() => { 
+      stranicaUpaljena = true;
+      unHide("servis");
+      transitionTimeout = setTimeout(() => {
+        
         if (servisHTML.classList.contains('hidden')) {
             servisHTML.classList.remove('hidden');
             servisHTML.classList.add('visible'); 
             //document.getElementById("navDijelovi").hidden = false;
         } 
-        stranicaUpaljena = true;
-        unHide("servis");
+        
         enableScroll();
       }, 2000);
     }
     if (firstHitName.startsWith("djelovi") || firstHitName.startsWith("dijelovi")) {
       transitionCamera(activeCamera, cameraList[cameraPosition], 1240);
+      stranicaUpaljena = true;
+      unHide("dijelovi");
       transitionTimeout = setTimeout(() => { 
         if (dijeloviHTML.classList.contains('hidden')) {
             dijeloviHTML.classList.remove('hidden');
             dijeloviHTML.classList.add('visible'); 
             //document.getElementById("navDijelovi").hidden = false;
         } 
-        stranicaUpaljena = true;
-        unHide("dijelovi");
+        
         enableScroll();
       }, 1250);
     }
