@@ -37,6 +37,7 @@ body{
 .footclick{
     text-align: center;
     align-self: center;
+    margin-top: auto;
     min-width: 300px;
     border-radius: 50px;
     width: 22%;
@@ -49,7 +50,12 @@ body{
     border: 1px solid #38bff88c;
     backdrop-filter: blur(20px);
     padding: 15px;
-    transition: transform 0.3s ease;
+    z-index: 100;
+    
+    transition: transform 0.3s ease; 
+    
+    animation: slideDown 0.3s ease-out forwards;
+
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -57,6 +63,10 @@ body{
 .foot:hover{
     cursor: pointer;
     color: #fbff00;
+}
+.footclick:hover {
+    color: #fbff00; /* Ovo već imaš u .foot:hover, ali može i ovdje */
+    transform: translateY(-10px); /* Pomiče element 10px prema gore */
 }
 
 .price-tag{
@@ -78,6 +88,7 @@ body{
 }
 footer{
     background: transparent;
+    width: 100%;
     backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
@@ -85,10 +96,19 @@ footer{
     align-items: center;
     text-align: center;
     position: relative;
-    margin-top: auto;
     border-top: 1px solid #38bff8a9;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
+    z-index: 110;
+}
+.footDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    margin-top: auto;
 }
 .main{
     margin-top: 20px;
@@ -295,7 +315,7 @@ nav ul li {
 
 }
 
-main {
+.main {
     flex-grow: 1;
     padding: 20px;
 }
@@ -538,6 +558,16 @@ option:hover {
     }
     100% {
         transform: scale(1);
+    }
+}
+@keyframes slideDown {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
     }
 }
 @media screen and (max-width: 1024px) {

@@ -56,27 +56,15 @@ export function cameraPrev(cameraList, cameraPosition) {
 
 export function clickTransition(cameraPosition, firstHitName) {
   if (firstHitName.startsWith("djelovi") || firstHitName.startsWith("dijelovi")) {
-    if(hudHTML.classList.contains('visible')) {
-      hudHTML.classList.remove('visible');
-      hudHTML.classList.add('hidden');
-    } 
-    hideHud(true);
+    hideHud(true, 500);
     return 4;
   }
   else if (firstHitName == "servis") {
-    if(hudHTML.classList.contains('visible')) {
-      hudHTML.classList.remove('visible');
-      hudHTML.classList.add('hidden');
-    }
-    hideHud(true);
+    hideHud(true, 500); 
     return 3;
   }
   else if (firstHitName == "login"){
-    if(hudHTML.classList.contains('visible')) {
-      hudHTML.classList.remove('visible');
-      hudHTML.classList.add('hidden');
-    }
-    hideHud(true); 
+    hideHud(true, 500); 
     return 2;
   }
   else return cameraPosition;
@@ -85,27 +73,15 @@ export function clickTransition(cameraPosition, firstHitName) {
 
 export function returnToPrevCam(cameraPosition) {
   if (cameraPosition == 3) {
-    if(hudHTML.classList.contains('hidden')) {
-      hudHTML.classList.remove('hidden');
-      hudHTML.classList.add('visible');
-    } 
-    hideHud(false);
+    hideHud(false, 1300);
     return 5;
   }
   else if (cameraPosition == 2) {
-    if(hudHTML.classList.contains('hidden')) {
-      hudHTML.classList.remove('hidden');
-      hudHTML.classList.add('visible');
-    } 
-    hideHud(false);
+    hideHud(false, 800);
     return 6;
   }
   else if (cameraPosition == 4) {
-    if(hudHTML.classList.contains('hidden')) {
-      hudHTML.classList.remove('hidden');
-      hudHTML.classList.add('visible');
-    } 
-    hideHud(false);
+    hideHud(false, 1500);
     return 7;
   }
   else return cameraPosition;
@@ -147,6 +123,25 @@ export function transitionLight(cameraPosition, movingLight, mobileOptimization)
 }
 
 
-function hideHud(hidden){
-  hudHTML.hidden = hidden;
+function hideHud(hidden, timeout){
+  if (hidden == true) {
+    if(hudHTML.classList.contains('visible')) {
+      hudHTML.classList.remove('visible');
+      hudHTML.classList.add('hidden');
+    }
+    setTimeout(() => {
+    hudHTML.hidden = hidden;
+  },timeout);
+  }
+  else{
+    setTimeout(() => {
+    hudHTML.hidden = hidden;
+    },timeout);
+    setTimeout(() => {
+      if(hudHTML.classList.contains('hidden')) {
+        hudHTML.classList.remove('hidden');
+        hudHTML.classList.add('visible');
+      } 
+    },timeout+200);
+  }
 }

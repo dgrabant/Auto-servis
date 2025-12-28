@@ -26,7 +26,7 @@
     <a href="./assets/pictures/djelovi/back.gif" download></a>
     <a href="./assets/pictures/djelovi/logo.gif" download></a>
 
-    <div id="hud" hidden>
+    <div id="hud" class="hidden" hidden>
       <div class="circular-indicator-container">
         
         <div class="indicator-dot dot-pos-1" data-position="1"></div>
@@ -200,6 +200,7 @@
             </div>
         </main>
     </div>
+    <div class="footDiv">
     <div id="kontakt" class="footclick" hidden>
             <h1>Kontakt</h1>
             <br>
@@ -224,11 +225,12 @@
     <footer>
         
         <div id="sidebarInfo" class="sidebar-info" hidden>
-            <a class="foot" onclick="kontakt()">Kontakt</a>
-            <a class="foot" onclick="RadnoVrijeme()">Radno vrijeme</a>
-            <a class="foot" onclick="oNama()">O nama</a>
+            <a class="foot" onclick="kontaktDijelovi()">Kontakt</a>
+            <a class="foot" onclick="RadnoVrijemeDijelovi()">Radno vrijeme</a>
+            <a class="foot" onclick="oNamaDijelovi()">O nama</a>
         </div>
     </footer>
+    </div>
     </div>
 
     
@@ -240,7 +242,7 @@
         <div class="icons">
             <div class = "back">
                 <a id="backServis" hidden>
-                    <img id="backPic" class="back_picture" src="/assets/pictures/dijelovi/back.gif" alt="">
+                    <img id="backPicServis" class="back_picture" src="/assets/pictures/dijelovi/back.gif" alt="">
                 </a>
             </div>
         </div>
@@ -257,22 +259,18 @@
         <aside id="sidebar" class="sidebar hide">
 
         </aside>
-        <main class="main">
-            <div class="banner">
-                <p class="baner-txt">Dobar dan, molim vas izaberite nešto iz naše ponude.</p>
-                <div class="image-present">
-                    <img src="/assets/pictures/dijelovi/audi.jpg" class="present_pict" alt=""></div>
-            </div>
-            <div class="products" id="product-container">
-            </div>
+        <main class="mainServis">
         </main>
     </div>
-    <div id="kontakt" class="footclick" hidden>
+    <div class="footDiv">
+
+    
+        <div id="kontakt_servis" class="footclick" hidden>
             <h1>Kontakt</h1>
             <br>
             <p>Unska 3, 10000 Zagreb</p>
-    </div>
-    <div id="vrijeme" class="footclick" hidden>
+        </div>
+        <div id="vrijeme_servis" class="footclick" hidden>
             <h1>Radno vrijeme</h1>
             <br>
             <p>Pon – Pet: 08:00 – 16:00</p>
@@ -280,22 +278,24 @@
             <p>Subota: 08:00 – 14:00</p>
             <br>
             <p>Nedjelja: Zatvoreno</p>
-    </div>
-    <div id="mi" class="footclick" hidden>
+        </div>
+        <div id="mi_servis" class="footclick" hidden>
             <h1>O nama</h1>
             <br>
             <p>Mi smo mali ovlašteni servis za Audi vozila.</p>
             <br>
             <p>Za sada imamo jedini servis u Zagrebu.</p>
-    </div>
+        </div>
     <footer>
+
         
         <div id="sidebarInfoServis" class="sidebar-info" hidden>
-            <a class="foot" onclick="kontakt()">Kontakt</a>
-            <a class="foot" onclick="RadnoVrijeme()">Radno vrijeme</a>
-            <a class="foot" onclick="oNama()">O nama</a>
+            <a class="foot" onclick="kontaktServis()">Kontakt</a>
+            <a class="foot" onclick="RadnoVrijemeServis()">Radno vrijeme</a>
+            <a class="foot" onclick="oNamaServis()">O nama</a>
         </div>
     </footer>
+    </div>
     </div>
 
     
@@ -332,59 +332,97 @@
         window.location.href = 'https://auto-servis.onrender.com/oauth2/authorization/github';
     });
 </script>
-  <script>
-    const kontaktHTML = document.getElementById('kontakt');
-    const vrijemeHTML = document.getElementById('vrijeme');
-    const miHTML = document.getElementById('mi');
+<script>
+    let kontaktHTML = "";
+    let vrijemeHTML = "";
+    let miHTML = "";
+    function dijeloviPostava(){
+        kontaktHTML = document.getElementById('kontakt');
+        vrijemeHTML = document.getElementById('vrijeme');
+        miHTML = document.getElementById('mi');
+    }
+    function servisPostava(){
+        kontaktHTML = document.getElementById('kontakt_servis');
+        vrijemeHTML = document.getElementById('vrijeme_servis');
+        miHTML = document.getElementById('mi_servis');
+    }
+    function kontaktDijelovi(){
+        dijeloviPostava();
+        kontakt();
+    }
+    function kontaktServis(){
+        servisPostava();
+        kontakt();
+    }
+
+    function RadnoVrijemeDijelovi(){
+        dijeloviPostava();
+        RadnoVrijeme();
+    }
+
+    function RadnoVrijemeServis(){
+        servisPostava();
+        RadnoVrijeme();
+    }
+    function oNamaDijelovi() {
+        dijeloviPostava();
+        oNama();
+    }
+    function oNamaServis(){
+        servisPostava();
+        oNama();
+    }
+
+    
     let scrollHeight = document.body.scrollHeight;
 
     function kontakt() {
-      scrollHeight = document.body.scrollHeight
-      kontaktHTML.hidden = !(kontaktHTML.hidden);
-      if (!(vrijemeHTML.hidden)) {
-          vrijemeHTML.hidden = true;
-      }
-      if (!(miHTML.hidden)) {
-          miHTML.hidden = true;
-      }
-      window.scrollTo({
-          top: scrollHeight,
+        scrollHeight = document.body.scrollHeight
+        kontaktHTML.hidden = !(kontaktHTML.hidden);
+        if (!(vrijemeHTML.hidden)) {
+            vrijemeHTML.hidden = true;
+        }
+        if (!(miHTML.hidden)) {
+            miHTML.hidden = true;
+        }
+        window.scrollTo({
+            top: scrollHeight,
           // Dodajemo "smooth" ponašanje za glatku animaciju
-          behavior: 'smooth' 
-      });
+            behavior: 'instant' 
+        });
     }
     function RadnoVrijeme(){
-      scrollHeight = document.body.scrollHeight
-      vrijemeHTML.hidden = !(vrijemeHTML.hidden);
-      if (!(kontaktHTML.hidden)) {
-          kontaktHTML.hidden = true;
-      }
-      if (!(miHTML.hidden)) {
-          miHTML.hidden = true;
-      }
-      window.scrollTo({
-          top: scrollHeight,
+        scrollHeight = document.body.scrollHeight
+        vrijemeHTML.hidden = !(vrijemeHTML.hidden);
+        if (!(kontaktHTML.hidden)) {
+            kontaktHTML.hidden = true;
+        }
+        if (!(miHTML.hidden)) {
+            miHTML.hidden = true;
+        }
+        window.scrollTo({
+            top: scrollHeight,
           // Dodajemo "smooth" ponašanje za glatku animaciju
-          behavior: 'smooth' 
-      });
+            behavior: 'instant' 
+        });
     }
 
     function oNama(){
-      scrollHeight = document.body.scrollHeight
-      miHTML.hidden = !(miHTML.hidden);
-      if (!(vrijemeHTML.hidden)) {
-          vrijemeHTML.hidden = true;
-      }
-      if (!(kontaktHTML.hidden)) {
-          kontaktHTML.hidden = true;
-      }
-      window.scrollTo({
-          top: scrollHeight,
+        scrollHeight = document.body.scrollHeight
+        miHTML.hidden = !(miHTML.hidden);
+        if (!(vrijemeHTML.hidden)) {
+            vrijemeHTML.hidden = true;
+        }
+        if (!(kontaktHTML.hidden)) {
+            kontaktHTML.hidden = true;
+        }
+        window.scrollTo({
+            top: scrollHeight,
           // Dodajemo "smooth" ponašanje za glatku animaciju
-          behavior: 'smooth' 
-      });
+            behavior: 'instant' 
+        });
     }
-  </script>
+</script>
 <canvas id="bg"></canvas>
 </body>
 

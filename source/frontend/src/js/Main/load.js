@@ -418,6 +418,10 @@ loader.load(
         onWindowResize();
         main.hidden = true;
         hudHTML.hidden = false;
+        if(hudHTML.classList.contains('hidden')) {
+          hudHTML.classList.remove('hidden');
+          hudHTML.classList.add('visible');
+        } 
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);
@@ -510,6 +514,8 @@ function onDocumentClick(event) {
     }
     if (firstHitName == "login") {
       transitionCamera(activeCamera, cameraList[cameraPosition], 700);
+      stranicaUpaljena = true;
+      unHide("login");
       transitionTimeout = setTimeout(() => { 
         if (loginHTML.classList.contains('hidden')) {
             loginHTML.classList.remove('hidden');
@@ -519,8 +525,7 @@ function onDocumentClick(event) {
             //document.getElementById("github").hidden = false;
             console.log("hidden false");
         } 
-        stranicaUpaljena = true;
-        unHide("login");
+        
         //enableScroll();
       }, 700);
     }
@@ -889,6 +894,9 @@ document.getElementById("backPic").addEventListener("click", () => {
 document.getElementById("backPicLogin").addEventListener("click", () => {
   povratak();
 });
+document.getElementById("backPicServis").addEventListener("click", () => {
+  povratak();
+});
 
 function povratak(){
   if ((cameraPosition == 3 || cameraPosition == 2 || cameraPosition == 4) && !uTranziciji) {
@@ -932,14 +940,16 @@ function povratak(){
         if (loginHTML.classList.contains('visible')) {
             loginHTML.classList.remove('visible');
             loginHTML.classList.add('hidden');
-            loginHTML.hidden = false;
-            hide("login");
+            //loginHTML.hidden = false;
+            
             //document.getElementById("google").hidden = true;
             //document.getElementById("github").hidden = true;
-            stranicaUpaljena = false;
+            
         }
         transitionTimeout = setTimeout(() => {
-        transitionCamera(activeCamera, cameraList[cameraPosition], 700);
+          hide("login");
+          stranicaUpaljena = false;
+          transitionCamera(activeCamera, cameraList[cameraPosition], 700);
         }, 700);
       }
     }
