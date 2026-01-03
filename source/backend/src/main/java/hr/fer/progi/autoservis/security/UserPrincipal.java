@@ -44,7 +44,6 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getPassword() {
-        // U slucaju ako ce se koristiti first-party autentifikacija
         return null;
     }
 

@@ -1,79 +1,99 @@
 package hr.fer.progi.autoservis.controller;
 
-import hr.fer.progi.autoservis.model.Usluga;
-import hr.fer.progi.autoservis.repository.UslugaRepository;
+import hr.fer.progi.autoservis.dto.DijeloviuslugeCreateDto;
+import hr.fer.progi.autoservis.dto.DijeloviuslugeUpdateDto;
+import hr.fer.progi.autoservis.model.Dijeloviusluge;
+import hr.fer.progi.autoservis.repository.DijeloviuslugeRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
+import hr.fer.progi.autoservis.service.AuthorityCheck;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usluga")
 public class UslugaController {
+    private final DijeloviuslugeRepository dijeloviuslugeRepository;
 
-    private final UslugaRepository uslugaRepository;
-
-    public UslugaController(UslugaRepository uslugaRepository){
-        this.uslugaRepository = uslugaRepository;
+    public UslugaController(DijeloviuslugeRepository dijeloviRepository){
+        this.dijeloviuslugeRepository = dijeloviRepository;
     }
 
     @GetMapping
-    public List<Usluga> getAllServices() {
-        return uslugaRepository.findAll();
+    public List<Dijeloviusluge> getAll(){
+        return dijeloviuslugeRepository.findAll().stream().filter(du -> du.getVrsta().equalsIgnoreCase("usluga")).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usluga> getServiceById(@PathVariable Integer id) {
-        return uslugaRepository.findById(id)
+    public ResponseEntity<Dijeloviusluge> getById(@PathVariable Integer id){
+        return dijeloviuslugeRepository.findById(id)
+                .filter(du -> du.getVrsta().equals("usluga"))
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @PostMapping
-    public ResponseEntity<Usluga> createService(@RequestBody Usluga newUsluga, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
-        return ResponseEntity.ok(uslugaRepository.save(newUsluga));
+    public ResponseEntity<Dijeloviusluge> create(@Valid @RequestBody DijeloviuslugeCreateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
+
+        try {
+            return ResponseEntity.ok(dijeloviuslugeRepository.save(new Dijeloviusluge(dijeloviuslugeDto)));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usluga> updateService(@PathVariable Integer id, @RequestBody Usluga updated, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
-        return uslugaRepository.findById(id)
-                .map(existing -> {
-                    existing.setNaziv(updated.getNaziv());
-                    existing.setCijena(updated.getCijena());
-                    existing.setOpis(updated.getOpis());
-                    existing.setSlikaUrl(updated.getSlikaUrl());
-                    return ResponseEntity.ok(uslugaRepository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Dijeloviusluge> update(@PathVariable Integer id, @Valid @RequestBody DijeloviuslugeUpdateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal){
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("usluga")) return ResponseEntity.badRequest().build();
+
+        Optional<Dijeloviusluge> existing = dijeloviuslugeRepository.findById(id);
+        if(existing.isPresent()){
+            if(!existing.get().getVrsta().equalsIgnoreCase("usluga")) return ResponseEntity.badRequest().build();
+
+            if(dijeloviuslugeDto.getVrsta() != null) existing.get().setVrsta(dijeloviuslugeDto.getVrsta());
+            if(dijeloviuslugeDto.getNaziv() != null) existing.get().setNaziv(dijeloviuslugeDto.getNaziv());
+            if(dijeloviuslugeDto.getCijena() != null) existing.get().setCijena(dijeloviuslugeDto.getCijena());
+            if(dijeloviuslugeDto.getOpis() != null) existing.get().setOpis(dijeloviuslugeDto.getOpis());
+            if(dijeloviuslugeDto.getSlikaUrl() != null) existing.get().setSlikaUrl(dijeloviuslugeDto.getSlikaUrl());
+
+            try {
+                return ResponseEntity.ok(dijeloviuslugeRepository.save(existing.get()));
+            }
+            catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
+        }
+        else return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteService(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
-        if (!uslugaRepository.existsById(id)) return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if (!dijeloviuslugeRepository.existsById(id)) return ResponseEntity.badRequest().build();
+        if(dijeloviuslugeRepository.findById(id).isPresent() && !dijeloviuslugeRepository.findById(id).get().getVrsta().equalsIgnoreCase("usluga"))
+            return ResponseEntity.badRequest().build();
 
         boolean success = false;
         try{
-            uslugaRepository.deleteById(id);
+            dijeloviuslugeRepository.deleteById(id);
             success = true;
         }
         catch (Exception ignored){ }
         return (success?ResponseEntity.ok():ResponseEntity.internalServerError()).build();
-    }
-
-    private boolean CheckAuthority(UserPrincipal userPrincipal){
-        return (userPrincipal!=null);
-    }
-
-    private boolean CheckAuthority(UserPrincipal userPrincipal, String role){
-        return (userPrincipal!=null && Objects.requireNonNull(userPrincipal.getAuthorities().stream().findFirst().orElse(null)).getAuthority().equals(role));
     }
 }

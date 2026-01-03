@@ -28,6 +28,7 @@ public class ErrorController implements org.springframework.boot.web.servlet.err
 
         if(userPrincipal==null){
             error.put("status",401);
+            error.put("message","Unauthorized!");
             return error;
         }
 

@@ -21,7 +21,7 @@ public class KorisnikService {
     }
 
     public UserDetails loadUserById(Integer id) {
-        Korisnik user = korisnikRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Korisnik s idKorisnika "+id+" nije pronaden!"));
+        Korisnik user = korisnikRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Korisnik s idKorisnik "+id+" nije pronaden!"));
         return UserPrincipal.create(user);
     }
 
@@ -51,7 +51,7 @@ public class KorisnikService {
             user.setIme(firstname);
             user.setPrezime(lastname);
             user.setDavateljUsluge(getProviderFromAttributes(attributes));
-            user.setUloga("KORISNIK");
+            user.setUloga(KorisnikUloga.KORISNIK.getValue());
         }
 
         return korisnikRepository.save(user);

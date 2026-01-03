@@ -1,14 +1,19 @@
 package hr.fer.progi.autoservis.controller;
 
+import hr.fer.progi.autoservis.dto.VrstavozilaCreateDto;
+import hr.fer.progi.autoservis.dto.VrstavozilaUpdateDto;
 import hr.fer.progi.autoservis.model.VrstaVozila;
 import hr.fer.progi.autoservis.repository.VrstaVozilaRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import hr.fer.progi.autoservis.service.AuthorityCheck;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/vrstavozila")
@@ -21,46 +26,63 @@ public class VrstaVozilaController {
 
     @GetMapping
     public ResponseEntity<List<VrstaVozila>> getAllVehicleTypes(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
         List<VrstaVozila> vehicleTypes = vrstaVozilaRepository.findAll();
         return ResponseEntity.ok(vehicleTypes);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VrstaVozila> getVehicleTypeById(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "RADNIK") && !CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
         return vrstaVozilaRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<VrstaVozila> createVehicleType(@RequestBody VrstaVozila newVrsta, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
+    public ResponseEntity<VrstaVozila> createVehicleType(@Valid @RequestBody VrstavozilaCreateDto vrstavozilaDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        return ResponseEntity.ok(vrstaVozilaRepository.save(newVrsta));
+        try {
+            return ResponseEntity.ok(vrstaVozilaRepository.save(new VrstaVozila(vrstavozilaDto)));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VrstaVozila> updateVehicleType(@PathVariable Integer id, @RequestBody VrstaVozila updated, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
-        return vrstaVozilaRepository.findById(id)
-                .map(existing -> {
-                    existing.setNazivModela(updated.getNazivModela());
-                    existing.setOpisVrste(updated.getOpisVrste());
-                    return ResponseEntity.ok(vrstaVozilaRepository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<VrstaVozila> updateVehicleType(@PathVariable Integer id, @RequestBody VrstavozilaUpdateDto vrstavozilaDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        if(vrstavozilaDto.getNazivModela() == null && vrstavozilaDto.getOpisVrste() == null) return ResponseEntity.badRequest().build();
+
+        Optional<VrstaVozila> existing = vrstaVozilaRepository.findById(id);
+        if(existing.isPresent()){
+            if(vrstavozilaDto.getNazivModela() != null) existing.get().setNazivModela(vrstavozilaDto.getNazivModela());
+            if(vrstavozilaDto.getOpisVrste() != null) existing.get().setOpisVrste(vrstavozilaDto.getOpisVrste());
+
+            try {
+                return ResponseEntity.ok(vrstaVozilaRepository.save(existing.get()));
+            }
+            catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
+        }
+        else return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVehicleType(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!CheckAuthority(userPrincipal, "UPRAVITELJ") && !CheckAuthority(userPrincipal, "ADMIN"))
-            return ResponseEntity.status(401).build();
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "upravitelj", "admin"))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
         if (!vrstaVozilaRepository.existsById(id)) return ResponseEntity.notFound().build();
 
         boolean success = false;
@@ -70,13 +92,5 @@ public class VrstaVozilaController {
         }
         catch (Exception ignored){ }
         return (success?ResponseEntity.ok():ResponseEntity.internalServerError()).build();
-    }
-
-    private boolean CheckAuthority(UserPrincipal userPrincipal){
-        return (userPrincipal!=null);
-    }
-
-    private boolean CheckAuthority(UserPrincipal userPrincipal, String role){
-        return (userPrincipal!=null && Objects.requireNonNull(userPrincipal.getAuthorities().stream().findFirst().orElse(null)).getAuthority().equals(role));
     }
 }

@@ -16,23 +16,23 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/dijelovi")
-public class DijeloviController {
+@RequestMapping("/api/dijeloviusluge")
+public class DijeloviuslugeController {
+
     private final DijeloviuslugeRepository dijeloviuslugeRepository;
 
-    public DijeloviController(DijeloviuslugeRepository dijeloviRepository){
+    public DijeloviuslugeController(DijeloviuslugeRepository dijeloviRepository){
         this.dijeloviuslugeRepository = dijeloviRepository;
     }
 
     @GetMapping
     public List<Dijeloviusluge> getAll(){
-        return dijeloviuslugeRepository.findAll().stream().filter(du -> du.getVrsta().equalsIgnoreCase("dio")).toList();
+        return dijeloviuslugeRepository.findAll();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Dijeloviusluge> getById(@PathVariable Integer id){
         return dijeloviuslugeRepository.findById(id)
-                .filter(du -> du.getVrsta().equals("dio"))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.badRequest().build());
     }
@@ -41,8 +41,6 @@ public class DijeloviController {
     public ResponseEntity<Dijeloviusluge> create(@Valid @RequestBody DijeloviuslugeCreateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
 
         try {
             return ResponseEntity.ok(dijeloviuslugeRepository.save(new Dijeloviusluge(dijeloviuslugeDto)));
@@ -57,12 +55,8 @@ public class DijeloviController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
-
         Optional<Dijeloviusluge> existing = dijeloviuslugeRepository.findById(id);
         if(existing.isPresent()){
-            if(!existing.get().getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
-
             if(dijeloviuslugeDto.getVrsta() != null) existing.get().setVrsta(dijeloviuslugeDto.getVrsta());
             if(dijeloviuslugeDto.getNaziv() != null) existing.get().setNaziv(dijeloviuslugeDto.getNaziv());
             if(dijeloviuslugeDto.getCijena() != null) existing.get().setCijena(dijeloviuslugeDto.getCijena());
@@ -85,8 +79,6 @@ public class DijeloviController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if (!dijeloviuslugeRepository.existsById(id)) return ResponseEntity.badRequest().build();
-        if(dijeloviuslugeRepository.findById(id).isPresent() && !dijeloviuslugeRepository.findById(id).get().getVrsta().equalsIgnoreCase("dio"))
-            return ResponseEntity.badRequest().build();
 
         boolean success = false;
         try{

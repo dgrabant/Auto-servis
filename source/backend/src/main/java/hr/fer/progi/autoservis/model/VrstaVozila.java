@@ -1,8 +1,17 @@
 package hr.fer.progi.autoservis.model;
 
+import hr.fer.progi.autoservis.dto.VrstavozilaCreateDto;
+import hr.fer.progi.autoservis.dto.VrstavozilaUpdateDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
 @Entity
+@NoArgsConstructor
 @Table(name="vrstavozila")
 public class VrstaVozila {
     @Id
@@ -10,30 +19,20 @@ public class VrstaVozila {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idVrsta;
 
+    @Setter
     @Column(name="nazivModela", nullable = false, length = 50)
+    @NotNull
+    @Size(max = 50)
     private String nazivModela;
 
+    @Setter
     @Column(name="opisVrste", nullable = false, length = 100)
-    private String opisVrste;
+    @NotNull
+    @Size(max = 100)
+    private String opisVrste = "";
 
-    public Integer getIdVrsta() {
-        return idVrsta;
-    }
-
-    public String getNazivModela() {
-        return nazivModela;
-    }
-    public void setNazivModela(String nazivModela) {
-        if(nazivModela==null) return;
-        if(nazivModela.isEmpty() || nazivModela.length()>50) throw new RuntimeException();
-        else this.nazivModela = nazivModela;
-    }
-
-    public String getOpisVrste() {
-        return opisVrste;
-    }
-    public void setOpisVrste(String opisVrste) {
-        if(opisVrste.length()>100) throw new RuntimeException();
-        else this.opisVrste = opisVrste;
+    public VrstaVozila(VrstavozilaCreateDto vrstavozilaCreateDto){
+        this.nazivModela = vrstavozilaCreateDto.getNazivModela();
+        this.opisVrste = vrstavozilaCreateDto.getOpisVrste();
     }
 }
