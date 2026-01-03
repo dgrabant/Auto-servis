@@ -1,8 +1,16 @@
 package hr.fer.progi.autoservis.model;
 
+import hr.fer.progi.autoservis.dto.VoziloCreateDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
 @Entity
+@NoArgsConstructor
 @Table(name="vozilo")
 public class Vozilo {
     @Id
@@ -10,75 +18,41 @@ public class Vozilo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idVozila;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name="idKorisnik",referencedColumnName="idKorisnik")
     private Korisnik korisnik;
 
+    @Setter
     @ManyToOne
     @JoinColumn(name="idVrsta",referencedColumnName="idVrsta", nullable = false)
+    @NotNull
     private VrstaVozila vrstaVozila;
 
+    @Setter
     @Column(name="regOznaka", nullable = false, length = 10, unique = true)
+    @NotNull
+    @Size(max = 10)
     private String regOznaka;
 
+    @Setter
     @Column(name="godinaProizvodnje")
     private Short godinaProizvodnje;
 
+    @Setter
     @Column(name="serijskiBroj", length = 100)
+    @Size(max = 100)
     private String serijskiBroj;
 
+    @Setter
     @Column(name="jeZamjensko", nullable = false)
+    @NotNull
     private Boolean jeZamjensko = false;
 
-    public Integer getIdVozila() {
-        return idVozila;
-    }
-
-    public Korisnik getKorisnik() {
-        return korisnik;
-    }
-    public void setKorisnik(Korisnik korisnik) {
-        if(korisnik==null) return;
-        this.korisnik = korisnik;
-    }
-
-    public VrstaVozila getVrstaVozila() {
-        return vrstaVozila;
-    }
-    public void setVrstaVozila(VrstaVozila vrstaVozila) {
-        if(vrstaVozila==null) return;
-        this.vrstaVozila = vrstaVozila;
-    }
-
-    public String getRegOznaka() {
-        return regOznaka;
-    }
-    public void setRegOznaka(String regOznaka) {
-        if(regOznaka==null) return;
-        if(regOznaka.isEmpty() || regOznaka.length()>10) throw new RuntimeException();
-        else this.regOznaka = regOznaka;
-    }
-
-    public Short getGodinaProizvodnje() {
-        return godinaProizvodnje;
-    }
-    public void setGodinaProizvodnje(Short godinaProizvodnje) {
-        this.godinaProizvodnje = godinaProizvodnje;
-    }
-
-    public String getSerijskiBroj() {
-        return serijskiBroj;
-    }
-    public void setSerijskiBroj(String serijskiBroj) {
-        if(serijskiBroj.length()>100) throw new RuntimeException();
-        else this.serijskiBroj = serijskiBroj;
-    }
-
-    public Boolean getJeZamjensko() {
-        return jeZamjensko;
-    }
-    public void setJeZamjensko(Boolean jeZamjensko) {
-        if(jeZamjensko==null) return;
-        this.jeZamjensko = jeZamjensko;
+    public Vozilo(VoziloCreateDto voziloCreateDto){
+        this.regOznaka = voziloCreateDto.getRegOznaka();
+        this.godinaProizvodnje = voziloCreateDto.getGodinaProizvodnje();
+        this.serijskiBroj = voziloCreateDto.getSerijskiBroj();
+        this.jeZamjensko = voziloCreateDto.getJeZamjensko();
     }
 }

@@ -48,7 +48,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            else response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
         catch (UsernameNotFoundException exception){
             logger.warn("Pokušaj prijave s obrisanim korisnikom ["+request.getRequestURI()+"]");

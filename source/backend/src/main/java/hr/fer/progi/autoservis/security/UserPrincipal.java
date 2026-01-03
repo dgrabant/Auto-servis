@@ -23,7 +23,7 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(Korisnik user) {
         List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(user.getUloga().getValue())
+                new SimpleGrantedAuthority(user.getUloga())
         );
 
         return new UserPrincipal(

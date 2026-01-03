@@ -1,76 +1,46 @@
 package hr.fer.progi.autoservis.model;
 
+import hr.fer.progi.autoservis.dto.PopravakCreateDto;
 import hr.fer.progi.autoservis.service.PopravakStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.List;
-
+@Getter
 @Entity
+@NoArgsConstructor
 @Table(name="popravak")
 public class Popravak {
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPopravak;
 
+    @Setter
     @ManyToOne
-    @JoinColumn(name="idVozilo", referencedColumnName = "idVozilo", nullable = false)
+    @JoinColumn(name="idVozila", referencedColumnName = "idVozila", nullable = false)
+    @NotNull
     private Vozilo vozilo;
 
+    @Setter
     @OneToOne
     @JoinColumn(name="idTermin", referencedColumnName = "idTermin", nullable = false, unique = true)
+    @NotNull
     private Termin termin;
 
-    @Column(name="stanje", length = 10, nullable = false)
+    @Column(name="stanje", nullable = false, length = 20)
+    @NotNull
+    @Size(max = 20)
     private String stanje = "u pripremi";
 
-    public Integer getIdPopravak() {
-        return idPopravak;
+    public Popravak(PopravakCreateDto popravakDto){
+        this.stanje = popravakDto.getStanje();
     }
 
-    public void setIdPopravak(Integer idPopravak) {
-        this.idPopravak = idPopravak;
-    }
-
-    public Vozilo getVozilo() {
-        return vozilo;
-    }
-
-    public void setVozilo(Vozilo vozilo) {
-        if(vozilo == null) return;
-        this.vozilo = vozilo;
-    }
-
-    public Termin getTermin() {
-        return termin;
-    }
-
-    public void setTermin(Termin termin) {
-        if(termin == null) return;
-        this.termin = termin;
-    }
-
-    public PopravakStatus getStanje() {
-        PopravakStatus status;
-
-        try{
-            status = PopravakStatus.valueOf(this.stanje);
-        }
-        catch (Exception e){
-            throw new RuntimeException();
-        }
-
-        return status;
-    }
-
-    public void setStanje(PopravakStatus status) {
-        if(stanje==null) return;
-
-        List<String> values = Arrays.stream(PopravakStatus.values()).map(PopravakStatus::getValue).toList();
-        String strStatus = status.getValue();
-
-        if(values.contains(strStatus)){
-            this.stanje = strStatus;
-        } else throw new RuntimeException();
+    public void setStanje(String stanje) {
+        if(PopravakStatus.exists(stanje)) this.stanje = stanje;
     }
 }

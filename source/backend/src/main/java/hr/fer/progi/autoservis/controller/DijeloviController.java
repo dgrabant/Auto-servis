@@ -1,15 +1,19 @@
 package hr.fer.progi.autoservis.controller;
 
+import hr.fer.progi.autoservis.dto.DijeloviuslugeCreateDto;
+import hr.fer.progi.autoservis.dto.DijeloviuslugeUpdateDto;
 import hr.fer.progi.autoservis.model.Dijeloviusluge;
 import hr.fer.progi.autoservis.repository.DijeloviuslugeRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import hr.fer.progi.autoservis.service.AuthorityCheck;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/dijelovi")
@@ -30,36 +34,49 @@ public class DijeloviController {
         return dijeloviuslugeRepository.findById(id)
                 .filter(du -> du.getVrsta().equals("dio"))
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @PostMapping
-    public ResponseEntity<Dijeloviusluge> create(@RequestBody Dijeloviusluge newPart, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Dijeloviusluge> create(@Valid @RequestBody DijeloviuslugeCreateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(!newPart.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
+        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
 
-        return ResponseEntity.ok(dijeloviuslugeRepository.save(newPart));
+        try {
+            return ResponseEntity.ok(dijeloviuslugeRepository.save(new Dijeloviusluge(dijeloviuslugeDto)));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Dijeloviusluge> update(@PathVariable Integer id, @RequestBody Dijeloviusluge updated, @AuthenticationPrincipal UserPrincipal userPrincipal){
+    public ResponseEntity<Dijeloviusluge> update(@PathVariable Integer id, @Valid @RequestBody DijeloviuslugeUpdateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal){
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(!updated.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
+        if(!dijeloviuslugeDto.getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
 
-        return dijeloviuslugeRepository.findById(id)
-                .filter(du -> du.getVrsta().equalsIgnoreCase("dio"))
-                .map(existing -> {
-                    existing.setNaziv(updated.getNaziv());
-                    existing.setCijena(updated.getCijena());
-                    existing.setOpis(updated.getOpis());
-                    existing.setSlikaUrl(updated.getSlikaUrl());
-                    return ResponseEntity.ok(dijeloviuslugeRepository.save(existing));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        Optional<Dijeloviusluge> existing = dijeloviuslugeRepository.findById(id);
+        if(existing.isPresent()){
+            if(!existing.get().getVrsta().equalsIgnoreCase("dio")) return ResponseEntity.badRequest().build();
+
+            if(dijeloviuslugeDto.getVrsta() != null) existing.get().setVrsta(dijeloviuslugeDto.getVrsta());
+            if(dijeloviuslugeDto.getNaziv() != null) existing.get().setNaziv(dijeloviuslugeDto.getNaziv());
+            if(dijeloviuslugeDto.getCijena() != null) existing.get().setCijena(dijeloviuslugeDto.getCijena());
+            if(dijeloviuslugeDto.getOpis() != null) existing.get().setOpis(dijeloviuslugeDto.getOpis());
+            if(dijeloviuslugeDto.getSlikaUrl() != null) existing.get().setSlikaUrl(dijeloviuslugeDto.getSlikaUrl());
+
+            try {
+                return ResponseEntity.ok(dijeloviuslugeRepository.save(existing.get()));
+            }
+            catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
+        }
+        else return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
@@ -67,7 +84,7 @@ public class DijeloviController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if (!dijeloviuslugeRepository.existsById(id)) return ResponseEntity.notFound().build();
+        if (!dijeloviuslugeRepository.existsById(id)) return ResponseEntity.badRequest().build();
         if(dijeloviuslugeRepository.findById(id).isPresent() && !dijeloviuslugeRepository.findById(id).get().getVrsta().equalsIgnoreCase("dio"))
             return ResponseEntity.badRequest().build();
 

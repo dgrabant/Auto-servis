@@ -1,5 +1,7 @@
 package hr.fer.progi.autoservis.service;
 
+import java.util.Objects;
+
 public enum KorisnikUloga {
     KORISNIK("korisnik"),
     SERVISER("serviser"),
@@ -14,5 +16,14 @@ public enum KorisnikUloga {
 
     public String getValue(){
         return value;
+    }
+
+    public static boolean exists(String value) {
+        for (KorisnikUloga o : values()) {
+            if (Objects.equals(o.value, value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

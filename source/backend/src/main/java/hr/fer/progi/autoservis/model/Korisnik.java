@@ -1,13 +1,17 @@
 package hr.fer.progi.autoservis.model;
 
+import hr.fer.progi.autoservis.dto.KorisnikCreateDto;
 import hr.fer.progi.autoservis.service.KorisnikUloga;
-import hr.fer.progi.autoservis.service.PopravakStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.List;
-
+@Getter
 @Entity
+@NoArgsConstructor
 @Table(name="korisnik")
 public class Korisnik {
     @Id
@@ -15,81 +19,44 @@ public class Korisnik {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idKorisnik;
 
+    @Setter
     @Column(nullable = false, length = 50)
+    @NotNull
+    @Size(max = 50)
     private String ime;
 
+    @Setter
     @Column(nullable = false, length = 50)
+    @NotNull
+    @Size(max = 50)
     private String prezime;
 
+    @Setter
     @Column(nullable = false, unique = true, length = 100)
+    @NotNull
+    @Size(max = 100)
     private String email;
 
+    @Setter
     @Column(name="davateljUsluge", nullable = false, length = 20)
+    @NotNull
+    @Size(max = 20)
     private String davateljUsluge = "unknown";
 
     @Column(nullable = false, length = 20)
+    @NotNull
+    @Size(max = 20)
     private String uloga;
 
-    public Integer getIdKorisnik() {
-        return idKorisnik;
+    public Korisnik(KorisnikCreateDto korisnikDto){
+        this.ime = korisnikDto.getIme();
+        this.prezime = korisnikDto.getPrezime();
+        this.email = korisnikDto.getEmail();
+        this.davateljUsluge = korisnikDto.getDavateljUsluge();
+        this.uloga = korisnikDto.getUloga();
     }
 
-    public String getIme() {
-        return ime;
-    }
-    public void setIme(String ime) {
-        if(ime==null) return;
-        if(ime.isEmpty() || ime.length()>50) throw new RuntimeException();
-        else this.ime = ime;
-    }
-
-    public String getPrezime() {
-        return prezime;
-    }
-    public void setPrezime(String prezime) {
-        if(prezime==null) return;
-        if(prezime.isEmpty() || prezime.length()>50) throw new RuntimeException();
-        else this.prezime = prezime;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        if(email==null) return;
-        if(email.isEmpty() || email.length()>100) throw new RuntimeException();
-        else this.email = email;
-    }
-
-    public String getDavateljUsluge() {
-        return davateljUsluge;
-    }
-    public void setDavateljUsluge(String davateljUsluge) {
-        if(davateljUsluge==null) return;
-        if(davateljUsluge.isEmpty() || davateljUsluge.length()>20) throw new RuntimeException();
-        else this.davateljUsluge = davateljUsluge;
-    }
-
-    public KorisnikUloga getUloga() {
-        KorisnikUloga uloga;
-
-        try{
-            uloga = KorisnikUloga.valueOf(this.uloga);
-        }
-        catch (Exception e){
-            throw new RuntimeException();
-        }
-
-        return uloga;
-    }
-    public void setUloga(KorisnikUloga uloga) {
-        if(uloga==null) return;
-
-        List<String> values = Arrays.stream(KorisnikUloga.values()).map(KorisnikUloga::getValue).toList();
-        String strStatus = uloga.getValue();
-
-        if(values.contains(strStatus)){
-            this.uloga = strStatus;
-        } else throw new RuntimeException();
+    public void setUloga(String uloga) {
+        if(KorisnikUloga.exists(uloga)) this.uloga = uloga;
     }
 }

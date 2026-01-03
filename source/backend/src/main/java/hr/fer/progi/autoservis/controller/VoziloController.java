@@ -1,13 +1,19 @@
 package hr.fer.progi.autoservis.controller;
 
-import hr.fer.progi.autoservis.model.Vozilo;
+import hr.fer.progi.autoservis.dto.VoziloCreateDto;
+import hr.fer.progi.autoservis.dto.VoziloUpdateDto;
+import hr.fer.progi.autoservis.model.*;
+import hr.fer.progi.autoservis.repository.KorisnikRepository;
 import hr.fer.progi.autoservis.repository.VoziloRepository;
+import hr.fer.progi.autoservis.repository.VrstaVozilaRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import hr.fer.progi.autoservis.service.AuthorityCheck;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +23,14 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/vozilo")
 public class VoziloController {
-
     private final VoziloRepository voziloRepository;
+    private final KorisnikRepository korisnikRepository;
+    private final VrstaVozilaRepository vrstaVozilaRepository;
 
-    public VoziloController(VoziloRepository voziloRepository) {
+    public VoziloController(VoziloRepository voziloRepository, KorisnikRepository korisnikRepository, VrstaVozilaRepository vrstaVozilaRepository) {
         this.voziloRepository = voziloRepository;
+        this.korisnikRepository = korisnikRepository;
+        this.vrstaVozilaRepository = vrstaVozilaRepository;
     }
 
     @GetMapping
@@ -58,21 +67,38 @@ public class VoziloController {
         }
         else return voziloRepository.findById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.badRequest().build());
     }
 
     @PostMapping
-    public ResponseEntity<Vozilo> createVehicle(@RequestBody Vozilo newVozilo, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Vozilo> createVehicle(@Valid @RequestBody VoziloCreateDto voziloDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.badRequest().build();
-        return ResponseEntity.ok(voziloRepository.save(newVozilo));
+
+        Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElseThrow(null);
+        VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+        Vozilo newVozilo = new Vozilo(voziloDto);
+        newVozilo.setKorisnik(korisnik);
+        newVozilo.setVrstaVozila(vrstaVozila);
+
+        if(newVozilo.getJeZamjensko()) newVozilo.setKorisnik(null);
+        else{
+            if(korisnik == null) return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            return ResponseEntity.ok(voziloRepository.save(newVozilo));
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vozilo> updateVehicle(@PathVariable Integer id, @RequestBody Vozilo updated, @AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Vozilo> updateVehicle(@PathVariable Integer id, @Valid @RequestBody VoziloUpdateDto voziloDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.badRequest().build();
 
         Optional<Vozilo> vozilo = voziloRepository.findById(id);
-
         if(vozilo.isPresent()){
             if(AuthorityCheck.CheckAuthority(userPrincipal, "korisnik")){
                 if(!Objects.equals(vozilo.get().getKorisnik().getIdKorisnik(), userPrincipal.getId())){
@@ -82,22 +108,36 @@ public class VoziloController {
 
             Vozilo existing = vozilo.get();
 
-            existing.setKorisnik(updated.getKorisnik());
-            existing.setVrstaVozila(updated.getVrstaVozila());
-            existing.setRegOznaka(updated.getRegOznaka());
-            existing.setGodinaProizvodnje(updated.getGodinaProizvodnje());
-            existing.setSerijskiBroj(updated.getSerijskiBroj());
-            existing.setJeZamjensko(updated.getJeZamjensko());
+            Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElseThrow(null);
+            VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElseThrow(null);
 
-            return ResponseEntity.ok(voziloRepository.save(existing));
+            if(voziloDto.getJeZamjensko() != null) existing.setJeZamjensko(voziloDto.getJeZamjensko());
+
+            if(existing.getJeZamjensko()) korisnik = null;
+            else{
+                if(korisnik == null) return ResponseEntity.badRequest().build();
+            }
+
+            existing.setKorisnik(korisnik); // potencijalni problem: ako azuriramo vozilo i ne brisemo korisnika, moramo uvijek navesti id korisnika kako ga ne bi obrisao iz vozila
+            if(vrstaVozila != null)  existing.setVrstaVozila(vrstaVozila);
+            if(voziloDto.getRegOznaka() != null) existing.setRegOznaka(voziloDto.getRegOznaka());
+            if(voziloDto.getGodinaProizvodnje() != null) existing.setGodinaProizvodnje(voziloDto.getGodinaProizvodnje());
+            if(voziloDto.getSerijskiBroj() != null) existing.setSerijskiBroj(voziloDto.getSerijskiBroj());
+
+            try {
+                return ResponseEntity.ok(voziloRepository.save(existing));
+            }
+            catch (Exception e){
+                return ResponseEntity.internalServerError().build();
+            }
         }
-        else return ResponseEntity.notFound().build();
+        else return ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVehicle(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.badRequest().build();
-        if (!voziloRepository.existsById(id)) return ResponseEntity.notFound().build();
+        if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if (!voziloRepository.existsById(id)) return ResponseEntity.badRequest().build();
 
         boolean success = false;
         try{
@@ -111,7 +151,7 @@ public class VoziloController {
 
                 voziloRepository.deleteById(id);
                 success = true;
-            } else ResponseEntity.notFound().build();
+            } else ResponseEntity.badRequest().build();
         }
         catch (Exception ignored){ }
         return (success?ResponseEntity.ok():ResponseEntity.internalServerError()).build();

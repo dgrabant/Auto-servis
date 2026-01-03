@@ -1,5 +1,7 @@
 package hr.fer.progi.autoservis.service;
 
+import java.util.Objects;
+
 public enum PopravakStatus {
     UPRIPREMI("u pripremi"),
     UTIJEKU("u tijeku"),
@@ -14,5 +16,14 @@ public enum PopravakStatus {
 
     public String getValue(){
         return value;
+    }
+
+    public static boolean exists(String value) {
+        for (PopravakStatus o : values()) {
+            if (Objects.equals(o.value, value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,5 +1,7 @@
 package hr.fer.progi.autoservis.service;
 
+import java.util.Objects;
+
 public enum RadnjaStatus {
     NEPOTRVDENO("nepotvrđeno"),
     POTVRDENO("potvrđeno"),
@@ -13,5 +15,14 @@ public enum RadnjaStatus {
 
     public String getValue(){
         return value;
+    }
+
+    public static boolean exists(String value) {
+        for (RadnjaStatus o : values()) {
+            if (Objects.equals(o.value, value)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
