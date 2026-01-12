@@ -74,7 +74,7 @@ public class VoziloController {
     public ResponseEntity<Vozilo> createVehicle(@Valid @RequestBody VoziloCreateDto voziloDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.badRequest().build();
 
-        Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElseThrow(null);
+        Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElse(null);
         VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
         Vozilo newVozilo = new Vozilo(voziloDto);
@@ -108,8 +108,8 @@ public class VoziloController {
 
             Vozilo existing = vozilo.get();
 
-            Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElseThrow(null);
-            VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElseThrow(null);
+            Korisnik korisnik = korisnikRepository.findById(voziloDto.getIdKorisnik()).orElse(null);
+            VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElse(null);
 
             if(voziloDto.getJeZamjensko() != null) existing.setJeZamjensko(voziloDto.getJeZamjensko());
 

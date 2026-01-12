@@ -99,10 +99,10 @@ public class PopravakController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
-            Servisiranje servisiranje = new Servisiranje(popravak, korisnik);
-            servisiranjeRepository.save(servisiranje);
+            popravak = popravakRepository.save(popravak);
+            servisiranjeRepository.save(new Servisiranje(popravak, korisnik));
 
-            return ResponseEntity.ok(popravakRepository.save(popravak));
+            return ResponseEntity.ok(popravak);
         }
         catch (Exception e){
             return ResponseEntity.internalServerError().build();
