@@ -122,7 +122,7 @@ public class RadnjaController {
             if(korisnik != null) existing.get().setKorisnik(korisnik);
             if(dijeloviusluge != null) existing.get().setDijeloviusluge(dijeloviusluge);
             if(radnjaDto.getStanje() != null) existing.get().setStanje(radnjaDto.getStanje());
-            if(radnjaDto.getNapomena() != null) existing.get().setStanje(radnjaDto.getNapomena());
+            if(radnjaDto.getNapomena() != null) existing.get().setNapomena(radnjaDto.getNapomena());
 
             try {
                 return ResponseEntity.ok(radnjaRepository.save(existing.get()));

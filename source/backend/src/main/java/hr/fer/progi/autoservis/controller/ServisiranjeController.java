@@ -109,11 +109,11 @@ public class ServisiranjeController {
             Popravak popravak_dto = popravakRepository.findById(servisiranjeDto.getIdPopravak()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
             Korisnik korisnik_dto = korisnikRepository.findById(servisiranjeDto.getIdKorisnik()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
-            existing.get().setPopravak(popravak_dto);
-            existing.get().setKorisnik(korisnik_dto);
-
             try {
-                return ResponseEntity.ok(servisiranjeRepository.save(existing.get()));
+                servisiranjeRepository.deleteById(servisiranjeKompozit);
+                Servisiranje servisiranje = new Servisiranje(popravak_dto, korisnik_dto);
+
+                return ResponseEntity.ok(servisiranjeRepository.save(servisiranje));
             }
             catch (Exception e){
                 return ResponseEntity.internalServerError().build();
