@@ -249,6 +249,9 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
     }
 
     e.preventDefault(); 
+
+
+    let trenutniKorisnikId = null;
     function provjera() {
         return new Promise(resolve => {
             fetch("https://auto-servis.onrender.com/api/korisnik/about", {
@@ -260,19 +263,19 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
                 })
                 .then(response => {
                     if (!response.ok) {
+                        trenutniKorisnikId = null;
                         throw new Error(`HTTP error! Status: ${response.status}`);
-                        const trenutniKorisnikId = null;
                     }
                       return response.json();
                     })
                 .then(data => {
                     console.log("Response data:", data);
-                    const trenutniKorisnikId = data.idKorisnik;
+                    trenutniKorisnikId = data.idKorisnik;
                     resolve();
                 })
                 .catch(error => {
                     console.error("Fetch error:", error);
-                    const trenutniKorisnikId = null;
+                    trenutniKorisnikId = null;
                     resolve();
                 });
         });
