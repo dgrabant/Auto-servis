@@ -251,7 +251,7 @@ function cekajKlik(idGumba) {
       else{
         pcPerformance = true;
         scenePath = scenePathPC;
-        texturePath = texturePathPC;
+        texturePath = texturePathMobile;
         localStorage.setItem('performance', 1);
       }
       resolve();
