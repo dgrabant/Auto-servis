@@ -274,9 +274,14 @@ if (!mobileOptimization){
         texturePath = texturePathMobile;
         scenePath = scenePathMoblie;
       }
-      else{
+      else if (performanceMem == 0) {
         scenePath = scenePathPC;
         texturePath = texturePathPC;
+      }
+      else{
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathPC;
       }
   }
   else
