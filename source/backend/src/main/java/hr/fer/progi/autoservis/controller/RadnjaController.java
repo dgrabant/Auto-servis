@@ -84,7 +84,7 @@ public class RadnjaController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Popravak popravak = popravakRepository.findById(radnjaDto.getIdDijelausluge()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        Popravak popravak = popravakRepository.findById(radnjaDto.getIdPopravak()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         Korisnik korisnik = korisnikRepository.findById(radnjaDto.getIdKorisnik()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
         Dijeloviusluge dijeloviusluge = dijeloviuslugeRepository.findById(radnjaDto.getIdDijelausluge()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
 
@@ -111,7 +111,7 @@ public class RadnjaController {
 
         Optional<Radnja> existing = radnjaRepository.findById(id);
         if(existing.isPresent()){
-            Popravak popravak = popravakRepository.findById(radnjaDto.getIdDijelausluge()).orElse(null);
+            Popravak popravak = popravakRepository.findById(radnjaDto.getIdPopravak()).orElse(null);
             Korisnik korisnik = korisnikRepository.findById(radnjaDto.getIdKorisnik()).orElse(null);
             Dijeloviusluge dijeloviusluge = dijeloviuslugeRepository.findById(radnjaDto.getIdDijelausluge()).orElse(null);
 
@@ -122,7 +122,7 @@ public class RadnjaController {
             if(korisnik != null) existing.get().setKorisnik(korisnik);
             if(dijeloviusluge != null) existing.get().setDijeloviusluge(dijeloviusluge);
             if(radnjaDto.getStanje() != null) existing.get().setStanje(radnjaDto.getStanje());
-            if(radnjaDto.getNapomena() != null) existing.get().setStanje(radnjaDto.getNapomena());
+            if(radnjaDto.getNapomena() != null) existing.get().setNapomena(radnjaDto.getNapomena());
 
             try {
                 return ResponseEntity.ok(radnjaRepository.save(existing.get()));
