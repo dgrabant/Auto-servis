@@ -249,14 +249,42 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
     }
 
     e.preventDefault(); 
-    
-    const trenutniKorisnikId = localStorage.getItem("authToken");
+    function provjera() {
+        return new Promise(resolve => {
+            fetch("https://auto-servis.onrender.com/api/korisnik/about", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer "+localStorage.getItem("authToken")
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                        const trenutniKorisnikId = null;
+                    }
+                      return response.json();
+                    })
+                .then(data => {
+                    console.log("Response data:", data);
+                    const trenutniKorisnikId = data.idKorisnik;
+                    resolve();
+                })
+                .catch(error => {
+                    console.error("Fetch error:", error);
+                    const trenutniKorisnikId = null;
+                    resolve();
+                });
+        });
+    }
+    await provjera();
 
     const payloadVozilo = {
-        idKorisnik: trenutniKorisnikId ? parseInt(trenutniKorisnikId) : null,
+        idKorisnik: trenutniKorisnikId,
         idVrsta: parseInt(document.getElementById('marka-model').value), // ID iz baze
         regOznaka: document.getElementById('reg').value,
         godinaProizvodnje: document.getElementById('godina-vozila').value ? parseInt(document.getElementById('godina-vozila').value) : null,
+        serijskiBroj: null, 
         jeZamjensko: document.getElementById('zamjensko').checked // Boolean
     };
 
