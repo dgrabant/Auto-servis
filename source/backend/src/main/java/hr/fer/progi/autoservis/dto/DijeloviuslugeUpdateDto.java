@@ -21,4 +21,5 @@ public class DijeloviuslugeUpdateDto {
     @Size(max = 200)
     private String slikaUrl = "";
 
+    private String base64 = "";
 }

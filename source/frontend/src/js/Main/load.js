@@ -248,10 +248,16 @@ function cekajKlik(idGumba) {
         scenePath = scenePathMoblie;
         localStorage.setItem('performance', 2);
       }
-      else{
+      else if (odabrano.value == "false"){
         scenePath = scenePathPC;
         texturePath = texturePathPC;
         localStorage.setItem('performance', 0);
+      }
+      else{
+        pcPerformance = true;
+        scenePath = scenePathPC;
+        texturePath = texturePathMobile;
+        localStorage.setItem('performance', 1);
       }
       resolve();
     }, { once: true });
@@ -273,9 +279,14 @@ if (!mobileOptimization){
         texturePath = texturePathMobile;
         scenePath = scenePathMoblie;
       }
-      else{
+      else if (performanceMem == 0) {
         scenePath = scenePathPC;
         texturePath = texturePathPC;
+      }
+      else{
+        pcPerformance = true;
+        texturePath = texturePathMobile;
+        scenePath = scenePathPC;
       }
   }
   else

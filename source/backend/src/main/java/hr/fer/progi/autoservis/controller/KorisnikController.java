@@ -29,7 +29,7 @@ public class KorisnikController {
 
     @GetMapping
     public ResponseEntity<List<Korisnik>> getAllUsers(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "admin")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        if(!AuthorityCheck.CheckAuthority(userPrincipal, "upravitelj", "admin")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         List<Korisnik> users = userRepository.findAll();
 
         return ResponseEntity.ok(users);

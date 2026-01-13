@@ -81,11 +81,6 @@ public class VoziloController {
         newVozilo.setKorisnik(korisnik);
         newVozilo.setVrstaVozila(vrstaVozila);
 
-        if(newVozilo.getJeZamjensko()) newVozilo.setKorisnik(null);
-        else{
-            if(korisnik == null) return ResponseEntity.badRequest().build();
-        }
-
         try {
             return ResponseEntity.ok(voziloRepository.save(newVozilo));
         }
@@ -112,11 +107,6 @@ public class VoziloController {
             VrstaVozila vrstaVozila = vrstaVozilaRepository.findById(voziloDto.getIdVrsta()).orElse(null);
 
             if(voziloDto.getJeZamjensko() != null) existing.setJeZamjensko(voziloDto.getJeZamjensko());
-
-            if(existing.getJeZamjensko()) korisnik = null;
-            else{
-                if(korisnik == null) return ResponseEntity.badRequest().build();
-            }
 
             existing.setKorisnik(korisnik); // potencijalni problem: ako azuriramo vozilo i ne brisemo korisnika, moramo uvijek navesti id korisnika kako ga ne bi obrisao iz vozila
             if(vrstaVozila != null)  existing.setVrstaVozila(vrstaVozila);
