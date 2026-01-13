@@ -36,20 +36,12 @@ public class KorisnikController {
     }
 
     @GetMapping("/about")
-    public ResponseEntity<Map<String, Object>> getUserById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Korisnik> getUserById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Optional<Korisnik> userOptional = userRepository.findById(userPrincipal.getId());
-        if(userOptional.isEmpty()) return ResponseEntity.badRequest().build();
-        Korisnik user = userOptional.get();
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("ime", user.getIme());
-        responseMap.put("prezime", user.getPrezime());
-        responseMap.put("email", user.getEmail());
-        responseMap.put("davateljUsluge", user.getDavateljUsluge());
-        responseMap.put("uloga", user.getUloga());
-
-        return ResponseEntity.ok(responseMap);
+        return userRepository.findById(userPrincipal.getId())
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
     @GetMapping("/{id}")
