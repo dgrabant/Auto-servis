@@ -287,6 +287,7 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
         idVrsta: parseInt(document.getElementById('marka-model').value), // ID iz baze
         regOznaka: document.getElementById('reg').value,
         godinaProizvodnje: document.getElementById('godina-vozila').value ? parseInt(document.getElementById('godina-vozila').value) : null,
+        //DODATI
         serijskiBroj: null, 
         jeZamjensko: document.getElementById('zamjensko').checked // Boolean
     };
@@ -304,7 +305,7 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
         
         const novoVozilo = await res.json();
         console.log("Vozilo spremljeno:", novoVozilo);
-
+        console.log(document.getElementById('termin').value);
         const payloadPopravak = {
             idVozila: novoVozilo.idVozila, 
             idTermin: parseInt(document.getElementById('termin').value),
