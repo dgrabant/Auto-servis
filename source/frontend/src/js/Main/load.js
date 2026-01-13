@@ -243,10 +243,16 @@ function cekajKlik(idGumba) {
         scenePath = scenePathMoblie;
         localStorage.setItem('performance', 2);
       }
-      else{
+      else if (odabrano.value == "false"){
         scenePath = scenePathPC;
         texturePath = texturePathPC;
         localStorage.setItem('performance', 0);
+      }
+      else{
+        pcPerformance = true;
+        scenePath = scenePathPC;
+        texturePath = texturePathPC;
+        localStorage.setItem('performance', 1);
       }
       resolve();
     }, { once: true });

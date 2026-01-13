@@ -9,6 +9,7 @@ import hr.fer.progi.autoservis.service.AuthorityCheck;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,8 @@ public class DijeloviuslugeController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        // TODO: implementacija slika
+
         try {
             return ResponseEntity.ok(dijeloviuslugeRepository.save(new Dijeloviusluge(dijeloviuslugeDto)));
         }
@@ -54,6 +57,8 @@ public class DijeloviuslugeController {
     public ResponseEntity<Dijeloviusluge> update(@PathVariable Integer id, @Valid @RequestBody DijeloviuslugeUpdateDto dijeloviuslugeDto, @AuthenticationPrincipal UserPrincipal userPrincipal){
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        // TODO: implementacija slika
 
         Optional<Dijeloviusluge> existing = dijeloviuslugeRepository.findById(id);
         if(existing.isPresent()){
