@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="/css/performance.css">
     <link rel="stylesheet" type="text/css" href="/css/osnovno.css">
     <link rel="stylesheet" type="text/css" href="/css/hud.css">
+    <link rel="stylesheet" type="text/css" href="/css/servis.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Auto-servis</title>
 
@@ -236,15 +237,14 @@
     
     </div>
 
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
     <div id="servis" class="hidden" hidden>
     <div class="glavni">
-    <header>
-        <div class="icons">
-            <div class = "back">
-                <a id="backServis" hidden>
-                    <img id="backPicServis" class="back_picture" src="/assets/pictures/dijelovi/back.gif" alt="">
-                </a>
-            </div>
+    <header class="servis-header">
+        <div class="header-left">
+            <a id="backServis" hidden>
+                <img id="backPicServis" class="back_picture" src="/assets/pictures/dijelovi/back.gif" alt="">
+            </a>
         </div>
         <div id="selected" class="selected">Harlemova kočija</div>
         <a id="logoServis" href="index.html" class="logo" hidden>
@@ -252,14 +252,122 @@
         </a>  
     </header>
     
-    <div class="drop">
+    <!-- <div class="drop">
         <button class="drop_down" id="drop" >Otvori izbornik</button>
-    </div>
+    </div> -->
     <div class="container">
         <aside id="sidebar" class="sidebar hide">
 
         </aside>
         <main class="mainServis">
+            <div class="servis-wrapper">
+
+                <section class="servis-sekcija">
+                    <h2 class="naslov-sekcije">Nova Prijava Vozila</h2>
+                    <form id="form-prijava-vozila" class="servis-forma">
+                        
+                        <div class="input-red">
+                            <div class="input-grupa">
+                                <label>Marka i Model</label>
+                                <select id="marka-model" required>
+                                    <option value="" disabled selected>Učitavam vozila...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-red">
+                            <div class="input-grupa">
+                                <label>Godište vozila</label>
+                                <input 
+                                    type="number" 
+                                    id="godina-vozila" 
+                                    min="1970" 
+                                    max="2025" 
+                                    placeholder="2020" 
+                                    oninput="validacijaGodine(this)"
+                                    required -->
+                                
+                                <span id="godina-error" style="color: #ff4444; font-size: 0.75rem; display: none;">
+                                    Godina ne može biti u budućnosti!
+                                </span>
+                            </div>
+                            <div class="input-grupa">
+                                <label>Registracija</label>
+                                <input type="text" id="reg" maxlength="10" placeholder="ST-1234-AA">
+                            </div>
+                        </div>
+
+                        <div class="odabir-usluga-sekcija">
+                            <label>Dostupne usluge (iz baze):</label>
+                            <div id="usluge-popis" class="usluge-grid">
+                                </div>
+
+                            <label>Dostupni dijelovi (iz baze):</label>
+                            <div id="dijelovi-popis" class="usluge-grid">
+                                </div>
+                        </div>
+
+                        <div class="rezime-kontejner">
+                            <h4 style="color: white;">Vaš odabir za popravak:</h4>
+                            <ul id="popis-za-popravak" class="styled-list">
+                                <li>Nije odabrana nijedna stavka</li>
+                            </ul>
+                            <input type="hidden" id="finalni-popis-input" name="odabrane_usluge">
+                        </div>
+
+                        <div class="input-grupa">
+                            <label>Dodatni opis problema</label>
+                            <textarea id="opis-kvara" rows="2" placeholder="Ovdje dopišite detalje..."></textarea>
+                        </div>
+
+                        <div class="input-red">
+                            <div class="input-grupa">
+                                <label>Dostupni termini</label>
+                                <select id="termin" required>
+                                    <option value="" disabled selected>Odaberite termin</option>
+                                    <option>Ponedjeljak, 08:00</option>
+                                    <option>Ponedjeljak, 12:00</option>
+                                    <option>Utorak, 09:00</option>
+                                </select>
+                            </div>
+                            <div class="input-grupa checkbox-centar">
+                                <label class="custom-checkbox">
+                                    <input type="checkbox" id="zamjensko">
+                                    <span class="checkmark"></span>
+                                    Trebam zamjensko vozilo
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="gumb-prijava">Završi prijavu</button>
+                    </form>
+                </section>
+
+                <section class="servis-sekcija status-sekcija">
+                    <h2 class="naslov-sekcije">Status popravka</h2>
+                    <div id="status-vozila-kontenjer">
+                        
+                        <div class="kartica-statusa">
+                            <div class="info-vozilo">
+                                <span class="vozilo-naziv">Audi RS6</span>
+                                <span class="status-badge">U TIJEKU</span>
+                            </div>
+                            
+                            <div class="progress-bar-pozadina">
+                                <div class="progress-bar-popuna" style="width: 75%;">75%</div>
+                            </div>
+                            
+                            <div class="napomene-servisera">
+                                <p><strong>Napomena:</strong> Čekamo isporuku dijelova.</p>
+                            </div>
+                            
+                            <button class="btn-pdf">Dokumentacija (PDF)</button>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
         </main>
     </div>
     <div class="footDiv">
@@ -304,6 +412,7 @@
     
     
     <script type="text/javascript" src="/data.js"></script>
+    <!-- <script type="module" src="./src/js/dijelovi/servisScript.js"></script> -->
 
 
     <div id="container3D"></div>

@@ -9,6 +9,7 @@ import { getFirstObjectHit, cameraNext, cameraPrev, clickTransition, returnToPre
 import { getFirstCameraInScene, updateCameraAspect } from '../called/cameraSetup.js'; // Funkcije za rad s kamerama u sceni
 import { checkIfLogedIn } from '../called/loginCheck.js';
 import { updateIndicators } from './indicator.js';
+import { dohvatiPodatkeZaServis } from '../dijelovi/servisScript.js';
 
 
 //Putanje do modela i teksture
@@ -141,6 +142,10 @@ function unHide(stranica){
     document.getElementById('logoServis').hidden = false;
     document.getElementById('backServis').hidden = false;
     document.getElementById('sidebarInfoServis').hidden = false;
+    //dohvatiPodatkeZaServis();
+    if (typeof dohvatiPodatkeZaServis === 'function') {
+        dohvatiPodatkeZaServis();
+    }
   }
   if (stranica == "login") {
     document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
