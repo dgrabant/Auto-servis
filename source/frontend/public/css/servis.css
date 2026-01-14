@@ -282,6 +282,27 @@ select:focus {
     margin-top: auto;
     background-color: #1a1a1a;
 }
+.ServisGlavni{
+    height: 100%;
+    min-width: 100%;
+    min-height: 100vh;
+    background-color: #14364200;
+    background-image: url(../assets/pictures/dijelovi/background.jpg);
+
+    background-size:cover;
+
+    display: flex;
+    flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    z-index: 50;
+}
+
+.ServisContainer {
+    display: flex;
+    flex-direction: row;
+}
 
 /* Zeleni obrub kad je format ispravan */
 #reg:focus:valid {
@@ -297,5 +318,8 @@ select:focus {
 @media (max-width: 850px) {
     .servis-wrapper {
         grid-template-columns: 1fr;
+    }
+    .ServisContainer {
+        flex-direction: column;
     }
 }

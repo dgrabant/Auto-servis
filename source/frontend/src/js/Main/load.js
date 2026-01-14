@@ -86,6 +86,12 @@ function provjera() {
             if (data.uloga == "admin") {
               document.getElementById("logo").href = "/admin.html";
             }
+            if (data.uloga == "upravitelj") {
+              document.getElementById("logo").href = "/upravitelj.html";
+            }
+            if (data.uloga == "serviser") {
+              document.getElementById("logo").href = "/serviser.html";
+            }
             resolve();
         })
         .catch(error => {
