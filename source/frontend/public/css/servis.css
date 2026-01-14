@@ -1,32 +1,38 @@
-.mainServis {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; 
-    padding-top: 60px;
-    background: #0f0f0f; 
-    /* background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 100%); */
-    min-height: 100vh;
-    width: 100%;
-}
-
 #servis {
     position: absolute;
     top: 0;
     left: 0;
-    /* width: 100%; */
     min-height: 100vh;
-    /*background-color: rgba(0, 0, 0, 0.9);*/
     z-index: 9999; 
     overflow-y: auto;
     background-color: #121212 !important; 
+}
+
+
+.mainServis {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    padding: 60px 0;
+    width: 100%;
+    min-height: 100vh;
+
+    background: radial-gradient(circle at center, 
+        #800000 0%,    
+        #3d0000 25%,   
+        #001a2e 70%,   
+        #050505 100%
+    ) no-repeat center center fixed !important;
+    background-size: cover !important;
 }
 
 .servis-wrapper {
     display: grid;
     grid-template-columns: 4fr 2fr;
     gap: 40px;
-    width: 90%;
-    /* max-width: 1100px; */
+    width: 95%; 
+    max-width: 1400px; 
+    margin: 60px auto; 
 }
 
 #servis h2, #servis h3, #servis label {
@@ -46,7 +52,6 @@
 }
 
 .naslov-sekcije {
-    /* color: #38bff8; Audi plava ovo ne radi */
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 25px;

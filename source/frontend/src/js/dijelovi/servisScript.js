@@ -170,8 +170,19 @@ function prikaziStavke(lista, kontejnerId) {
         div.className = 'stavka-ponude'; 
         
         //iddijelaUsluge!!!
-        div.innerText = stavka.naziv || "Bez naziva"; 
+        /*div.innerText = stavka.naziv || "Bez naziva"; 
+        div.dataset.id = stavka.idDijelaUsluge;*/
+
+        const naziv = stavka.naziv || "Bez naziva";
+        const cijena = stavka.cijena ? `${stavka.cijena} €` : "0 €";
+
+        div.innerHTML = `
+            <span class="stavka-naziv">${naziv}</span>
+            <span class="stavka-cijena">${cijena}</span>
+        `;
+        
         div.dataset.id = stavka.idDijelaUsluge;
+        div.dataset.cijena = stavka.cijena || 0;
 
         div.onclick = function() {
             this.classList.toggle('active');
