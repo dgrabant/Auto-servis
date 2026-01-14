@@ -7,6 +7,7 @@ import hr.fer.progi.autoservis.model.Korisnik;
 import hr.fer.progi.autoservis.model.Popravak;
 import hr.fer.progi.autoservis.model.Termin;
 import hr.fer.progi.autoservis.repository.KorisnikRepository;
+import hr.fer.progi.autoservis.repository.PopravakRepository;
 import hr.fer.progi.autoservis.repository.TerminRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import hr.fer.progi.autoservis.service.AuthorityCheck;
@@ -28,10 +29,12 @@ import java.util.Optional;
 public class TerminController {
     private final TerminRepository terminRepository;
     private final KorisnikRepository korisnikRepository;
+    private final PopravakRepository popravakRepository;
 
-    public TerminController(TerminRepository terminRepository, KorisnikRepository korisnikRepository){
+    public TerminController(TerminRepository terminRepository, KorisnikRepository korisnikRepository, PopravakRepository popravakRepository){
         this.terminRepository = terminRepository;
         this.korisnikRepository = korisnikRepository;
+        this.popravakRepository = popravakRepository;
     }
 
     @GetMapping
@@ -39,8 +42,21 @@ public class TerminController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        List<Termin> termini = new ArrayList<>();
+
+        for(Termin termin : terminRepository.findAll()){
+            boolean skip = false;
+            for(Popravak popravak : popravakRepository.findAll()){
+                if(popravak.getTermin().getIdTermin().equals(termin.getIdTermin())){
+                    skip = true;
+                    break;
+                }
+            }
+            if(!skip) termini.add(termin);
+        }
+
+
         if(AuthorityCheck.CheckAuthority(userPrincipal, "serviser")){
-            List<Termin> termini = terminRepository.findAll();
 
             List<Termin> sorted = new ArrayList<>();
 
@@ -54,7 +70,7 @@ public class TerminController {
             return ResponseEntity.ok(sorted);
         }
 
-        return ResponseEntity.ok(terminRepository.findAll());
+        return ResponseEntity.ok(termini);
     }
 
     @GetMapping("/{id}")

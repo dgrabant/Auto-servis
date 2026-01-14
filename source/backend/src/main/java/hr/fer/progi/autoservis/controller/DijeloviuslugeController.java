@@ -6,6 +6,7 @@ import hr.fer.progi.autoservis.model.Dijeloviusluge;
 import hr.fer.progi.autoservis.repository.DijeloviuslugeRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import hr.fer.progi.autoservis.service.AuthorityCheck;
+import hr.fer.progi.autoservis.service.ImageUpload;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,11 @@ import java.util.Optional;
 public class DijeloviuslugeController {
 
     private final DijeloviuslugeRepository dijeloviuslugeRepository;
+    private final ImageUpload imageUpload;
 
-    public DijeloviuslugeController(DijeloviuslugeRepository dijeloviRepository){
+    public DijeloviuslugeController(DijeloviuslugeRepository dijeloviRepository, ImageUpload imageUpload){
         this.dijeloviuslugeRepository = dijeloviRepository;
+        this.imageUpload = imageUpload;
     }
 
     @GetMapping
@@ -43,7 +46,18 @@ public class DijeloviuslugeController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        // TODO: implementacija slika
+        if(dijeloviuslugeDto.getBase64() != null){
+            String rawImage = dijeloviuslugeDto.getBase64();
+            if(!rawImage.isEmpty()){
+                String imgUrl = imageUpload.SendRequest(rawImage.split(",")[1]);
+
+                if(imgUrl.isEmpty()){
+                    return ResponseEntity.internalServerError().build();
+                }
+
+                dijeloviuslugeDto.setSlikaUrl(imgUrl);
+            }
+        }
 
         try {
             return ResponseEntity.ok(dijeloviuslugeRepository.save(new Dijeloviusluge(dijeloviuslugeDto)));
@@ -58,8 +72,6 @@ public class DijeloviuslugeController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        // TODO: implementacija slika
-
         Optional<Dijeloviusluge> existing = dijeloviuslugeRepository.findById(id);
         if(existing.isPresent()){
             if(dijeloviuslugeDto.getVrsta() != null) existing.get().setVrsta(dijeloviuslugeDto.getVrsta());
@@ -67,6 +79,19 @@ public class DijeloviuslugeController {
             if(dijeloviuslugeDto.getCijena() != null) existing.get().setCijena(dijeloviuslugeDto.getCijena());
             if(dijeloviuslugeDto.getOpis() != null) existing.get().setOpis(dijeloviuslugeDto.getOpis());
             if(dijeloviuslugeDto.getSlikaUrl() != null) existing.get().setSlikaUrl(dijeloviuslugeDto.getSlikaUrl());
+
+            if(dijeloviuslugeDto.getBase64() != null){
+                String rawImage = dijeloviuslugeDto.getBase64();
+                if(!rawImage.isEmpty()){
+                    String imgUrl = imageUpload.SendRequest(rawImage.split(",")[1]);
+
+                    if(imgUrl.isEmpty()){
+                        return ResponseEntity.internalServerError().build();
+                    }
+
+                    dijeloviuslugeDto.setSlikaUrl(imgUrl);
+                }
+            }
 
             try {
                 return ResponseEntity.ok(dijeloviuslugeRepository.save(existing.get()));
