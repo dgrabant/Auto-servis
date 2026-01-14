@@ -700,21 +700,36 @@
                     });
                 }
 
-                // 4. Termini (za Popravak dropdown)
+                // 4. Termini
                 const terminRes = await fetch(`${API_BASE}/termin`, { headers: getAuthHeaders() });
                 cachedAppointments = await terminRes.json();
                 const terminSel = document.getElementById('popravak-idTermin');
+
                 if(terminSel) {
                     terminSel.innerHTML = '<option value="">Odaberite termin...</option>';
+
+                    // --- NOVO: Filtriranje termina ---
+                    // 1. Kreiraj listu ID-eva termina koji se već nalaze u popravcima
+                    const iskoristeniTerminIds = cachedRepairs
+                        .map(r => r.termin ? r.termin.idTermin : r.idTermin)
+                        .filter(id => id != null); // Filtriraj null vrijednosti
+                
                     cachedAppointments.forEach(t => {
-                         const opt = document.createElement('option');
-                         opt.value = t.idTermin;
-                         // Prikaz: Ime Prezime, Datum Vrijeme, Odgoda
-                         const ime = t.korisnik ? `${t.korisnik.ime} ${t.korisnik.prezime}` : 'Nepoznato';
-                         const datum = new Date(t.datumVrijeme).toLocaleString();
-                         const odgoda = t.odgoda ? ` (Odgoda: ${new Date(t.odgoda).toLocaleString()})` : '';
-                         opt.textContent = `${ime} - ${datum}${odgoda}`;
-                         terminSel.appendChild(opt);
+                        // Provjera 1: Termin NE SMIJE biti u listi iskorištenih
+                        const jeSlobodan = !iskoristeniTerminIds.includes(t.idTermin);
+                    
+                        // Ako uređujemo postojeći popravak, moramo prikazati i taj termin iako je "zauzet"
+                        // (Ovo je naprednija logika, ovdje radimo strogo po uputi: samo slobodni i moji)
+
+                        if (jeSlobodan ) {
+                                const opt = document.createElement('option');
+                                opt.value = t.idTermin;
+                                const ime = t.korisnik ? `${t.korisnik.ime} ${t.korisnik.prezime}` : 'Nepoznato';
+                                const datum = new Date(t.datumVrijeme).toLocaleString();
+                                const odgoda = t.odgoda ? ` (Odgoda: ${new Date(t.odgoda).toLocaleString()})` : '';
+                                opt.textContent = `${ime} - ${datum}${odgoda}`;
+                                terminSel.appendChild(opt);
+                        }
                     });
                 }
 

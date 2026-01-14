@@ -119,19 +119,9 @@
 }
 
 .iconsLogin {
-    margin-bottom: 15px;
-    margin-left: 10px;
-    border-radius: 40px;
     display: flex;
     align-items: center;
-    background: #38bff8a9;
-    backdrop-filter: blur(30px);
-    padding: 10px 0px;
-}
-.iconsLogin span {
-    margin: 0 15px;
-    cursor: pointer;
-    position: relative;
+    min-width: 50px;
 }
 
 .login-button.google:hover {

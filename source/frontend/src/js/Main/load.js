@@ -24,6 +24,8 @@ const servisHTML = document.getElementById("servis");
 const loginHTML = document.getElementById("login");
 const loadingText = document.getElementById("loadText");
 const hudHTML = document.getElementById("hud");
+const userHTML = document.getElementById("user");
+const footHTML = document.getElementById("foot");
 const forma = document.getElementById("performance");
 const tutorial = document.getElementById("tutorial");
 const loadingScreen = document.getElementById("loading-screen");
@@ -77,12 +79,18 @@ function provjera() {
         })
         .then(response => {
             if (!response.ok) {
+                document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
+                document.getElementById("inicUser").innerHTML = "NP";
+                document.getElementById("logout-btn").hidden=true;
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
               return response.json();
             })
         .then(data => {
             console.log("Response data:", data);
+            document.getElementById("imeUser").innerHTML = `${data.ime} ${data.prezime}`;
+            document.getElementById("inicUser").innerHTML = `${data.ime[0]}${data.prezime[0]}`;
+            document.getElementById("logout-btn").hidden=false;
             if (data.uloga == "admin") {
               document.getElementById("logo").href = "/admin.html";
             }
@@ -103,6 +111,9 @@ function provjera() {
 
 function LogedOut(){
   hide("login");
+  document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
+  document.getElementById("inicUser").innerHTML = "NP";
+  document.getElementById("logout-btn").hidden=true;
   localStorage.removeItem('authToken');
   localStorage.removeItem('performance');
   console.log('Logged out...');
@@ -116,14 +127,12 @@ function hide(stranica){
     dijeloviHTML.hidden = true;
     document.getElementById('logo').hidden = true;
     document.getElementById('back').hidden = true;
-    document.getElementById('sidebarInfo').hidden = true;
     document.getElementById('category-select').hidden = true;
   }
   if (stranica == "servis") {
     servisHTML.hidden = true;
     document.getElementById('logoServis').hidden = true;
     document.getElementById('backServis').hidden = true;
-    document.getElementById('sidebarInfoServis').hidden = true;
   }
   if (stranica == "login") {
     document.getElementById("backPicLogin").src="/assets/pictures/dijelovi/back.png";
@@ -140,14 +149,12 @@ function unHide(stranica){
     dijeloviHTML.hidden = false;
     document.getElementById('logo').hidden = false;
     document.getElementById('back').hidden = false;
-    document.getElementById('sidebarInfo').hidden = false;
     document.getElementById('category-select').hidden = false;
   }
   if (stranica == "servis") {
     servisHTML.hidden = false;
     document.getElementById('logoServis').hidden = false;
     document.getElementById('backServis').hidden = false;
-    document.getElementById('sidebarInfoServis').hidden = false;
     //dohvatiPodatkeZaServis();
     if (typeof dohvatiPodatkeZaServis === 'function') {
         dohvatiPodatkeZaServis();
@@ -225,6 +232,9 @@ function cekajPotvrdu(idGumba) {
 }
 
 document.getElementById("logoutGumb").addEventListener("click", () => {
+  LogedOut();
+});
+document.getElementById("logout-btn").addEventListener("click", () => {
   LogedOut();
 });
 
@@ -439,11 +449,9 @@ loader.load(
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
-        hudHTML.hidden = false;
-        if(hudHTML.classList.contains('hidden')) {
-          hudHTML.classList.remove('hidden');
-          hudHTML.classList.add('visible');
-        } 
+        hudHTML.style.display = 'flex';
+        userHTML.style.display = 'flex';
+        footHTML.style.display = 'flex';
         //onWindowResize();
         if (renderer && activeCamera) {
           renderer.setSize(window.innerWidth, window.innerHeight);

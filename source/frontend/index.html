@@ -11,6 +11,7 @@
     </noscript>
 
     <link rel="stylesheet" type="text/css" href="/css/login.css">
+    <link rel="stylesheet" type="text/css" href="/css/footer.css">
     <link rel="stylesheet" type="text/css" href="/css/loading.css">
     <link rel="stylesheet" type="text/css" href="/css/tutorial.css">
     <link rel="stylesheet" type="text/css" href="/css/performance.css">
@@ -26,7 +27,27 @@
     <a href="./assets/pictures/djelovi/back.gif" download></a>
     <a href="./assets/pictures/djelovi/logo.gif" download></a>
 
-    <div id="hud" class="hidden" hidden>
+
+    <div id="user" class="user-profile-float">
+    <div id="inicUser" class="user-avatar">MC</div> <div class="user-info">
+        <span id="imeUser" class="user-name">Mihael Car</span>
+        <button id="logout-btn" class="logout-btn" hidden>LOGOUT</button>
+    </div>
+    </div>
+
+    <div id="sidePanel" class="side-panel">
+    <span class="close-side" onclick="closeSidePanel()">[ ZATVORI ]</span>
+    <div id="sidePanelContent">
+        </div>
+    </div>
+
+    <div id="foot" class="floating-footer">
+    <button class="footer-btn" onclick="toggleSidePanel('kontakt')">KONTAKT</button>
+    <button class="footer-btn" onclick="toggleSidePanel('radno-vrijeme')">RADNO VRIJEME</button>
+    <button class="footer-btn" onclick="toggleSidePanel('o-nama')">O NAMA</button>
+    </div>
+
+    <div id="hud" class="hud-container ">
       <div class="circular-indicator-container">
         
         <div class="indicator-dot dot-pos-1" data-position="1"></div>
@@ -200,37 +221,6 @@
             </div>
         </main>
     </div>
-    <div class="footDiv">
-    <div id="kontakt" class="footclick" hidden>
-            <h1>Kontakt</h1>
-            <br>
-            <p>Unska 3, 10000 Zagreb</p>
-    </div>
-    <div id="vrijeme" class="footclick" hidden>
-            <h1>Radno vrijeme</h1>
-            <br>
-            <p>Pon – Pet: 08:00 – 16:00</p>
-            <br>
-            <p>Subota: 08:00 – 14:00</p>
-            <br>
-            <p>Nedjelja: Zatvoreno</p>
-    </div>
-    <div id="mi" class="footclick" hidden>
-            <h1>O nama</h1>
-            <br>
-            <p>Mi smo mali ovlašteni servis za Audi vozila.</p>
-            <br>
-            <p>Za sada imamo jedini servis u Zagrebu.</p>
-    </div>
-    <footer>
-        
-        <div id="sidebarInfo" class="sidebar-info" hidden>
-            <a class="foot" onclick="kontaktDijelovi()">Kontakt</a>
-            <a class="foot" onclick="RadnoVrijemeDijelovi()">Radno vrijeme</a>
-            <a class="foot" onclick="oNamaDijelovi()">O nama</a>
-        </div>
-    </footer>
-    </div>
     </div>
 
     
@@ -376,40 +366,6 @@
             </div>
         </main>
     </div>
-    <div class="footDiv">
-
-    
-        <div id="kontakt_servis" class="footclick" hidden>
-            <h1>Kontakt</h1>
-            <br>
-            <p>Unska 3, 10000 Zagreb</p>
-        </div>
-        <div id="vrijeme_servis" class="footclick" hidden>
-            <h1>Radno vrijeme</h1>
-            <br>
-            <p>Pon – Pet: 08:00 – 16:00</p>
-            <br>
-            <p>Subota: 08:00 – 14:00</p>
-            <br>
-            <p>Nedjelja: Zatvoreno</p>
-        </div>
-        <div id="mi_servis" class="footclick" hidden>
-            <h1>O nama</h1>
-            <br>
-            <p>Mi smo mali ovlašteni servis za Audi vozila.</p>
-            <br>
-            <p>Za sada imamo jedini servis u Zagrebu.</p>
-        </div>
-    <footer>
-
-        
-        <div id="sidebarInfoServis" class="sidebar-info" hidden>
-            <a class="foot" onclick="kontaktServis()">Kontakt</a>
-            <a class="foot" onclick="RadnoVrijemeServis()">Radno vrijeme</a>
-            <a class="foot" onclick="oNamaServis()">O nama</a>
-        </div>
-    </footer>
-    </div>
     </div>
 
     
@@ -448,95 +404,58 @@
     });
 </script>
 <script>
-    let kontaktHTML = "";
-    let vrijemeHTML = "";
-    let miHTML = "";
-    function dijeloviPostava(){
-        kontaktHTML = document.getElementById('kontakt');
-        vrijemeHTML = document.getElementById('vrijeme');
-        miHTML = document.getElementById('mi');
-    }
-    function servisPostava(){
-        kontaktHTML = document.getElementById('kontakt_servis');
-        vrijemeHTML = document.getElementById('vrijeme_servis');
-        miHTML = document.getElementById('mi_servis');
-    }
-    function kontaktDijelovi(){
-        dijeloviPostava();
-        kontakt();
-    }
-    function kontaktServis(){
-        servisPostava();
-        kontakt();
-    }
+    const sideData = {
+    'kontakt': `
+        <h2>KONTAKT</h2>
+        <p><strong>Lokacija:</strong><br>Unska 3, 10000 Zagreb</p>
+        <p><strong>Email:</strong><br>predložak</p>
+        <iframe class="map-frame" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2781.789047910405!2d15.968652415568!3d45.80145157910657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4765d6f050cf2ccd%3A0x73729c279f5d8531!2sUnska%20ul.%203%2C%2010000%2C%20Zagreb!5e0!3m2!1shr!2shr!4v1700000000000" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+    `,
+    'radno-vrijeme': `
+        <h2>RADNO VRIJEME</h2>
+        <p><strong>Pon - Pet:</strong><br>08:00 - 16:00h</p>
+        <p><strong>Subota:</strong><br>08:00 - 14:00h</p>
+        <p><strong>Nedjelja:</strong><br>Zatvoreno</p>
+    `,
+    'o-nama': `
+        <h2>O NAMA</h2>
+        <p>Profesionalna podrška i prodaja autodijelova vrhunske kvalitete</p>
+        
+    `
+};
 
-    function RadnoVrijemeDijelovi(){
-        dijeloviPostava();
-        RadnoVrijeme();
-    }
+let activeType = null;
 
-    function RadnoVrijemeServis(){
-        servisPostava();
-        RadnoVrijeme();
-    }
-    function oNamaDijelovi() {
-        dijeloviPostava();
-        oNama();
-    }
-    function oNamaServis(){
-        servisPostava();
-        oNama();
-    }
+function toggleSidePanel(type) {
+    const panel = document.getElementById('sidePanel');
+    const content = document.getElementById('sidePanelContent');
 
-    
-    let scrollHeight = document.body.scrollHeight;
+    if (activeType === type) {
+        closeSidePanel();
+    } else {
+        content.innerHTML = sideData[type];
+        panel.classList.add('active');
+        activeType = type;
+    }
+}
 
-    function kontakt() {
-        scrollHeight = document.body.scrollHeight
-        kontaktHTML.hidden = !(kontaktHTML.hidden);
-        if (!(vrijemeHTML.hidden)) {
-            vrijemeHTML.hidden = true;
-        }
-        if (!(miHTML.hidden)) {
-            miHTML.hidden = true;
-        }
-        window.scrollTo({
-            top: scrollHeight,
-          // Dodajemo "smooth" ponašanje za glatku animaciju
-            behavior: 'instant' 
-        });
-    }
-    function RadnoVrijeme(){
-        scrollHeight = document.body.scrollHeight
-        vrijemeHTML.hidden = !(vrijemeHTML.hidden);
-        if (!(kontaktHTML.hidden)) {
-            kontaktHTML.hidden = true;
-        }
-        if (!(miHTML.hidden)) {
-            miHTML.hidden = true;
-        }
-        window.scrollTo({
-            top: scrollHeight,
-          // Dodajemo "smooth" ponašanje za glatku animaciju
-            behavior: 'instant' 
-        });
-    }
+function closeSidePanel() {
+    document.getElementById('sidePanel').classList.remove('active');
+    activeType = null;
+}
 
-    function oNama(){
-        scrollHeight = document.body.scrollHeight
-        miHTML.hidden = !(miHTML.hidden);
-        if (!(vrijemeHTML.hidden)) {
-            vrijemeHTML.hidden = true;
-        }
-        if (!(kontaktHTML.hidden)) {
-            kontaktHTML.hidden = true;
-        }
-        window.scrollTo({
-            top: scrollHeight,
-          // Dodajemo "smooth" ponašanje za glatku animaciju
-            behavior: 'instant' 
-        });
+// Opcionalno: Zatvori panel ako se klikne bilo gdje drugdje na ekranu
+document.addEventListener('mousedown', function(event) {
+    const panel = document.getElementById('sidePanel');
+    const footer = document.querySelector('.floating-footer');
+    if (!panel.contains(event.target) && !footer.contains(event.target)) {
+        closeSidePanel();
     }
+});
 </script>
 <canvas id="bg"></canvas>
 </body>

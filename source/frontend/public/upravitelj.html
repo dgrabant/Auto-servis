@@ -680,7 +680,7 @@
 
             fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
             .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-            .then(() => { logStatus(id ? "Ažurirano!" : "Dodano!"); resetPartForm(); loadItems('all'); })
+            .then(() => { logStatus(id ? "Ažurirano!" : "Dodano!"); resetPartForm(); loadItems('all'); populateDropdowns();})
             .catch(err => logStatus("Greška spremanje: " + err, true));
         });
 
@@ -1107,7 +1107,7 @@
 
             fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
             .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-            .then(() => { logStatus("Podaci spremljeni!"); resetDataForm(); loadEntityData(); })
+            .then(() => { logStatus("Podaci spremljeni!"); resetDataForm(); loadEntityData(); populateDropdowns();})
             .catch(err => logStatus("Greška spremanje: " + err, true));
         });
 

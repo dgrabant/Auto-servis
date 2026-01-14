@@ -54,7 +54,7 @@ body{
     
     transition: transform 0.3s ease; 
     
-    animation: slideDown 0.3s ease-out forwards;
+    animation: slideRight 0.3s ease-out forwards;
 
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
     border-bottom-left-radius: 0;
@@ -131,64 +131,46 @@ footer{
     border-bottom-right-radius: 40px;
 }
 header {
-    right: 0;
-    top: 5px;
-    display: flex;
     position: fixed;
-    border-bottom-right-radius: 20px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
     z-index: 100000;
-    width: 99%;
-    /* max-height: 30px;
-    min-height: 20px; */
-    height: 45px;
-    padding: 10px;
-    background: rgba(0, 0, 0, 0.0);
-    backdrop-filter: blur(5px);
-    border-bottom: 1px solid #38bff8a9;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    
+    /* Stakleni efekt iz tvog primjera */
+    background: #0000006e;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #38bff844;
+    box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.5);
+    
+    font-family: 'Americorps', sans-serif;
+    transition: all 0.3s ease;
+    animation: slideDownHeader 0.5s ease-out forwards;
 }
 
-
+/* --- Naslov (Harlemova kočija) --- */
 .selected {
-    font-family: 'Americorps';
-    font-size: 2rem;
-    color: #000000;
-    margin-bottom: 15px;
-    max-width: 50%;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    background: #38bff8;
-    backdrop-filter: blur(30px);
-    padding: 10px;
+    font-size: 22px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-align: center;
+    /* Suptilan neonski sjaj teksta */
+    text-shadow: 0 0 10px #38bff88c;
 }
 
-.logo {
-    margin-bottom: 15px;
-    font-size: 24px;
-    font-weight: bold;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
-    background: #38bff8a9;
-    backdrop-filter: blur(30px);
-    padding: 10px;
-}
-
-.icons {
-    margin-bottom: 15px;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
+.icons, .logo {
     display: flex;
     align-items: center;
-    background: #38bff8a9;
-    backdrop-filter: blur(30px);
-    padding: 10px 0px;
-}
-
-.icons span {
-    margin: 0 15px;
-    cursor: pointer;
-    position: relative;
+    min-width: 50px;
 }
 
 .cart-icon {
@@ -470,17 +452,39 @@ label {
     display: block;
 }
 .back_picture{
+    height: 45px;
+    width: auto;
+    border-radius: 50%;
+    border: 1px solid #38bff88c;
+    background: #00000044;
+    padding: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
     content: url("../assets/pictures/dijelovi/back.png");
 }
 .back_picture:hover{
+    border-color: #38bff8;
+    box-shadow: 0 0 15px #38bff88c;
+    transform: scale(1.1);
     cursor: pointer;
     content: url("../assets/pictures/dijelovi/back.gif");
 }
 
 .logo_pic{
+    height: 45px;
+    width: auto;
+    border-radius: 50%;
+    border: 1px solid #38bff88c;
+    background: #00000044;
+    padding: 5px;
+    transition: all 0.3s ease;
+    cursor: pointer;
     content: url("../assets/pictures/dijelovi/logo.png");
 }
 .logo_pic:hover{
+    border-color: #38bff8;
+    box-shadow: 0 0 15px #38bff88c;
+    transform: scale(1.1);
     content: url("../assets/pictures/dijelovi/logo.gif");
 }
 
@@ -560,7 +564,7 @@ option:hover {
         transform: scale(1);
     }
 }
-@keyframes slideDown {
+@keyframes slideRight {
     0% {
         transform: translateX(100%);
         opacity: 0;
@@ -568,6 +572,36 @@ option:hover {
     100% {
         transform: translateX(0);
         opacity: 1;
+    }
+}
+@keyframes slideLeft {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@keyframes hideRight {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+@keyframes hideLeft {
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-100%);
+        opacity: 0;
     }
 }
 @media screen and (max-width: 1024px) {
@@ -670,5 +704,15 @@ option:hover {
     }
     .back_picture{
         margin-top: 10px;
+    }
+}
+@keyframes slideDownHeader {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

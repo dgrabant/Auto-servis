@@ -2,6 +2,7 @@ import * as THREE from 'three';
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const hudHTML = document.getElementById("hud");
+const userHTML = document.getElementById("user");
 
 // *** PROMJENA OVDJE: Dodan 'event' kao prvi argument ***
 export function getFirstObjectHit(event, window, camera, scene, maxDistance = Infinity) {
@@ -125,23 +126,25 @@ export function transitionLight(cameraPosition, movingLight, mobileOptimization)
 
 function hideHud(hidden, timeout){
   if (hidden == true) {
-    if(hudHTML.classList.contains('visible')) {
-      hudHTML.classList.remove('visible');
-      hudHTML.classList.add('hidden');
-    }
+    hudHTML.classList.add('hidden');
+    userHTML.classList.add('hidden');
     setTimeout(() => {
-    hudHTML.hidden = hidden;
+      hudHTML.style.display = 'none';
+      userHTML.style.display = 'none';
+      hudHTML.hidden = hidden;
+      userHTML.hidden = hidden;
   },timeout);
   }
   else{
     setTimeout(() => {
-    hudHTML.hidden = hidden;
+      hudHTML.classList.remove('hidden');
+      userHTML.classList.remove('hidden');
+      hudHTML.hidden = hidden;
+      userHTML.hidden = hidden;
     },timeout);
     setTimeout(() => {
-      if(hudHTML.classList.contains('hidden')) {
-        hudHTML.classList.remove('hidden');
-        hudHTML.classList.add('visible');
-      } 
+      hudHTML.style.display = 'flex';
+      userHTML.style.display = 'flex';
     },timeout+200);
   }
 }
