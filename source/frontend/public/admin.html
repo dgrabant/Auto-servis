@@ -528,8 +528,9 @@
             </div>
         </div>
     </div>
+    
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; flex-direction:column; justify-content:center; align-items:center; color:white; backdrop-filter: blur(5px);">
-    <div class="spinner"></div> <p>Spremanje u tijeku, molimo pričekajte...</p>
+        <div class="spinner"></div> <p>Spremanje u tijeku, molimo pričekajte...</p>
     </div>
 
     <script>
@@ -545,6 +546,10 @@
         const loginMessage = document.getElementById('login-message');
         const statusDisplay = document.getElementById('status-display');
         
+        // --- LOADER HELPERS ---
+        const showLoader = () => document.getElementById('loading-overlay').style.display = 'flex';
+        const hideLoader = () => document.getElementById('loading-overlay').style.display = 'none';
+
         //postavljanje ograničenja na starost auta
         document.getElementById('vozilo-godina').max = new Date().getFullYear();
 
@@ -572,8 +577,11 @@
             statusDisplay.style.color = isError ? "#ef4444" : "#4ade80"; // Red or Green
             if(isError) console.error(msg); else console.log(msg);
         }
+        
         // --- INIT ---
         function initApp() {
+            // Inicijalna provjera ne mora imati overlay jer već postoji "Provjera autorizacije..." div, 
+            // ali radi konzistentnosti možemo ga dodati ako je autorizacija spora.
             fetch(`${API_BASE}/korisnik/about`, {
                 method: "GET",
                 headers: getAuthHeaders()
@@ -583,14 +591,10 @@
                 return res.json();
             })
             .then(user => {
-                // --- DODANA PROVJERA ULOGE ---
-                // Provjeravamo je li uloga točno 'admin'. 
-                // Koristimo toLowerCase() za svaki slučaj ako baza vrati "Admin" ili "ADMIN"
                 if (!user.uloga || user.uloga.toLowerCase() !== 'admin') {
                     throw new Error("NOT_ADMIN");
                 }
-                // -----------------------------
-
+                
                 loginMessage.style.display = "none";
                 appContainer.style.display = "block";
                 document.getElementById('current-user-display').textContent = `Prijavljen: ${user.ime || user.username || user.email} (${user.uloga})`;
@@ -603,10 +607,6 @@
                 window.location.href = REDIRECT_ON_FAIL;
             });
         }
-        // --- INIT SIMULATION ---
-        //loginMessage.style.display = "none";
-        //appContainer.style.display = "block";
-        //switchTab('parts'); 
 
         // --- DRAG & DROP LOGIKA ---
         let currentFileName = ""; 
@@ -617,27 +617,20 @@
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]);
         });
-        let base64Slika = ""; // Globalna varijabla u koju ćemo spremiti rezultat
+        let base64Slika = ""; 
 
         function handleFile(file) {
             if (file && file.type.startsWith('image/')) {
                 currentFileName = file.name; 
-                
-                // 1. Prikaz previewa (vaš postojeći kod)
                 const previewUrl = URL.createObjectURL(file);
                 imagePreview.innerHTML = `<img src="${previewUrl}" alt="Pregled"><p style="font-size:0.8em; color:#64748b;">${currentFileName}</p>`;
             
-                // 2. Pretvorba u Base64
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    // Rezultat se nalazi u e.target.result
                     base64Slika = e.target.result; 
                     console.log("Base64 string je spreman!");
-                    //console.log(base64Slika);
                 };
-                
-                reader.readAsDataURL(file); // Pokretanje čitanja datoteke
-            
+                reader.readAsDataURL(file); 
             } else { 
                 alert("Molimo odaberite slikovnu datoteku."); 
             }
@@ -663,6 +656,7 @@
             } else if (tabName === 'data') {
                 document.getElementById('data-section').classList.add('active');
                 document.getElementById('btn-tab-data').classList.add('active');
+                // populateDropdowns će hendlati svoj loader interno jer je async
                 populateDropdowns().then(() => {
                     handleEntityChange(); 
                 });
@@ -671,7 +665,7 @@
 
         // --- HELPER ZA DROPDOWNOVE ---
         async function populateDropdowns() {
-            // Dohvati sve potrebne podatke
+            showLoader();
             try {
                 // 1. Korisnici
                 const userRes = await fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() });
@@ -735,22 +729,18 @@
                 cachedAppointments = await terminRes.json();
                 const terminSel = document.getElementById('popravak-idTermin');
 
+                // Za termine trebamo i popravke da znamo koji su zauzeti
+                const popravakRes = await fetch(`${API_BASE}/popravak`, { headers: getAuthHeaders() });
+                cachedRepairs = await popravakRes.json();
+
                 if(terminSel) {
                     terminSel.innerHTML = '<option value="">Odaberite termin...</option>';
-
-                    // --- NOVO: Filtriranje termina ---
-                    // 1. Kreiraj listu ID-eva termina koji se već nalaze u popravcima
                     const iskoristeniTerminIds = cachedRepairs
                         .map(r => r.termin ? r.termin.idTermin : r.idTermin)
-                        .filter(id => id != null); // Filtriraj null vrijednosti
+                        .filter(id => id != null); 
                 
                     cachedAppointments.forEach(t => {
-                        // Provjera 1: Termin NE SMIJE biti u listi iskorištenih
                         const jeSlobodan = !iskoristeniTerminIds.includes(t.idTermin);
-                    
-                        // Ako uređujemo postojeći popravak, moramo prikazati i taj termin iako je "zauzet"
-                        // (Ovo je naprednija logika, ovdje radimo strogo po uputi: samo slobodni i moji)
-
                         if (jeSlobodan ) {
                                 const opt = document.createElement('option');
                                 opt.value = t.idTermin;
@@ -762,19 +752,13 @@
                         }
                     });
                 }
-
-                // 5. Popravci (za Servisiranje i Radnju dropdown)
-                const popravakRes = await fetch(`${API_BASE}/popravak`, { headers: getAuthHeaders() });
-                cachedRepairs = await popravakRes.json();
                 
                 const servisPopravakSel = document.getElementById('servis-idPopravak');
                 const radnjaPopravakSel = document.getElementById('radnja-idPopravak');
                 
-                // HTML helper za option tekst
                 const createPopravakOption = (r) => {
                      const opt = document.createElement('option');
                      opt.value = r.idPopravak;
-                     // Model auta, broj šasije, broj tablice, ime, prezime
                      const model = r.vozilo?.vrstaVozila?.nazivModela || 'N/A';
                      const sasija = r.vozilo?.serijskiBroj || 'N/A';
                      const tablica = r.vozilo?.regOznaka || 'N/A';
@@ -785,7 +769,6 @@
                      return opt;
                 };
 
-                // Radnja ima malo drugaciji prikaz trazen (Reg, Model, Termin, Stanje)
                 const createRadnjaPopravakOption = (r) => {
                     const opt = document.createElement('option');
                     opt.value = r.idPopravak;
@@ -808,7 +791,7 @@
                     cachedRepairs.forEach(r => radnjaPopravakSel.appendChild(createRadnjaPopravakOption(r)));
                 }
 
-                // 6. Dijelovi i Usluge (za Radnju)
+                // 6. Dijelovi i Usluge
                 const partsRes = await fetch(`${API_BASE}/dijeloviusluge`, { headers: getAuthHeaders() });
                 cachedParts = await partsRes.json();
                 const radnjaDioSel = document.getElementById('radnja-idDijela');
@@ -817,7 +800,6 @@
                     cachedParts.forEach(p => {
                         const opt = document.createElement('option');
                         opt.value = p.idDijelausluge;
-                        // Naziv, je li dio ili usluga, cijena
                         opt.textContent = `${p.naziv} (${p.vrsta}) - ${p.cijena}€`;
                         radnjaDioSel.appendChild(opt);
                     });
@@ -825,20 +807,24 @@
 
             } catch (e) {
                 console.error("Greška pri učitavanju dropdown podataka", e);
+            } finally {
+                hideLoader();
             }
         }
 
         // --- 1. DIJELOVI I USLUGE ---
         const partForm = document.getElementById('part-form');
         
-        function loadItems(filterType) {
-            
+        async function loadItems(filterType) {
+            showLoader();
             if(filterType == 'all') logStatus("Učitavam Dijelove i Usluge...");
             if(filterType == 'dio') logStatus("Učitavam Dijelove...");
             if(filterType == 'usluga') logStatus("Učitavam Usluge...");
-            fetch(`${API_BASE}/dijeloviusluge`, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(data => {
+            
+            try {
+                const res = await fetch(`${API_BASE}/dijeloviusluge`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                
                 const tbody = document.getElementById('parts-table-body');
                 tbody.innerHTML = "";
                 let items = Array.isArray(data) ? data : [];
@@ -863,31 +849,30 @@
                 if(filterType == 'all') logStatus(`Učitano ${items.length} Dijelova/Usluga.`);
                 if(filterType == 'dio') logStatus(`Učitano ${items.length} Dijelova.`);
                 if(filterType == 'usluga') logStatus(`Učitano ${items.length} Usluga.`);
-            }).catch(err => logStatus("Greška dijelovi/usluge: " + err, true));
+            } catch (err) {
+                logStatus("Greška dijelovi/usluge: " + err, true);
+            } finally {
+                hideLoader();
+            }
         }
 
     partForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-            
-        // 1. Prikaži blokadu ekrana
-        const overlay = document.getElementById('loading-overlay');
-        overlay.style.display = 'flex';
+        showLoader();
             
         const id = document.getElementById('item-id').value;
-        console.log(base64Slika)
         const payload = {
             vrsta: getSelectedType(),
             naziv: document.getElementById('part-name').value,
             cijena: document.getElementById('part-price').value ? parseFloat(document.getElementById('part-price').value) : null,
             opis: document.getElementById('part-desc').value,
-            base64: base64Slika // Tvoj base64 string
+            base64: base64Slika 
         };
         
         const url = id ? `${API_BASE}/dijeloviusluge/${id}` : `${API_BASE}/dijeloviusluge`;
         const method = id ? "PUT" : "POST";
     
         try {
-            // 2. Čekaj (await) da server odgovori
             const res = await fetch(url, { 
                 method: method, 
                 headers: getAuthHeaders(), 
@@ -896,28 +881,26 @@
         
             if (!res.ok) throw new Error(res.status);
             
-            // 3. Osvježi podatke
             logStatus(id ? "Ažurirano!" : "Dodano!");
             resetPartForm();
-            await loadItems('all'); // Čekaj i da se lista učita
-            await populateDropdowns(); // Čekaj i da se dropdowni osvježe
+            await loadItems('all'); 
+            await populateDropdowns(); 
         
         } catch (err) {
             logStatus("Greška spremanje: " + err, true);
         } finally {
-            // 4. Makni blokadu ekrana bez obzira je li uspjelo ili ne
-            overlay.style.display = 'none';
+            hideLoader();
         }
     });
 
         window.prepareItemEdit = async function(id) {
+            showLoader();
             try {
                 const res = await fetch(`${API_BASE}/dijeloviusluge/${id}`, { headers: getAuthHeaders() });
                 const item = await res.json();
             
                 const img = item.slikaUrl.startsWith('http') ? item.slikaUrl : `https://autoservis-progi.onrender.com/assets/pictures/dijelovi/${item.slikaUrl}`;
 
-                // Popunjavanje polja
                 document.getElementById('item-id').value = item.idDijelausluge;
                 document.getElementById('part-name').value = item.naziv;
                 document.getElementById('part-price').value = item.cijena || "";
@@ -930,7 +913,6 @@
                     imagePreview.innerHTML = `<img src="${img}"><p>${img}</p>`;
                     currentFileName = item.slikaUrl;
                 
-                    // Pretvorba u Base64 (ako je nužno)
                     const imgRes = await fetch(img);
                     const blob = await imgRes.blob();
                     const reader = new FileReader();
@@ -944,7 +926,6 @@
                     base64Slika = "";
                 }
             
-                // UI promjene
                 document.getElementById('part-form-title').textContent = `Uredi stavku ID: ${id}`;
                 const saveBtn = document.getElementById('part-save-btn');
                 saveBtn.textContent = "Spremi izmjene";
@@ -955,14 +936,24 @@
             
             } catch (err) {
                 logStatus("Greška dohvat: " + err, true);
+            } finally {
+                hideLoader();
             }
         };
 
-        window.deleteItem = function(id) { 
+        window.deleteItem = async function(id) { 
             if(confirm("Sigurno želite obrisati ovu stavku?")) {
-                fetch(`${API_BASE}/dijeloviusluge/${id}`, { method: "DELETE", headers: getAuthHeaders() })
-                .then(res => { if(!res.ok) throw new Error(`Neuspješno ${API_BASE}/dijeloviusluge/${id}`); loadItems('all'); logStatus("Obrisano."); })
-                .catch(err => logStatus(err, true));
+                showLoader();
+                try {
+                    const res = await fetch(`${API_BASE}/dijeloviusluge/${id}`, { method: "DELETE", headers: getAuthHeaders() });
+                    if(!res.ok) throw new Error(`Neuspješno ${API_BASE}/dijeloviusluge/${id}`); 
+                    await loadItems('all'); 
+                    logStatus("Obrisano.");
+                } catch(err) {
+                    logStatus(err, true);
+                } finally {
+                    hideLoader();
+                }
             }
         };
 
@@ -982,12 +973,13 @@
         // --- 2. KORISNICI ---
         const userForm = document.getElementById('user-form');
         
-        window.loadUsers = function() {
+        window.loadUsers = async function() {
+            showLoader();
             logStatus("Učitavam korisnike...");
-            fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(data => {
-                cachedUsers = Array.isArray(data) ? data : []; // Spremi u globalni cache
+            try {
+                const res = await fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() });
+                const data = await res.json();
+                cachedUsers = Array.isArray(data) ? data : []; 
                 const tbody = document.getElementById('users-table-body');
                 tbody.innerHTML = "";
                 
@@ -1007,7 +999,11 @@
                     tbody.appendChild(tr);
                 });
                 logStatus(`Učitano ${cachedUsers.length} korisnika.`);
-            }).catch(err => logStatus("Greška korisnici: " + err, true));
+            } catch (err) {
+                logStatus("Greška korisnici: " + err, true);
+            } finally {
+                hideLoader();
+            }
         };
 
         document.getElementById('davUsluge').addEventListener('change', (e) => {
@@ -1018,10 +1014,7 @@
 
         userForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Prikaži loading blokadu
-            const overlay = document.getElementById('loading-overlay');
-            if(overlay) overlay.style.display = 'flex';
+            showLoader();
 
             const userId = document.getElementById('user-id').value;
             const method = userId ? "PUT" : "POST";
@@ -1048,26 +1041,27 @@
                 logStatus(userId ? "Korisnik ažuriran!" : "Korisnik kreiran!");
                 resetUserForm();
                 await loadUsers();
-                await populateDropdowns(); // DODANO: Osvježava dropdownove jer se novi korisnik može pojaviti u listi servisera
+                await populateDropdowns(); 
             
             } catch (err) {
                 logStatus("Greška korisnik: " + err.message, true);
             } finally {
-                if(overlay) overlay.style.display = 'none';
+                hideLoader();
             }
         });
 
         window.prepareUserEdit = function(id) {
-            // Koristimo cache ako je moguće ili fetch
             const user = cachedUsers.find(u => u.idKorisnik === id);
             
             if (user) {
                 fillUserForm(user);
             } else {
+                showLoader();
                 fetch(`${API_BASE}/korisnik/${id}`, { headers: getAuthHeaders() })
                 .then(res => res.json())
                 .then(u => fillUserForm(u))
-                .catch(err => logStatus("Greška dohvat korisnika: " + err, true));
+                .catch(err => logStatus("Greška dohvat korisnika: " + err, true))
+                .finally(() => hideLoader());
             }
         };
 
@@ -1103,21 +1097,29 @@
             document.getElementById('davUsluge').dispatchEvent(new Event('change'));
         };
 
-        window.deleteUser = function(id) {
+        window.deleteUser = async function(id) {
             if(!confirm("Trajno obrisati korisnika?")) return;
-            fetch(`${API_BASE}/korisnik/${id}`, { method: "DELETE", headers: getAuthHeaders() })
-            .then(res => { if(!res.ok) throw new Error(res.status); loadUsers(); })
-            .catch(err => logStatus("Greška brisanje: " + err, true));
+            showLoader();
+            try {
+                const res = await fetch(`${API_BASE}/korisnik/${id}`, { method: "DELETE", headers: getAuthHeaders() });
+                if(!res.ok) throw new Error(res.status); 
+                await loadUsers();
+            } catch(err) {
+                logStatus("Greška brisanje: " + err, true);
+            } finally {
+                hideLoader();
+            }
         };
 
         // --- PROMJENA ULOGE ---
-        window.updateUserRole = function(id) {
+        window.updateUserRole = async function(id) {
             const newRole = document.getElementById(`role-select-${id}`).value;
             const originalUser = cachedUsers.find(u => u.idKorisnik === id);
             if(!originalUser) {
                 logStatus("Greška: Korisnik nije pronađen u lokalnim podacima.", true);
                 return;
             }
+            showLoader();
             const payload = {
                 ime: originalUser.ime,
                 prezime: originalUser.prezime,
@@ -1125,10 +1127,17 @@
                 davateljUsluge: originalUser.davateljUsluge, 
                 uloga: newRole
             };
-            fetch(`${API_BASE}/korisnik/${id}`, { method: "PUT", headers: getAuthHeaders(), body: JSON.stringify(payload) })
-            .then(res => { if(!res.ok) throw new Error("Err"); return res.json(); })
-            .then(() => { logStatus(`Uloga promijenjena u ${newRole}.`); loadUsers(); })
-            .catch(err => logStatus("Greška role update: " + err, true));
+            try {
+                const res = await fetch(`${API_BASE}/korisnik/${id}`, { method: "PUT", headers: getAuthHeaders(), body: JSON.stringify(payload) });
+                if(!res.ok) throw new Error("Err");
+                await res.json();
+                logStatus(`Uloga promijenjena u ${newRole}.`); 
+                await loadUsers(); 
+            } catch(err) {
+                logStatus("Greška role update: " + err, true);
+            } finally {
+                hideLoader();
+            }
         };
 
         // ==============================================
@@ -1150,13 +1159,19 @@
             loadEntityData();
         }
 
-        function loadEntityData() {
+        async function loadEntityData() {
+            showLoader();
             const endpoint = `${API_BASE}/${currentEntity}`;
             logStatus(`Učitavam ${currentEntity}...`);
-            fetch(endpoint, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(data => renderDataTable(data))
-            .catch(err => logStatus("Greška učitavanje entiteta: " + err, true));
+            try {
+                const res = await fetch(endpoint, { headers: getAuthHeaders() });
+                const data = await res.json();
+                renderDataTable(data);
+            } catch(err) {
+                logStatus("Greška učitavanje entiteta: " + err, true);
+            } finally {
+                hideLoader();
+            }
         }
          
 
@@ -1243,7 +1258,6 @@
                 columns.forEach(col => {
                     let val = null;
 
-                    // Logika za dohvaćanje vrijednosti
                     if (col.key === 'korisnik.imePrezime') {
                         val = item.korisnik ? `${item.korisnik.ime} ${item.korisnik.prezime}` : '-';
                     } else if (col.key === 'korisnik.idKorisnik') {
@@ -1257,27 +1271,22 @@
                     } else if (col.key === 'vin') {
                         val = item.serijskiBroj;
                     } 
-                    // Popravak specifika
                     else if (col.key === 'popravak.vozilo') {
                         val = item.vozilo ? item.vozilo.regOznaka : (item.idVozila || '-');
                     } else if (col.key === 'popravak.korisnik') {
-                         // Pretpostavka da vozilo ima korisnika
                         val = item.vozilo && item.vozilo.korisnik ? 
                               `${item.vozilo.korisnik.ime} ${item.vozilo.korisnik.prezime}` : '-';
                     } else if (col.key === 'popravak.datum') {
                         val = item.termin ? item.termin.datumVrijeme : (item.idTermin || '-');
                     }
-                    // Radnja specifika
                     else if (col.key === 'radnja.serviser') {
                         val = item.korisnik ? `${item.korisnik.ime} ${item.korisnik.prezime}` : (item.idKorisnik || '-');
                     } else if (col.key === 'radnja.dio') {
                         val = item.dijeloviusluge ? `${item.dijeloviusluge.naziv} ---> ${item.dijeloviusluge.cijena}€` : '-';
                     } else if (col.key === 'radnja.vozilo') {
-                        // Dohvat modela i reg iz ugnježdenog popravka
                         val = item.popravak && item.popravak.vozilo ? 
                               `${item.popravak.vozilo.regOznaka} (${item.popravak.vozilo.vrstaVozila?.nazivModela})` : '-';
                     }
-                    // Servisiranje specifika (Ispis podataka iz ugniježđenog objekta Popravak->Vozilo)
                     else if (col.key === 'servis.model') {
                         val = item.popravak?.vozilo?.vrstaVozila?.nazivModela || '-';
                     } else if (col.key === 'servis.ime') {
@@ -1293,7 +1302,6 @@
                         val = item[col.key];
                     }
 
-                    // Formatiranje
                     if((col.key.includes('datum') || col.key === 'odgoda') && val && val !== '-') val = new Date(val).toLocaleString();
                     if(val === true) val = "DA";
                     if(val === false) val = "NE";
@@ -1302,19 +1310,15 @@
                     rowHtml += `<td>${val}</td>`;
                 });
                 
-                // Primarni ključ identifikacija
                 let pk = item.idVrsta || item.idVozila || item.idTermin || item.idRadnja || item.idPopravak; 
 
-                // Hack za serijalizaciju objekta u HTML atribut (zamjena navodnika)
                 let itemJson = JSON.stringify(item).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 
-                // POPRAVAK: Za Servisiranje generiramo kompozitni ključ za URL (oldIdPopravak.oldIdKorisnik)
                 if(currentEntity === 'servisiranje') {
                     const oldP = item.popravak ? item.popravak.idPopravak : item.idPopravak;
                     const oldK = item.korisnik ? item.korisnik.idKorisnik : item.idKorisnik;
                     
                     pk = `${oldP}.${oldK}`;
-                    //console.log(pk);
                 }
 
                 rowHtml += `
@@ -1344,10 +1348,7 @@
         // --- PROMJENA METODE ---
         dataForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Prikaži loading blokadu
-            const overlay = document.getElementById('loading-overlay');
-            if(overlay) overlay.style.display = 'flex';
+            showLoader();
 
             const id = document.getElementById('data-id').value;
             const method = id ? "PUT" : "POST";
@@ -1356,7 +1357,7 @@
 
             const payload = collectPayload(method);
             if(!validatePayload(payload, currentEntity)) {
-                if(overlay) overlay.style.display = 'none';
+                hideLoader();
                 return;
             }
         
@@ -1372,12 +1373,12 @@
                 logStatus("Podaci spremljeni!");
                 resetDataForm();
                 await loadEntityData();
-                await populateDropdowns(); // Osvježava dropdownove
+                await populateDropdowns(); 
             
             } catch (err) {
                 logStatus("Greška spremanje: " + err, true);
             } finally {
-                if(overlay) overlay.style.display = 'none';
+                hideLoader();
             }
         });
 
@@ -1386,7 +1387,6 @@
             const getVal = (id) => { const v = document.getElementById(id).value; return v === "" ? null : v; };
             const getInt = (id) => { const v = document.getElementById(id).value; return v ? parseInt(v) : null; };
             
-            // Format za termin: 2025-12-20T07:00:00Z
             const formatDateForApi = (dateStr) => {
                 if (!dateStr) return null;
                 const d = new Date(dateStr);
@@ -1400,8 +1400,8 @@
                 };
                 case 'vozilo': return {
                     idKorisnik: getInt('vozilo-idKorisnik'), 
-                    idVrsta: getInt('vozilo-idVrsta'), // required
-                    regOznaka: getVal('vozilo-reg'), // required
+                    idVrsta: getInt('vozilo-idVrsta'), 
+                    regOznaka: getVal('vozilo-reg'), 
                     godinaProizvodnje: getInt('vozilo-godina'), 
                     serijskiBroj: getVal('vozilo-serijski'), 
                     jeZamjensko: document.getElementById('vozilo-zamjensko').value === 'true'
@@ -1429,126 +1429,127 @@
                     stanje: getVal('popravak-stanje') 
                 };
                 case 'servisiranje': return {
-                    // Za PUT šaljemo nove vrijednosti u body, dok su stare u URL-u
                     idPopravak: getInt('servis-idPopravak'),
                     idKorisnik: getInt('servis-idKorisnik')
                 };
                 case 'radnja': return {
-                    // POPRAVAK: Radnja šalje ID-eve povezanih entiteta
                     idPopravak: getInt('radnja-idPopravak'),
                     idKorisnik: getInt('radnja-idKorisnik'),
-                    idDijelausluge: getInt('radnja-idDijela'), // Ako je null, backend će primiti null
+                    idDijelausluge: getInt('radnja-idDijela'), 
                     stanje: getVal('radnja-stanje'),
                     napomena: getVal('radnja-napomena')
                 };
             }
         }
 
-        window.deleteData = function(id) {
+        window.deleteData = async function(id) {
             if(!confirm("Sigurno obrisati?")) return;
-            // ID za servisiranje je u formatu "12.5", pa url ispadne /api/servisiranje/12.5
+            showLoader();
             let url = `${API_BASE}/${currentEntity}/${id}`;
-            fetch(url, { method: "DELETE", headers: getAuthHeaders() })
-            .then(() => { logStatus("Obrisano."); loadEntityData(); })
-            .catch(err => logStatus("Greška brisanje: " + err, true));
+            try {
+                await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
+                logStatus("Obrisano."); 
+                await loadEntityData();
+            } catch (err) {
+                logStatus("Greška brisanje: " + err, true);
+            } finally {
+                hideLoader();
+            }
         };
 
         // POPUNJAVANJE FORME KOD UREĐIVANJA
         window.prepareDataEdit = async function(item, compositePk = null) {
             console.log("Editing item:", item); 
-                
-                
-            let pkVal = compositePk;
-            if (!pkVal) {
-                 if(item.idVrsta) pkVal = item.idVrsta;
-                 else if(item.idVozila) pkVal = item.idVozila;
-                 else if(item.idTermin) pkVal = item.idTermin;
-                 else if(item.idRadnja) pkVal = item.idRadnja;
-                 else if(item.idPopravak) pkVal = item.idPopravak; 
-            }
             
-            document.getElementById('data-id').value = pkVal;
-
-            const saveBtn = document.getElementById('data-save-btn');
-            saveBtn.textContent = "Ažuriraj";
-            saveBtn.classList.remove('btn-primary');
-            saveBtn.classList.add('btn-edit');
-            document.getElementById('data-cancel-btn').style.display = "inline-block";
-
-            const formatDate = (dateStr) => {
-                if(!dateStr) return "";
-                const d = new Date(dateStr);
-                d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-                return d.toISOString().slice(0,16);
-            };
-
-            switch(currentEntity) {
-                case 'vrstavozila':
-                    document.getElementById('vv-naziv').value = item.nazivModela || "";
-                    document.getElementById('vv-opis').value = item.opisVrste || "";
-                    break;
-                case 'vozilo':
-                    const userId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
-                    const vrstaId = (item.vrstaVozila && item.vrstaVozila.idVrsta) ? item.vrstaVozila.idVrsta : (item.idVrsta || "");
-                    
-                    document.getElementById('vozilo-idKorisnik').value = userId;
-                    document.getElementById('vozilo-idVrsta').value = vrstaId;
-                    document.getElementById('vozilo-reg').value = item.regOznaka || "";
-                    document.getElementById('vozilo-godina').value = item.godinaProizvodnje || "";
-                    document.getElementById('vozilo-serijski').value = item.serijskiBroj || "";
-                    document.getElementById('vozilo-zamjensko').value = item.jeZamjensko ? 'true' : 'false';
-                    break;
-                case 'termin':
-                    const terminUserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
-                    document.getElementById('termin-idKorisnik').value = terminUserId;
-                    document.getElementById('termin-datum').value = formatDate(item.datumVrijeme);
-                    document.getElementById('termin-odgoda').value = formatDate(item.odgoda);
-                    break;
-                case 'popravak':
-                    const popravakVoziloId = (item.vozilo && item.vozilo.idVozila) ? item.vozilo.idVozila : (item.idVozila || "");
-                    const popravakTerminId = (item.termin && item.termin.idTermin) ? item.termin.idTermin : (item.idTermin || "");
-
-                    document.getElementById('popravak-idVozila').value = popravakVoziloId;
-                    popravakTerminEdit = popravakTerminId;
-                    document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
-                    break;
-                case 'servisiranje':
-                    // Mapiranje podataka za formu (korisnik vidi trenutno stanje u dropdownu)
-                    const idPop = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
-                    const serviserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
-                    
-                    document.getElementById('servis-idPopravak').value = idPop;
-                    document.getElementById('servis-idKorisnik').value = serviserId;
-                    break;
-                case 'radnja':
-                    // POPRAVAK: Ispravno dohvaćanje ugniježđenih ID-eva za Radnju
-                    const rPopId = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
-                    document.getElementById('radnja-idPopravak').value = rPopId;
-                    
-                    const radnjaServiserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
-                    document.getElementById('radnja-idKorisnik').value = radnjaServiserId;
-                    
-                    const radnjaDioId = (item.dijeloviusluge && item.dijeloviusluge.idDijelausluge) ? item.dijeloviusluge.idDijelausluge : (item.idDijelausluge || "");
-                    document.getElementById('radnja-idDijela').value = radnjaDioId;
-                    
-                    document.getElementById('radnja-stanje').value = item.stanje || "nepotvrđeno";
-                    document.getElementById('radnja-napomena').value = item.napomena || "";
-                    break;
-            }
-            if (item.idPopravak) {
-                
+            // Ovdje koristimo loader jer se ispod radi async fetch
+            showLoader();
+            
             try {
+                let pkVal = compositePk;
+                if (!pkVal) {
+                     if(item.idVrsta) pkVal = item.idVrsta;
+                     else if(item.idVozila) pkVal = item.idVozila;
+                     else if(item.idTermin) pkVal = item.idTermin;
+                     else if(item.idRadnja) pkVal = item.idRadnja;
+                     else if(item.idPopravak) pkVal = item.idPopravak; 
+                }
+                
+                document.getElementById('data-id').value = pkVal;
+    
+                const saveBtn = document.getElementById('data-save-btn');
+                saveBtn.textContent = "Ažuriraj";
+                saveBtn.classList.remove('btn-primary');
+                saveBtn.classList.add('btn-edit');
+                document.getElementById('data-cancel-btn').style.display = "inline-block";
+    
+                const formatDate = (dateStr) => {
+                    if(!dateStr) return "";
+                    const d = new Date(dateStr);
+                    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+                    return d.toISOString().slice(0,16);
+                };
+    
+                switch(currentEntity) {
+                    case 'vrstavozila':
+                        document.getElementById('vv-naziv').value = item.nazivModela || "";
+                        document.getElementById('vv-opis').value = item.opisVrste || "";
+                        break;
+                    case 'vozilo':
+                        const userId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
+                        const vrstaId = (item.vrstaVozila && item.vrstaVozila.idVrsta) ? item.vrstaVozila.idVrsta : (item.idVrsta || "");
+                        
+                        document.getElementById('vozilo-idKorisnik').value = userId;
+                        document.getElementById('vozilo-idVrsta').value = vrstaId;
+                        document.getElementById('vozilo-reg').value = item.regOznaka || "";
+                        document.getElementById('vozilo-godina').value = item.godinaProizvodnje || "";
+                        document.getElementById('vozilo-serijski').value = item.serijskiBroj || "";
+                        document.getElementById('vozilo-zamjensko').value = item.jeZamjensko ? 'true' : 'false';
+                        break;
+                    case 'termin':
+                        const terminUserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
+                        document.getElementById('termin-idKorisnik').value = terminUserId;
+                        document.getElementById('termin-datum').value = formatDate(item.datumVrijeme);
+                        document.getElementById('termin-odgoda').value = formatDate(item.odgoda);
+                        break;
+                    case 'popravak':
+                        const popravakVoziloId = (item.vozilo && item.vozilo.idVozila) ? item.vozilo.idVozila : (item.idVozila || "");
+                        const popravakTerminId = (item.termin && item.termin.idTermin) ? item.termin.idTermin : (item.idTermin || "");
+    
+                        document.getElementById('popravak-idVozila').value = popravakVoziloId;
+                        popravakTerminEdit = popravakTerminId;
+                        document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
+                        break;
+                    case 'servisiranje':
+                        const idPop = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
+                        const serviserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
+                        
+                        document.getElementById('servis-idPopravak').value = idPop;
+                        document.getElementById('servis-idKorisnik').value = serviserId;
+                        break;
+                    case 'radnja':
+                        const rPopId = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
+                        document.getElementById('radnja-idPopravak').value = rPopId;
+                        
+                        const radnjaServiserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
+                        document.getElementById('radnja-idKorisnik').value = radnjaServiserId;
+                        
+                        const radnjaDioId = (item.dijeloviusluge && item.dijeloviusluge.idDijelausluge) ? item.dijeloviusluge.idDijelausluge : (item.idDijelausluge || "");
+                        document.getElementById('radnja-idDijela').value = radnjaDioId;
+                        
+                        document.getElementById('radnja-stanje').value = item.stanje || "nepotvrđeno";
+                        document.getElementById('radnja-napomena').value = item.napomena || "";
+                        break;
+                }
+                
+                if (item.idPopravak) {
                     const endpoint = `${API_BASE}/termin`;
-                    // 2. Dodajemo 'await' - ovdje program STOJI dok server ne odgovori
                     const res = await fetch(endpoint, { headers: getAuthHeaders() });
                     const data = await res.json();
 
-                    // 3. Provjera podataka
                     if (data && data.length > 0) {
                         postoji = true;
                     }
                 
-                    // --- TEK SADA program ide dalje na tvoju logiku ---
                     console.log("Sada znamo rezultat:", postoji);
                 
                     if (item.idPopravak) {
@@ -1565,13 +1566,14 @@
                             if (kontejner) kontejner.style.display = "none";
                         }
                     }
-                
-                } catch (err) {
-                    logStatus("Greška učitavanje entiteta: " + err, true);
                 }
-                    
+                window.scrollTo(0, 0);
+
+            } catch (err) {
+                logStatus("Greška priprema entiteta: " + err, true);
+            } finally {
+                hideLoader();
             }
-            window.scrollTo(0, 0);
         };
 
         window.resetDataForm = function() {
