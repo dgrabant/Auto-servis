@@ -383,3 +383,41 @@ function izracunajDatumZavrsetka() {
 document.addEventListener('DOMContentLoaded', () => {
     dohvatiPodatkeZaServis();
 });
+
+
+//----- PDF EXPORT -----
+    /*const pdfGumb = document.getElementById('exportPDF');
+
+    pdfGumb.addEventListener('click', function() {
+        exportToPDF();
+    });
+ function getStatsDataForExport() {
+     // Helper funkcija koja skuplja tekst iz kartica
+     const data = [];
+     const cards = document.querySelectorAll('.stat-card');
+     cards.forEach(card => {
+         const label = card.querySelector('h4').innerText;
+         const value = card.querySelector('.value').innerText;
+         const desc = card.querySelector('.desc').innerText;
+         data.push({ Statistika: label, Vrijednost: value, Opis: desc });
+     });
+     return data;
+ }
+ window.exportToPDF = function() {
+     const data = getStatsDataForExport();
+     if(data.length === 0) { alert("Nema podataka za izvoz."); return; }
+     const { jsPDF } = window.jspdf;
+     const doc = new jsPDF();
+     
+     doc.text("Auto Servis - Izvještaj Statistike", 14, 20);
+     doc.setFontSize(10);
+     doc.text(`Datum generiranja: ${new Date().toLocaleString()}`, 14, 28);
+     // Priprema podataka za tablicu (array of arrays)
+     const tableBody = data.map(item => [item.Statistika, item.Vrijednost, item.Opis]);
+     doc.autoTable({
+         startY: 35,
+         head: [['Naziv Statistike', 'Vrijednost', 'Opis']],
+         body: tableBody,
+     });
+     doc.save("AutoServis_Statistika.pdf");
+ };*/

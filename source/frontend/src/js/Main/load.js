@@ -1025,4 +1025,4 @@ function povratak(){
         // Stranica se učitava na uobičajeni način (prvi put, ili tvrdim reloadom)
         console.log('Stranica je učitana prvi put ili nakon klasičnog reloada.');
     }
-});
+  });
