@@ -45,6 +45,7 @@ const fpsPC = 30;
 const fpsMobile = 5; //sve ostalo mobiteli
 let isLoaded = false;
 let pcPerformance = false;
+let korisnik = null;
 //provjera na kojem uređaju se stranica ucita
 
 
@@ -87,7 +88,8 @@ function provjera() {
               return response.json();
             })
         .then(data => {
-            console.log("Response data:", data);
+            korisnik = data;
+            console.log("Response data:", korisnik);
             document.getElementById("imeUser").innerHTML = `${data.ime} ${data.prezime}`;
             document.getElementById("inicUser").innerHTML = `${data.ime[0]}${data.prezime[0]}`;
             document.getElementById("logout-btn").hidden=false;
@@ -117,7 +119,7 @@ function LogedOut(){
   localStorage.removeItem('authToken');
   localStorage.removeItem('performance');
   console.log('Logged out...');
-    unHide("login");
+  unHide("login");
   justLogedOut(scene);
 }
 
@@ -449,6 +451,16 @@ loader.load(
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
+        if (checkIfLogedIn()) {
+          document.getElementById("imeUser").innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+          document.getElementById("inicUser").innerHTML = `${korisnik.ime[0]}${korisnik.prezime[0]}`;
+          document.getElementById("logout-btn").hidden=false;
+        }
+        else{
+          document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
+          document.getElementById("inicUser").innerHTML = "NP";
+          document.getElementById("logout-btn").hidden=true;
+        }
         hudHTML.style.display = 'flex';
         userHTML.style.display = 'flex';
         footHTML.style.display = 'flex';
@@ -461,6 +473,7 @@ loader.load(
         initialLoadTimeout2 = setTimeout(() => {
           console.log("Pokrećem prijelaz na kameru 6...");
           transitionCamera(activeCamera, cameraList[7], 1500);
+          
           
           setTimeout(() => {
             isLoaded = true;
@@ -758,6 +771,16 @@ function initCameraSystem() {
 // ======================================================
 function transitionCamera(fromCam, toCam, duration) {
   console.log("camera transition");
+  if (checkIfLogedIn()) {
+    document.getElementById("imeUser").innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+    document.getElementById("inicUser").innerHTML = `${korisnik.ime[0]}${korisnik.prezime[0]}`;
+    document.getElementById("logout-btn").hidden=false;
+  }
+  else{
+    document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
+    document.getElementById("inicUser").innerHTML = "NP";
+    document.getElementById("logout-btn").hidden=true;
+  }
   uTranziciji=true;
   setTimeout(() => {
     uTranziciji = false;
