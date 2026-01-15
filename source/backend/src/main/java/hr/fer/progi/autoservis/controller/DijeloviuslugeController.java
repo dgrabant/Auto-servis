@@ -89,7 +89,7 @@ public class DijeloviuslugeController {
                         return ResponseEntity.internalServerError().build();
                     }
 
-                    dijeloviuslugeDto.setSlikaUrl(imgUrl);
+                    existing.get().setSlikaUrl(imgUrl);
                 }
             }
 
