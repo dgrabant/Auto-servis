@@ -15,9 +15,11 @@ import java.util.Optional;
 public class KorisnikService {
 
     private final KorisnikRepository korisnikRepository;
+    private final MailingAgent mailingAgent;
 
-    public KorisnikService(KorisnikRepository korisnikRepository) {
+    public KorisnikService(KorisnikRepository korisnikRepository, MailingAgent mailingAgent) {
         this.korisnikRepository = korisnikRepository;
+        this.mailingAgent = mailingAgent;
     }
 
     public UserDetails loadUserById(Integer id) {
@@ -52,6 +54,13 @@ public class KorisnikService {
             user.setPrezime(lastname);
             user.setDavateljUsluge(getProviderFromAttributes(attributes));
             user.setUloga(KorisnikUloga.KORISNIK.getValue());
+
+            try{
+                mailingAgent.send(email, "Dobrodošli!", "Pozdrav i hvala na registraciji na naš Auto-servis Harlemova kočija!", "");
+            }
+            catch (Exception e){
+                System.out.println("Pogreška prilikom slanja emaila pri registraciji za korisnika: "+email);
+            }
         }
 
         return korisnikRepository.save(user);

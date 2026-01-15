@@ -60,6 +60,8 @@ public class KorisnikController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "admin")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
+            Korisnik korisnik = userRepository.save(new Korisnik(korisnikCreateDto));
+
             try{
                 mailingAgent.send(korisnikCreateDto.getEmail(), "Dobrodošli!", "Pozdrav i hvala na registraciji na naš Auto-servis Harlemova kočija!", "");
             }
@@ -67,7 +69,7 @@ public class KorisnikController {
                 System.out.println("Pogreška prilikom slanja emaila pri registraciji za korisnika: "+korisnikCreateDto.getEmail());
             }
 
-            return ResponseEntity.ok(userRepository.save(new Korisnik(korisnikCreateDto)));
+            return ResponseEntity.ok(korisnik);
         }
         catch (Exception e){
             return ResponseEntity.internalServerError().build();
