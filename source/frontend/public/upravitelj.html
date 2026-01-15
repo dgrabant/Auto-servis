@@ -32,10 +32,42 @@
             line-height: 1.5;
         }
 
+        /* LOADING OVERLAY STYLES */
+        #loading-overlay {
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            z-index: 10000; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            color: white; 
+            backdrop-filter: blur(5px);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #38bff8; 
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* Layout */
         #app-container {
             width: 100%;
-            max-width: 90%;
+            max-width: 95%; /* Malo prošireno radi statistike */
             background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
@@ -190,13 +222,13 @@
         /* STATS CARD STYLES */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
         .stat-card {
             background: var(--stat-card-bg);
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
@@ -204,12 +236,17 @@
             flex-direction: column;
             justify-content: space-between;
         }
-        .stat-card h4 { margin: 0 0 10px 0; color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;}
-        .stat-card .value { font-size: 2.5rem; font-weight: 700; color: var(--primary-color); }
-        .stat-card .desc { font-size: 0.85rem; color: #94a3b8; margin-top: 5px; }
+        .stat-card h4 { margin: 0 0 10px 0; color: var(--secondary-color); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;}
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: var(--primary-color); }
+        .stat-card .desc { font-size: 0.8rem; color: #94a3b8; margin-top: 5px; }
     </style>
 </head>
 <body>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div> 
+        <p>Obrada zahtjeva, molimo pričekajte...</p>
+    </div>
 
     <div id="login-message">
         <h2>Provjera autorizacije...</h2>
@@ -301,25 +338,97 @@
             <h3>Pregled statistike servisa</h3>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <h4>Dijelovi i Usluge</h4>
-                    <div class="value" id="stat-parts-count">-</div>
-                    <div class="desc">Ukupno dostupnih stavki</div>
+                    <h4>Ukupno Stavki</h4>
+                    <div class="value" id="stat-total-items">-</div>
+                    <div class="desc">Dijelovi + Usluge</div>
                 </div>
                 <div class="stat-card">
-                    <h4>Zakazani Termini</h4>
-                    <div class="value" id="stat-termin-count">-</div>
-                    <div class="desc">Ukupno zabilježenih termina</div>
+                    <h4>Samo Dijelovi</h4>
+                    <div class="value" id="stat-parts-only">-</div>
+                    <div class="desc">Fizički dijelovi</div>
                 </div>
                 <div class="stat-card">
-                    <h4>Evidentirani Popravci</h4>
-                    <div class="value" id="stat-popravak-count">-</div>
-                    <div class="desc">Svi popravci u sustavu</div>
+                    <h4>Samo Usluge</h4>
+                    <div class="value" id="stat-services-only">-</div>
+                    <div class="desc">Radni sati/usluge</div>
                 </div>
                 <div class="stat-card">
-                    <h4>Registrirana Vozila</h4>
-                    <div class="value" id="stat-vozilo-count">-</div>
-                    <div class="desc">Vozila u bazi podataka</div>
+                    <h4>Registrirani Korisnici</h4>
+                    <div class="value" id="stat-users-count">-</div>
+                    <div class="desc">Klijenti i osoblje</div>
                 </div>
+                <div class="stat-card">
+                    <h4>Ukupno Vozila</h4>
+                    <div class="value" id="stat-vehicles-count">-</div>
+                    <div class="desc">Sva vozila u bazi</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Zamjenska Vozila</h4>
+                    <div class="value" id="stat-replacement-cars">-</div>
+                    <div class="desc">Dostupna za klijente</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Različiti Modeli</h4>
+                    <div class="value" id="stat-unique-models">-</div>
+                    <div class="desc">Broj jedinstvenih modela</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Ukupno Termina</h4>
+                    <div class="value" id="stat-appointments-total">-</div>
+                    <div class="desc">Povijest svih termina</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Budući Termini</h4>
+                    <div class="value" id="stat-appointments-future">-</div>
+                    <div class="desc">Čekaju realizaciju</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Odgođeni termini</h4>
+                    <div class="value" id="stat-odgod-termin">-</div>
+                    <div class="desc">Termini s odgodom</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Prosječna odgoda</h4>
+                    <div class="value" id="stat-avg-odgod">-</div>
+                    <div class="desc">Prosječno tranjanje odgode</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Ukupno Popravaka</h4>
+                    <div class="value" id="stat-repairs-total">-</div>
+                    <div class="desc">Kreirani nalozi</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Popravci u Tijeku</h4>
+                    <div class="value" id="stat-repairs-active">-</div>
+                    <div class="desc">Status: U tijeku</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Završeni Popravci</h4>
+                    <div class="value" id="stat-repairs-done">-</div>
+                    <div class="desc">Status: Završeno</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Ukupno Radnji</h4>
+                    <div class="value" id="stat-actions-total">-</div>
+                    <div class="desc">Pojedinačne stavke popravka</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Potvrđene Radnje</h4>
+                    <div class="value" id="stat-actions-confirmed">-</div>
+                    <div class="desc">Odobrene od servisera</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Prosječna Cijena</h4>
+                    <div class="value" id="stat-avg-price">-</div>
+                    <div class="desc">Prosjek cijena dijelova/usluga</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Admini/Osoblje</h4>
+                    <div class="value" id="stat-admins-count">-</div>
+                    <div class="desc">Korisnici s ovlastima</div>
+                </div>
+                
+                
             </div>
             <div style="text-align: center; margin-top: 50px;">
                 <button onclick="loadStats()" class="btn-primary">Osvježi podatke</button>
@@ -423,7 +532,7 @@
                                 <option value="">Odaberite vozilo</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div id="popravakTermin"  class="form-group">
                             <label>Termin:</label>
                             <select id="popravak-idTermin">
                                 <option value="">Odaberite termin</option>
@@ -524,6 +633,11 @@
         const appContainer = document.getElementById('app-container');
         const loginMessage = document.getElementById('login-message');
         const statusDisplay = document.getElementById('status-display');
+        
+        // --- LOADER ---
+        const overlay = document.getElementById('loading-overlay');
+        function showLoader() { overlay.style.display = 'flex'; }
+        function hideLoader() { overlay.style.display = 'none'; }
 
         //postavljanje ograničenja na starost auta
         document.getElementById('vozilo-godina').max = new Date().getFullYear();
@@ -535,6 +649,8 @@
         let cachedRepairs = [];
         let cachedAppointments = [];
         let cachedParts = [];
+        let popravakTerminEdit;
+        let postoji = false;
 
        // --- AUTH & HELPERI ---
         function getAuthHeaders() {
@@ -553,6 +669,7 @@
         
         // --- INIT ---
         function initApp() {
+            showLoader();
             fetch(`${API_BASE}/korisnik/about`, {
                 method: "GET",
                 headers: getAuthHeaders()
@@ -579,12 +696,9 @@
             .catch(err => {
                 console.error(err);
                 window.location.href = REDIRECT_ON_FAIL;
-            });
+            })
+            .finally(() => hideLoader());
         }
-                //loginMessage.style.display = "none";
-                //appContainer.style.display = "block";
-                // Učitaj početni tab
-                //switchTab('parts'); 
 
         // --- DRAG & DROP LOGIKA ---
         let currentFileName = ""; 
@@ -595,18 +709,35 @@
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]);
         });
+        let base64Slika = ""; // Globalna varijabla u koju ćemo spremiti rezultat
+
         function handleFile(file) {
             if (file && file.type.startsWith('image/')) {
                 currentFileName = file.name; 
+                
+                // 1. Prikaz previewa (vaš postojeći kod)
                 const previewUrl = URL.createObjectURL(file);
                 imagePreview.innerHTML = `<img src="${previewUrl}" alt="Pregled"><p style="font-size:0.8em; color:#64748b;">${currentFileName}</p>`;
-            } else { alert("Molimo odaberite slikovnu datoteku."); }
+            
+                // 2. Pretvorba u Base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Rezultat se nalazi u e.target.result
+                    base64Slika = e.target.result; 
+                    console.log("Base64 string je spreman!");
+                    //console.log(base64Slika);
+                };
+                
+                reader.readAsDataURL(file); // Pokretanje čitanja datoteke
+            
+            } else { 
+                alert("Molimo odaberite slikovnu datoteku."); 
+            }
         }
         function getSelectedType() {
             const el = document.querySelector('input[name="item-type"]:checked');
             return el ? el.value : null;
-        }
-
+        } 
         // --- TAB LOGIKA ---
         function switchTab(tabName) {
             document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
@@ -662,58 +793,107 @@
                     tbody.appendChild(tr);
                 });
                 if(filterType == 'all') logStatus(`Učitano ${items.length} Dijelova/Usluga.`);
+                if(filterType == 'dio') logStatus(`Učitano ${items.length} Dijelova.`);
+                if(filterType == 'usluga') logStatus(`Učitano ${items.length} Usluga.`);
             }).catch(err => logStatus("Greška dijelovi/usluge: " + err, true));
         }
 
-        partForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('item-id').value;
-            const payload = {
-                vrsta: getSelectedType(),
-                naziv: document.getElementById('part-name').value,
-                cijena: document.getElementById('part-price').value ? parseFloat(document.getElementById('part-price').value) : null,
-                opis: document.getElementById('part-desc').value,
-                slikaUrl: currentFileName
-            };
-            const url = id ? `${API_BASE}/dijeloviusluge/${id}` : `${API_BASE}/dijeloviusluge`;
-            const method = id ? "PUT" : "POST";
+    partForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+            
+        // 1. Prikaži blokadu ekrana
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex';
+            
+        const id = document.getElementById('item-id').value;
+        console.log(base64Slika)
+        const payload = {
+            vrsta: getSelectedType(),
+            naziv: document.getElementById('part-name').value,
+            cijena: document.getElementById('part-price').value ? parseFloat(document.getElementById('part-price').value) : null,
+            opis: document.getElementById('part-desc').value,
+            base64: base64Slika // Tvoj base64 string
+        };
+        
+        const url = id ? `${API_BASE}/dijeloviusluge/${id}` : `${API_BASE}/dijeloviusluge`;
+        const method = id ? "PUT" : "POST";
+    
+        try {
+            // 2. Čekaj (await) da server odgovori
+            const res = await fetch(url, { 
+                method: method, 
+                headers: getAuthHeaders(), 
+                body: JSON.stringify(payload) 
+            });
+        
+            if (!res.ok) throw new Error(res.status);
+            
+            // 3. Osvježi podatke
+            logStatus(id ? "Ažurirano!" : "Dodano!");
+            resetPartForm();
+            await loadItems('all'); // Čekaj i da se lista učita
+            await populateDropdowns(); // Čekaj i da se dropdowni osvježe
+        
+        } catch (err) {
+            logStatus("Greška spremanje: " + err, true);
+        } finally {
+            // 4. Makni blokadu ekrana bez obzira je li uspjelo ili ne
+            overlay.style.display = 'none';
+        }
+    });
 
-            fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
-            .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-            .then(() => { logStatus(id ? "Ažurirano!" : "Dodano!"); resetPartForm(); loadItems('all'); populateDropdowns();})
-            .catch(err => logStatus("Greška spremanje: " + err, true));
-        });
+        window.prepareItemEdit = async function(id) {
+            try {
+                const res = await fetch(`${API_BASE}/dijeloviusluge/${id}`, { headers: getAuthHeaders() });
+                const item = await res.json();
+            
+                const img = item.slikaUrl.startsWith('http') ? item.slikaUrl : `https://autoservis-progi.onrender.com/assets/pictures/djelovi/${item.slikaUrl}`;
 
-        window.prepareItemEdit = function(id) {
-            fetch(`${API_BASE}/dijeloviusluge/${id}`, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(item => {
+                // Popunjavanje polja
                 document.getElementById('item-id').value = item.idDijelausluge;
                 document.getElementById('part-name').value = item.naziv;
                 document.getElementById('part-price').value = item.cijena || "";
                 document.getElementById('part-desc').value = item.opis || "";
-                if(item.vrsta === 'dio') document.getElementById('type-part').checked = true;
-                else document.getElementById('type-service').checked = true;
-                if(item.slikaUrl) {
-                     imagePreview.innerHTML = `<img src="https://autoservis-progi.onrender.com/assets/pictures/djelovi/${item.slikaUrl}"><p>${item.slikaUrl}</p>`;
-                     currentFileName = item.slikaUrl;
-                } else { imagePreview.innerHTML = ""; currentFileName = ""; }
 
+                document.getElementById('type-part').checked = (item.vrsta === 'dio');
+                document.getElementById('type-service').checked = (item.vrsta !== 'dio');
+            
+                if (item.slikaUrl) {
+                    imagePreview.innerHTML = `<img src="${img}"><p>${img}</p>`;
+                    currentFileName = item.slikaUrl;
+                
+                    // Pretvorba u Base64 (ako je nužno)
+                    const imgRes = await fetch(img);
+                    const blob = await imgRes.blob();
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        base64Slika = reader.result;
+                    };
+                } else {
+                    imagePreview.innerHTML = "";
+                    currentFileName = "";
+                    base64Slika = "";
+                }
+            
+                // UI promjene
                 document.getElementById('part-form-title').textContent = `Uredi stavku ID: ${id}`;
                 const saveBtn = document.getElementById('part-save-btn');
                 saveBtn.textContent = "Spremi izmjene";
-                saveBtn.classList.remove('btn-primary');
-                saveBtn.classList.add('btn-edit');
-                
+                saveBtn.classList.replace('btn-primary', 'btn-edit');
+
                 document.getElementById('part-cancel-btn').style.display = "inline-block";
                 window.scrollTo(0, 0);
-            }).catch(err => logStatus("Greška dohvat: " + err, true));
+            
+            } catch (err) {
+                logStatus("Greška dohvat: " + err, true);
+            }
         };
 
         window.deleteItem = function(id) { 
             if(confirm("Sigurno želite obrisati ovu stavku?")) {
                 fetch(`${API_BASE}/dijeloviusluge/${id}`, { method: "DELETE", headers: getAuthHeaders() })
-                .then(res => { if(!res.ok) throw new Error("Neuspješno"); loadItems('all'); logStatus("Obrisano."); })
+                .then(res => { if(!res.ok) throw new Error(`Neuspješno ${API_BASE}/dijeloviusluge/${id}`); loadItems('all'); logStatus("Obrisano."); })
                 .catch(err => logStatus(err, true));
             }
         };
@@ -731,34 +911,140 @@
             document.getElementById('type-service').checked = true; 
         };
 
-        // --- 2. STATISTIKA (NOVO) ---
+
+        // --- 2. STATISTIKA (PROŠIRENO 15+) ---
         window.loadStats = function() {
-            logStatus("Dohvaćam statistiku...");
+            logStatus("Dohvaćam proširenu statistiku...");
+            showLoader();
             
             const p1 = fetch(`${API_BASE}/dijeloviusluge`, { headers: getAuthHeaders() }).then(r=>r.json());
             const p2 = fetch(`${API_BASE}/termin`, { headers: getAuthHeaders() }).then(r=>r.json());
             const p3 = fetch(`${API_BASE}/popravak`, { headers: getAuthHeaders() }).then(r=>r.json());
             const p4 = fetch(`${API_BASE}/vozilo`, { headers: getAuthHeaders() }).then(r=>r.json());
+            const p5 = fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() }).then(r=>r.json());
+            const p6 = fetch(`${API_BASE}/radnja`, { headers: getAuthHeaders() }).then(r=>r.json());
 
-            Promise.all([p1, p2, p3, p4]).then(values => {
-                const parts = Array.isArray(values[0]) ? values[0].length : 0;
-                const termini = Array.isArray(values[1]) ? values[1].length : 0;
-                const popravci = Array.isArray(values[2]) ? values[2].length : 0;
-                const vozila = Array.isArray(values[3]) ? values[3].length : 0;
+            Promise.all([p1, p2, p3, p4, p5, p6]).then(values => {
+                const partsData = Array.isArray(values[0]) ? values[0] : [];
+                const slobodniTermini = Array.isArray(values[1]) ? values[1] : [];
+                const popravciData = Array.isArray(values[2]) ? values[2] : [];
+                const vozilaData = Array.isArray(values[3]) ? values[3] : [];
+                const korisniciData = Array.isArray(values[4]) ? values[4] : [];
+                const radnjeData = Array.isArray(values[5]) ? values[5] : [];
 
-                document.getElementById('stat-parts-count').textContent = parts;
-                document.getElementById('stat-termin-count').textContent = termini;
-                document.getElementById('stat-popravak-count').textContent = popravci;
-                document.getElementById('stat-vozilo-count').textContent = vozila;
+                const zauzetiTermini = popravciData
+                .filter(p => p.termin) // Osiguraj se da popravak ima termin
+                .map(p => p.termin);
+                console.log(zauzetiTermini)
+
+                // 1. Ukupno Dijelova i Usluga
+                document.getElementById('stat-total-items').textContent = partsData.length;
+                
+                // 2. Samo Dijelovi
+                document.getElementById('stat-parts-only').textContent = partsData.filter(x => x.vrsta === 'dio').length;
+                
+                // 3. Samo Usluge
+                document.getElementById('stat-services-only').textContent = partsData.filter(x => x.vrsta === 'usluga').length;
+                
+                // 4. Registrirani Korisnici
+                document.getElementById('stat-users-count').textContent = korisniciData.length;
+                
+                // 5. Ukupno Vozila
+                document.getElementById('stat-vehicles-count').textContent = vozilaData.length;
+                
+                // 6. Zamjenska Vozila
+                document.getElementById('stat-replacement-cars').textContent = vozilaData.filter(v => v.jeZamjensko).length;
+                
+                // 7. Različiti Modeli (Unique)
+                const uniqueModels = new Set(vozilaData.map(v => v.vrstaVozila ? v.vrstaVozila.nazivModela : null).filter(x => x));
+                document.getElementById('stat-unique-models').textContent = uniqueModels.size;
+                
+                // 8. Ukupno Termina
+                document.getElementById('stat-appointments-total').textContent = slobodniTermini.length + zauzetiTermini.length;
+                
+                // 9. Budući Termini
+                const now = new Date();
+                document.getElementById('stat-appointments-future').textContent = zauzetiTermini.filter(t => new Date(t.datumVrijeme) > now).length + slobodniTermini.filter(t => new Date(t.datumVrijeme) > now).length;
+                
+                // 10. Ukupno odgod termina
+                document.getElementById('stat-odgod-termin').textContent = slobodniTermini.filter((t) => t.odgoda !== null).length + zauzetiTermini.filter((t) => t.odgoda !== null).length;
+                
+                // 11. Prosjecno trajanje odgod
+                    const sviTerminiSOdgodom = [
+                        ...slobodniTermini.filter(t => t.odgoda !== null),
+                        ...zauzetiTermini.filter(t => t.odgoda !== null)
+                    ];
+
+                        // 1. Izračunaj sumu svih razlika u milisekundama
+                        const ukupnaOdgodaMs = sviTerminiSOdgodom.reduce((suma, p) => {
+                            const pocetni = new Date(p.datumVrijeme);
+                            const odgodeni = new Date(p.odgoda);
+                        
+                            // Razlika u milisekundama
+                            const razlika = odgodeni - pocetni;
+                            return suma + razlika;
+                        }, 0);
+                    
+                        // 2. Izračunaj prosjek
+                        const prosjekMs = ukupnaOdgodaMs / sviTerminiSOdgodom.length;
+                    
+                        // 3. Konstante za pretvorbu
+                        const msPoDanu = 24 * 60 * 60 * 1000;
+                        const msPoSatu = 60 * 60 * 1000;
+                        const msPoMinuti = 60 * 1000;
+                    
+                        // 4. Izračunaj dane, sate i minute koristeći prosjekMs (Ovdje je bila greška)
+                        const dani = Math.floor(prosjekMs / msPoDanu);
+                        const sati = Math.floor((prosjekMs % msPoDanu) / msPoSatu);
+                        const minute = Math.floor((prosjekMs % msPoSatu) / msPoMinuti);
+                    
+                        console.log(`Prosječna odgoda: ${dani} dana, ${sati} sati i ${minute} minuta.`);
+
+                        // Ako želiš to prikazati negdje na stranici:
+                        // document.getElementById('statistika').innerText = `Prosječna odgoda: ${dani}d ${sati}h ${minute}min`;
+                    
+                    console.log(sviTerminiSOdgodom);
+
+                document.getElementById('stat-avg-odgod').textContent = `${dani} dana`;
+
+                // 12. Ukupno Popravaka
+                document.getElementById('stat-repairs-total').textContent = popravciData.length;
+                
+                // 13. Popravci u Tijeku
+                document.getElementById('stat-repairs-active').textContent = popravciData.filter(p => p.stanje && p.stanje.toLowerCase().includes('tijek')).length;
+                
+                // 14. Završeni Popravci
+                document.getElementById('stat-repairs-done').textContent = popravciData.filter(p => p.stanje && p.stanje.toLowerCase().includes('završ')).length;
+                
+                // 15. Ukupno Radnji
+                document.getElementById('stat-actions-total').textContent = radnjeData.length;
+                
+                // 16. Potvrđene Radnje
+                document.getElementById('stat-actions-confirmed').textContent = radnjeData.filter(r => r.stanje && r.stanje.toLowerCase().includes('potvr')).length;
+                
+                // 17. Prosječna Cijena
+                const totalPrice = partsData.reduce((sum, item) => sum + (item.cijena || 0), 0);
+                const avgPrice = partsData.length ? (totalPrice / partsData.length).toFixed(2) : "0.00";
+                document.getElementById('stat-avg-price').textContent = avgPrice + " €";
+                
+                // 16. Admini/Osoblje
+                const staff = korisniciData.filter(k => {
+                    const r = k.uloga ? k.uloga.toLowerCase() : '';
+                    return r === 'admin' || r === 'upravitelj' || r === 'serviser';
+                }).length;
+                document.getElementById('stat-admins-count').textContent = staff;
 
                 logStatus("Statistika ažurirana.");
-            }).catch(err => logStatus("Greška pri dohvatu statistike: " + err, true));
+            })
+            .catch(err => logStatus("Greška pri dohvatu statistike: " + err, true))
+            .finally(() => hideLoader());
         }
 
-        // --- HELPER ZA DROPDOWNOVE (OSTALO ISTO) ---
+        // --- HELPER ZA DROPDOWNOVE ---
         async function populateDropdowns() {
+            showLoader();
             try {
-                // 1. Korisnici (trebaju nam za dropdown, iako je user management tab maknut)
+                // 1. Korisnici
                 const userRes = await fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() });
                 cachedUsers = await userRes.json();
                 
@@ -888,6 +1174,8 @@
 
             } catch (e) {
                 console.error("Greška pri učitavanju dropdown podataka", e);
+            } finally {
+                hideLoader();
             }
         }
 
@@ -913,10 +1201,12 @@
         function loadEntityData() {
             const endpoint = `${API_BASE}/${currentEntity}`;
             logStatus(`Učitavam ${currentEntity}...`);
+            showLoader();
             fetch(endpoint, { headers: getAuthHeaders() })
             .then(res => res.json())
             .then(data => renderDataTable(data))
-            .catch(err => logStatus("Greška učitavanje entiteta: " + err, true));
+            .catch(err => logStatus("Greška učitavanje entiteta: " + err, true))
+            .finally(() => hideLoader());
         }
 
         function renderDataTable(data) {
@@ -1096,6 +1386,7 @@
         // --- PROMJENA METODE ---
         dataForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            showLoader();
             const id = document.getElementById('data-id').value;
             const method = id ? "PUT" : "POST";
             let url = `${API_BASE}/${currentEntity}`;
@@ -1103,12 +1394,16 @@
             if(id) url += `/${id}`; 
 
             const payload = collectPayload();
-            if(!validatePayload(payload, currentEntity)) return;
+            if(!validatePayload(payload, currentEntity)) {
+                hideLoader();
+                return;
+            }
 
             fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
             .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
             .then(() => { logStatus("Podaci spremljeni!"); resetDataForm(); loadEntityData(); populateDropdowns();})
-            .catch(err => logStatus("Greška spremanje: " + err, true));
+            .catch(err => logStatus("Greška spremanje: " + err, true))
+            .finally(() => hideLoader());
         });
 
         // SKUPLJANJE PODATAKA
@@ -1140,10 +1435,22 @@
                     datumVrijeme: formatDateForApi(getVal('termin-datum')),
                     odgoda: formatDateForApi(getVal('termin-odgoda')) 
                 };
-                case 'popravak': return {
+                case 'popravak':
+                    if (method === "POST")
+                        return {
+                        idVozila: getInt('popravak-idVozila'),
+                        idTermin: getInt('popravak-idTermin'),
+                        stanje: getVal('popravak-stanje')
+                    }
+                    else if (postoji) return{
+                        idVozila: getInt('popravak-idVozila'),
+                        idTermin: document.getElementById('popravak-idTermin').value = popravakTerminId,
+                        stanje: getVal('popravak-stanje') 
+                    }
+                    else return {
                     idVozila: getInt('popravak-idVozila'),
-                    idTermin: getInt('popravak-idTermin'),
-                    stanje: getVal('popravak-stanje')
+                    idTermin: popravakTerminEdit,
+                    stanje: getVal('popravak-stanje') 
                 };
                 case 'servisiranje': return {
                     idPopravak: getInt('servis-idPopravak'),
@@ -1161,14 +1468,18 @@
 
         window.deleteData = function(id) {
             if(!confirm("Sigurno obrisati?")) return;
+            showLoader();
             let url = `${API_BASE}/${currentEntity}/${id}`;
             fetch(url, { method: "DELETE", headers: getAuthHeaders() })
             .then(() => { logStatus("Obrisano."); loadEntityData(); })
-            .catch(err => logStatus("Greška brisanje: " + err, true));
+            .catch(err => logStatus("Greška brisanje: " + err, true))
+            .finally(() => hideLoader());
         };
 
         // POPUNJAVANJE FORME KOD UREĐIVANJA
-        window.prepareDataEdit = function(item, compositePk = null) {
+        window.prepareDataEdit = async function(item, compositePk = null) {
+            // Nema mrežnih poziva pa loader nije nužan ovdje, 
+            // ali ako bi se nešto dohvaćalo, išlo bi u try/finally.
             let pkVal = compositePk;
             if (!pkVal) {
                  if(item.idVrsta) pkVal = item.idVrsta;
@@ -1220,7 +1531,7 @@
                     const popravakTerminId = (item.termin && item.termin.idTermin) ? item.termin.idTermin : (item.idTermin || "");
 
                     document.getElementById('popravak-idVozila').value = popravakVoziloId;
-                    document.getElementById('popravak-idTermin').value = popravakTerminId;
+                    popravakTerminEdit = popravakTerminId;
                     document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
                     break;
                 case 'servisiranje':
@@ -1243,6 +1554,42 @@
                     document.getElementById('radnja-napomena').value = item.napomena || "";
                     break;
             }
+            if (item.idPopravak) {
+                
+            try {
+                    const endpoint = `${API_BASE}/termin`;
+                    // 2. Dodajemo 'await' - ovdje program STOJI dok server ne odgovori
+                    const res = await fetch(endpoint, { headers: getAuthHeaders() });
+                    const data = await res.json();
+
+                    // 3. Provjera podataka
+                    if (data && data.length > 0) {
+                        postoji = true;
+                    }
+                
+                    // --- TEK SADA program ide dalje na tvoju logiku ---
+                    console.log("Sada znamo rezultat:", postoji);
+                
+                    if (item.idPopravak) {
+                        if (postoji) {
+                            const select = document.getElementById('popravak-idTermin');
+                            const novaOpcija = document.createElement('option');
+                            novaOpcija.value = `${popravakTerminEdit}`;
+                            console.log(popravakTerminEdit);
+                            novaOpcija.textContent = "Trenutno postavljeni termin";
+                            novaOpcija.selected = true;
+                            select.appendChild(novaOpcija);
+                        } else {
+                            const kontejner = document.getElementById('popravakTermin');
+                            if (kontejner) kontejner.style.display = "none";
+                        }
+                    }
+                
+                } catch (err) {
+                    logStatus("Greška učitavanje entiteta: " + err, true);
+                }
+                    
+            }
             window.scrollTo(0, 0);
         };
 
@@ -1254,6 +1601,14 @@
             saveBtn.classList.remove('btn-edit');
             saveBtn.classList.add('btn-primary');
             document.getElementById('data-cancel-btn').style.display = "none";
+            document.getElementById('popravakTermin').style.display = "block";
+            const select = document.getElementById('popravak-idTermin');
+
+            Array.from(select.options).forEach(option => {
+                if (option.textContent === "Trenutno postavljeni termin") {
+                    option.remove();
+                }
+            });
         };
         
         document.addEventListener('DOMContentLoaded', () => {

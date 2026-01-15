@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upravljačka stranica - Auto Servis Serviser</title>
     <style>
-        /* --- CSS STILOVI (Nepromijenjeni) --- */
+        /* --- CSS STILOVI (Nepromijenjeni + Novi Overlay) --- */
         :root {
             --primary-color: #2563eb;
             --primary-hover: #1d4ed8;
@@ -30,6 +30,23 @@
             justify-content: center;
             line-height: 1.5;
         }
+
+        /* --- LOADING SPINNER CSS --- */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #38bff8; /* Tvoja plava boja */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* --------------------------- */
 
         /* Layout */
         #app-container {
@@ -189,6 +206,11 @@
 </head>
 <body>
 
+    <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; flex-direction:column; justify-content:center; align-items:center; color:white; backdrop-filter: blur(5px);">
+        <div class="spinner"></div> 
+        <p>Spremanje u tijeku, molimo pričekajte...</p>
+    </div>
+
     <div id="login-message">
         <h2>Provjera autorizacije...</h2>
         <p>Učitavanje... Ako traje predugo, <a href="/index.html">prijavite se ponovno</a>.</p>
@@ -203,8 +225,29 @@
         <div class="status-box">Status: <span id="status-display">Sustav spreman.</span></div>
 
         <div class="tabs">
+            <button id="btn-tab-my-tasks" class="tab-btn">Moji Zadaci</button>
             <button id="btn-tab-parts" class="tab-btn active">Dijelovi i Usluge</button>
             <button id="btn-tab-data" class="tab-btn">Podaci (Vozila, Termini, Radnje...)</button>
+        </div>
+
+        <div id="my-tasks-section" class="content-section">
+            <h3>Moji Popravci</h3>
+            <p style="color:#64748b; font-size:0.9em;">Ovdje se nalaze sva vozila koja su dodijeljena vama na popravak.</p>
+            <div style="overflow-x: auto;">
+                <table id="my-tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Vozilo</th>
+                            <th>Korisnik</th>
+                            <th>Termin</th>
+                            <th>Stanje</th>
+                            <th>Brze Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody id="my-tasks-table-body">
+                        </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="parts-section" class="content-section active">
@@ -333,12 +376,6 @@
                 <div id="fields-termin" class="data-fields">
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Korisnik:</label>
-                            <select id="termin-idKorisnik">
-                                <option value="">Odaberite korisnika</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
                             <label>Datum i Vrijeme:</label>
                             <input type="datetime-local" id="termin-datum">
                         </div>
@@ -357,7 +394,7 @@
                                 <option value="">Odaberite vozilo</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div id="popravakTermin" class="form-group">
                             <label>Termin:</label>
                             <select id="popravak-idTermin">
                                 <option value="">Odaberite termin</option>
@@ -435,6 +472,7 @@
     </div>
 
     <script>
+        let popravakTerminEdit;
         // --- KONFIGURACIJA ---
         const API_BASE = "https://auto-servis.onrender.com/api";
         const REDIRECT_ON_FAIL = "/index.html"; 
@@ -446,6 +484,9 @@
         const appContainer = document.getElementById('app-container');
         const loginMessage = document.getElementById('login-message');
         const statusDisplay = document.getElementById('status-display');
+        
+        // LOADING OVERLAY CONSTANT
+        const overlay = document.getElementById('loading-overlay');
 
         // Postavljanje ograničenja na starost auta
         document.getElementById('vozilo-godina').max = new Date().getFullYear();
@@ -458,6 +499,7 @@
         let cachedAppointments = [];
         let cachedParts = [];
         let trenutniServiser;
+        let postoji = false;
 
        // --- AUTH & HELPERI ---
         function getAuthHeaders() {
@@ -474,24 +516,32 @@
             if(isError) console.error(msg); else console.log(msg);
         }
 
+        // --- LOADING HELPERS ---
+        function showLoading() {
+            overlay.style.display = 'flex';
+        }
+        function hideLoading() {
+            overlay.style.display = 'none';
+        }
+
         // --- INIT ---
-        function initApp() {
-            fetch(`${API_BASE}/korisnik/about`, {
-                method: "GET",
-                headers: getAuthHeaders()
-            })
-            .then(res => {
+        async function initApp() {
+            showLoading(); // Početak loadinga
+            try {
+                const res = await fetch(`${API_BASE}/korisnik/about`, {
+                    method: "GET",
+                    headers: getAuthHeaders()
+                });
+                
                 if (!res.ok) throw new Error("Auth failed");
-                return res.json();
-            })
-            .then(user => {
+                const user = await res.json();
+                
                 // ---PROVJERA---
                 trenutniServiser = user;
                 const role = user.uloga ? user.uloga.toLowerCase() : '';
                 if (role !== 'admin' && role !== 'upravitelj' && role !== 'serviser') {
                     throw new Error("ACCESS_DENIED");
                 }
-
                 //---------------------------------------------------
 
                 loginMessage.style.display = "none";
@@ -499,11 +549,13 @@
                 document.getElementById('current-user-display').textContent = `Prijavljen: ${user.ime || user.username || user.email} (${user.uloga})`;
                 
                 switchTab('parts'); 
-            })
-            .catch(err => {
+
+            } catch(err) {
                 console.error(err);
                 window.location.href = REDIRECT_ON_FAIL;
-            });
+            } finally {
+                hideLoading(); // Kraj loadinga
+            }
         }
 
         // --- DRAG & DROP LOGIKA ---
@@ -515,17 +567,35 @@
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault(); dropZone.classList.remove('dragover'); handleFile(e.dataTransfer.files[0]);
         });
+        let base64Slika = ""; // Globalna varijabla u koju ćemo spremiti rezultat
+
         function handleFile(file) {
             if (file && file.type.startsWith('image/')) {
                 currentFileName = file.name; 
+                
+                // 1. Prikaz previewa (vaš postojeći kod)
                 const previewUrl = URL.createObjectURL(file);
                 imagePreview.innerHTML = `<img src="${previewUrl}" alt="Pregled"><p style="font-size:0.8em; color:#64748b;">${currentFileName}</p>`;
-            } else { alert("Molimo odaberite slikovnu datoteku."); }
+            
+                // 2. Pretvorba u Base64
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Rezultat se nalazi u e.target.result
+                    base64Slika = e.target.result; 
+                    console.log("Base64 string je spreman!");
+                    //console.log(base64Slika);
+                };
+                
+                reader.readAsDataURL(file); // Pokretanje čitanja datoteke
+            
+            } else { 
+                alert("Molimo odaberite slikovnu datoteku."); 
+            }
         }
         function getSelectedType() {
             const el = document.querySelector('input[name="item-type"]:checked');
             return el ? el.value : null;
-        }
+        } 
 
         // --- TAB LOGIKA ---
         function switchTab(tabName) {
@@ -542,44 +612,115 @@
                 populateDropdowns().then(() => {
                     handleEntityChange(); 
                 });
+            } else if (tabName === 'mytasks') {
+                document.getElementById('my-tasks-section').classList.add('active');
+                document.getElementById('btn-tab-my-tasks').classList.add('active');
+                loadMyTasks();
             }
+        }
+
+        // --- NOVA FUNKCIJA: UČITAVANJE MOJIH ZADATAKA ---
+        async function loadMyTasks() {
+            showLoading();
+            try {
+                // Dohvaćamo veznu tablicu Servisiranje da vidimo koji su popravci dodijeljeni meni
+                const res = await fetch(`${API_BASE}/servisiranje`, { headers: getAuthHeaders() });
+                if(!res.ok) throw new Error("Neuspješan dohvat zadataka");
+                const allTasks = await res.json();
+                
+                // Filtriraj gdje je idKorisnik == trenutniServiser.idKorisnik
+                const myTasks = allTasks.filter(task => task.korisnik && task.korisnik.idKorisnik === trenutniServiser.idKorisnik);
+                
+                const tbody = document.getElementById('my-tasks-table-body');
+                tbody.innerHTML = "";
+
+                if(myTasks.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5'>Nemate dodijeljenih popravaka.</td></tr>";
+                    return;
+                }
+
+                myTasks.forEach(task => {
+                    const popravak = task.popravak;
+                    if(!popravak) return;
+                    
+                    const vozilo = popravak.vozilo;
+                    const voziloTxt = vozilo ? `${vozilo.regOznaka} (${vozilo.vrstaVozila?.nazivModela})` : "Nepoznato vozilo";
+                    const korisnikTxt = vozilo?.korisnik ? `${vozilo.korisnik.ime} ${vozilo.korisnik.prezime}` : "Nepoznat vlasnik";
+                    const terminTxt = popravak.termin ? new Date(popravak.termin.datumVrijeme).toLocaleString() : "Nema termina";
+                    const stanje = popravak.stanje || "Nepoznato";
+                    
+                    // Bojanje stanja
+                    let stanjeColor = "black";
+                    if(stanje.toLowerCase().includes("tijek")) stanjeColor = "#f59e0b"; // žuto
+                    if(stanje.toLowerCase().includes("završ")) stanjeColor = "#10b981"; // zeleno
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${voziloTxt}</strong></td>
+                        <td>${korisnikTxt}</td>
+                        <td>${terminTxt}</td>
+                        <td style="color:${stanjeColor}; font-weight:bold;">${stanje.toUpperCase()}</td>
+                        <td>
+                             <button class="btn-sm btn-primary" onclick="switchToRepairEdit(${popravak.idPopravak})">Detalji & Radnje</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (err) {
+                console.error(err);
+                logStatus("Greška kod učitavanja zadataka: " + err.message, true);
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // Pomoćna funkcija za prelazak s "Moji Zadaci" na uređivanje "Radnji"
+        function switchToRepairEdit(idPopravak) {
+            // Prebaci tab
+            switchTab('data');
+            // Postavi selector na Radnja
+            const selector = document.getElementById('entity-selector');
+            selector.value = 'radnja';
+            // Trigger change event ručno da se UI updatea
+            selector.dispatchEvent(new Event('change'));
+            
+            // Mala odgoda da se dropdownovi popune, pa onda selektiraj popravak u filteru (ako je moguće)
+            setTimeout(() => {
+                const repairSelect = document.getElementById('radnja-idPopravak');
+                if(repairSelect) repairSelect.value = idPopravak;
+                logStatus("Prebačeno na unos radnji za odabrani popravak.");
+            }, 800);
         }
 
         // --- HELPER ZA DROPDOWNOVE ---
         async function populateDropdowns() {
+            showLoading(); // Wrap fetching dropdowns
             try {
                 // 1. Korisnici
                 const userRes = await fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() });
                 cachedUsers = await userRes.json();
                 
-                // Ovdje mapiramo ID selecta na logiku filtriranja
                 const userSelects = {
-                    'vozilo-idKorisnik': false, // Svi korisnici (jer biramo vlasnika vozila)
-                    'termin-idKorisnik': true, // Svi korisnici (jer biramo tko dolazi na termin)
-                    'radnja-idKorisnik': true   // SAMO trenutni serviser (ne mogu dodijeliti drugome)
+                    'vozilo-idKorisnik': false,
+                    'termin-idKorisnik': true,
+                    'radnja-idKorisnik': true   
                 };
                 
                 for (const [selId, filterForServiser] of Object.entries(userSelects)) {
                     const sel = document.getElementById(selId);
                     if(sel) {
                         sel.innerHTML = '<option value="">Odaberite...</option>';
-                        
                         let usersToShow = cachedUsers;
-                        
-                        // FILTRIRANJE DROPDOWNA ZA RADNJU
                         if (filterForServiser && trenutniServiser) {
                             usersToShow = cachedUsers.filter(u => u.idKorisnik === trenutniServiser.idKorisnik);
                         }
-
                         usersToShow.forEach(u => {
                             const opt = document.createElement('option');
                             opt.value = u.idKorisnik;
-                            const display = `${u.ime} ${u.prezime} | ${u.email || u.username} (ID: ${u.idKorisnik})`;
-                            opt.textContent = display;
+                            opt.textContent = `${u.ime} ${u.prezime} | ${u.email || u.username} (ID: ${u.idKorisnik})`;
                             sel.appendChild(opt);
                         });
-                        
-                        // Ako postoji samo jedan user (ja) i ovo je polje za servisera, odaberi ga odmah
                         if(filterForServiser && usersToShow.length === 1) {
                             sel.value = usersToShow[0].idKorisnik;
                         }
@@ -618,29 +759,24 @@
                     });
                 }
 
-                // 4. Termini
+                // 4. Popravci (trebaju nam za filtriranje termina)
+                const popravakRes = await fetch(`${API_BASE}/popravak`, { headers: getAuthHeaders() });
+                cachedRepairs = await popravakRes.json();
+
+                // 5. Termini
                 const terminRes = await fetch(`${API_BASE}/termin`, { headers: getAuthHeaders() });
                 cachedAppointments = await terminRes.json();
                 const terminSel = document.getElementById('popravak-idTermin');
                             
                 if(terminSel) {
                     terminSel.innerHTML = '<option value="">Odaberite termin...</option>';
-                    
-                    // --- NOVO: Filtriranje termina ---
-                    // 1. Kreiraj listu ID-eva termina koji se već nalaze u popravcima
                     const iskoristeniTerminIds = cachedRepairs
                         .map(r => r.termin ? r.termin.idTermin : r.idTermin)
-                        .filter(id => id != null); // Filtriraj null vrijednosti
+                        .filter(id => id != null);
                 
                     cachedAppointments.forEach(t => {
-                        // Provjera 1: Termin NE SMIJE biti u listi iskorištenih
                         const jeSlobodan = !iskoristeniTerminIds.includes(t.idTermin);
-                        
-                        // Provjera 2: Termin mora pripadati trenutno prijavljenom korisniku
                         const jeMojTermin = t.korisnik && trenutniServiser && t.korisnik.idKorisnik === trenutniServiser.idKorisnik;
-                    
-                        // Ako uređujemo postojeći popravak, moramo prikazati i taj termin iako je "zauzet"
-                        // (Ovo je naprednija logika, ovdje radimo strogo po uputi: samo slobodni i moji)
                         
                         if (jeSlobodan && jeMojTermin) {
                                 const opt = document.createElement('option');
@@ -653,10 +789,6 @@
                         }
                     });
                 }
-
-                // 5. Popravci
-                const popravakRes = await fetch(`${API_BASE}/popravak`, { headers: getAuthHeaders() });
-                cachedRepairs = await popravakRes.json();
                 
                 const servisPopravakSel = document.getElementById('servis-idPopravak');
                 const radnjaPopravakSel = document.getElementById('radnja-idPopravak');
@@ -710,10 +842,12 @@
 
             } catch (e) {
                 console.error("Greška pri učitavanju dropdown podataka", e);
+            } finally {
+                hideLoading();
             }
         }
 
-        // --- 1. DIJELOVI I USLUGE (SVE DOZVOLJENO) ---
+       // --- 1. DIJELOVI I USLUGE ---
         const partForm = document.getElementById('part-form');
         
         function loadItems(filterType) {
@@ -746,58 +880,107 @@
                     tbody.appendChild(tr);
                 });
                 if(filterType == 'all') logStatus(`Učitano ${items.length} Dijelova/Usluga.`);
+                if(filterType == 'dio') logStatus(`Učitano ${items.length} Dijelova.`);
+                if(filterType == 'usluga') logStatus(`Učitano ${items.length} Usluga.`);
             }).catch(err => logStatus("Greška dijelovi/usluge: " + err, true));
         }
 
-        partForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('item-id').value;
-            const payload = {
-                vrsta: getSelectedType(),
-                naziv: document.getElementById('part-name').value,
-                cijena: document.getElementById('part-price').value ? parseFloat(document.getElementById('part-price').value) : null,
-                opis: document.getElementById('part-desc').value,
-                slikaUrl: currentFileName
-            };
-            const url = id ? `${API_BASE}/dijeloviusluge/${id}` : `${API_BASE}/dijeloviusluge`;
-            const method = id ? "PUT" : "POST";
+    partForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+            
+        // 1. Prikaži blokadu ekrana
+        const overlay = document.getElementById('loading-overlay');
+        overlay.style.display = 'flex';
+            
+        const id = document.getElementById('item-id').value;
+        console.log(base64Slika)
+        const payload = {
+            vrsta: getSelectedType(),
+            naziv: document.getElementById('part-name').value,
+            cijena: document.getElementById('part-price').value ? parseFloat(document.getElementById('part-price').value) : null,
+            opis: document.getElementById('part-desc').value,
+            base64: base64Slika // Tvoj base64 string
+        };
+        
+        const url = id ? `${API_BASE}/dijeloviusluge/${id}` : `${API_BASE}/dijeloviusluge`;
+        const method = id ? "PUT" : "POST";
+    
+        try {
+            // 2. Čekaj (await) da server odgovori
+            const res = await fetch(url, { 
+                method: method, 
+                headers: getAuthHeaders(), 
+                body: JSON.stringify(payload) 
+            });
+        
+            if (!res.ok) throw new Error(res.status);
+            
+            // 3. Osvježi podatke
+            logStatus(id ? "Ažurirano!" : "Dodano!");
+            resetPartForm();
+            await loadItems('all'); // Čekaj i da se lista učita
+            await populateDropdowns(); // Čekaj i da se dropdowni osvježe
+        
+        } catch (err) {
+            logStatus("Greška spremanje: " + err, true);
+        } finally {
+            // 4. Makni blokadu ekrana bez obzira je li uspjelo ili ne
+            overlay.style.display = 'none';
+        }
+    });
 
-            fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
-            .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-            .then(() => { logStatus(id ? "Ažurirano!" : "Dodano!"); resetPartForm(); loadItems('all'); populateDropdowns();})
-            .catch(err => logStatus("Greška spremanje: " + err, true));
-        });
+        window.prepareItemEdit = async function(id) {
+            try {
+                const res = await fetch(`${API_BASE}/dijeloviusluge/${id}`, { headers: getAuthHeaders() });
+                const item = await res.json();
+            
+                const img = item.slikaUrl.startsWith('http') ? item.slikaUrl : `https://autoservis-progi.onrender.com/assets/pictures/djelovi/${item.slikaUrl}`;
 
-        window.prepareItemEdit = function(id) {
-            fetch(`${API_BASE}/dijeloviusluge/${id}`, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(item => {
+                // Popunjavanje polja
                 document.getElementById('item-id').value = item.idDijelausluge;
                 document.getElementById('part-name').value = item.naziv;
                 document.getElementById('part-price').value = item.cijena || "";
                 document.getElementById('part-desc').value = item.opis || "";
-                if(item.vrsta === 'dio') document.getElementById('type-part').checked = true;
-                else document.getElementById('type-service').checked = true;
-                if(item.slikaUrl) {
-                     imagePreview.innerHTML = `<img src="https://autoservis-progi.onrender.com/assets/pictures/djelovi/${item.slikaUrl}"><p>${item.slikaUrl}</p>`;
-                     currentFileName = item.slikaUrl;
-                } else { imagePreview.innerHTML = ""; currentFileName = ""; }
 
+                document.getElementById('type-part').checked = (item.vrsta === 'dio');
+                document.getElementById('type-service').checked = (item.vrsta !== 'dio');
+            
+                if (item.slikaUrl) {
+                    imagePreview.innerHTML = `<img src="${img}"><p>${img}</p>`;
+                    currentFileName = item.slikaUrl;
+                
+                    // Pretvorba u Base64 (ako je nužno)
+                    const imgRes = await fetch(img);
+                    const blob = await imgRes.blob();
+                    const reader = new FileReader();
+                    reader.readAsDataURL(blob);
+                    reader.onloadend = () => {
+                        base64Slika = reader.result;
+                    };
+                } else {
+                    imagePreview.innerHTML = "";
+                    currentFileName = "";
+                    base64Slika = "";
+                }
+            
+                // UI promjene
                 document.getElementById('part-form-title').textContent = `Uredi stavku ID: ${id}`;
                 const saveBtn = document.getElementById('part-save-btn');
                 saveBtn.textContent = "Spremi izmjene";
-                saveBtn.classList.remove('btn-primary');
-                saveBtn.classList.add('btn-edit');
-                
+                saveBtn.classList.replace('btn-primary', 'btn-edit');
+
                 document.getElementById('part-cancel-btn').style.display = "inline-block";
                 window.scrollTo(0, 0);
-            }).catch(err => logStatus("Greška dohvat: " + err, true));
+            
+            } catch (err) {
+                logStatus("Greška dohvat: " + err, true);
+            }
         };
 
         window.deleteItem = function(id) { 
             if(confirm("Sigurno želite obrisati ovu stavku?")) {
                 fetch(`${API_BASE}/dijeloviusluge/${id}`, { method: "DELETE", headers: getAuthHeaders() })
-                .then(res => { if(!res.ok) throw new Error("Neuspješno"); loadItems('all'); logStatus("Obrisano."); })
+                .then(res => { if(!res.ok) throw new Error(`Neuspješno ${API_BASE}/dijeloviusluge/${id}`); loadItems('all'); logStatus("Obrisano."); })
                 .catch(err => logStatus(err, true));
             }
         };
@@ -814,6 +997,7 @@
             document.getElementById('part-cancel-btn').style.display = "none";
             document.getElementById('type-service').checked = true; 
         };
+
 
         // ==============================================
         // --- 2. OSTALI PODACI LOGIKA ---
@@ -834,33 +1018,34 @@
             loadEntityData();
         }
 
-        function loadEntityData() {
-            const endpoint = `${API_BASE}/${currentEntity}`;
-            logStatus(`Učitavam ${currentEntity}...`);
-            fetch(endpoint, { headers: getAuthHeaders() })
-            .then(res => res.json())
-            .then(data => renderDataTable(data))
-            .catch(err => logStatus("Greška učitavanje entiteta: " + err, true));
+        async function loadEntityData() {
+            showLoading();
+            try {
+                const endpoint = `${API_BASE}/${currentEntity}`;
+                logStatus(`Učitavam ${currentEntity}...`);
+                
+                const res = await fetch(endpoint, { headers: getAuthHeaders() });
+                const data = await res.json();
+                renderDataTable(data);
+            } catch(err) {
+                logStatus("Greška učitavanje entiteta: " + err, true);
+            } finally {
+                hideLoading();
+            }
         }
 
         function renderDataTable(data) {
             let list = Array.isArray(data) ? data : (data ? [data] : []);
 
             // --- FILTRIRANJE PO SERVISERU (LOGGED IN) ---
-            // Filtriramo listu prije nego krenemo u generiranje HTML-a
             if (['termin', 'popravak', 'servisiranje', 'radnja'].includes(currentEntity) && trenutniServiser) {
                 list = list.filter(item => {
                     let userIdToCheck = null;
-                    
-                    // Pokušaj pronaći ID korisnika u zapisu
                     if (item.korisnik) {
                         userIdToCheck = item.korisnik.idKorisnik;
                     } else if (item.termin && item.termin.korisnik) {
-                        // Za popravak, korisnik je u terminu
                         userIdToCheck = item.termin.korisnik.idKorisnik;
                     }
-
-                    // Vrati true samo ako se ID poklapa sa trenutno prijavljenim serviserom
                     return userIdToCheck === trenutniServiser.idKorisnik;
                 });
             }
@@ -984,7 +1169,6 @@
                     rowHtml += `<td>${val}</td>`;
                 });
                 
-                // Primarni ključ za brisanje/uređivanje
                 let pk = item.idVozila || item.idTermin || item.idRadnja || item.idPopravak; 
                 let itemJson = JSON.stringify(item).replace(/'/g, "&#39;").replace(/"/g, "&quot;");
                 
@@ -994,8 +1178,6 @@
                     pk = `${oldP}.${oldK}`;
                 }
 
-                // --- GUMBI AKCIJE ---
-                // Samo Vozilo ima Delete opciju. Ostali entiteti samo Edit.
                 let deleteButton = "";
                 if (currentEntity === 'vozilo') {
                     deleteButton = `<button class='btn-sm btn-delete' onclick='deleteData("${pk}")'>Obriši</button>`;
@@ -1026,7 +1208,7 @@
         }
 
         // --- PROMJENA METODE (CREATE / UPDATE) ---
-        dataForm.addEventListener('submit', (e) => {
+        dataForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('data-id').value;
             const method = id ? "PUT" : "POST";
@@ -1034,17 +1216,29 @@
             let url = `${API_BASE}/${currentEntity}`;
             if(id) url += `/${id}`; 
 
-            const payload = collectPayload();
+            const payload = collectPayload(method);
+            console.log(payload);
             if(!validatePayload(payload, currentEntity)) return;
 
-            fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) })
-            .then(res => { if(!res.ok) throw new Error(res.status); return res.json(); })
-            .then(() => { logStatus("Podaci spremljeni!"); resetDataForm(); loadEntityData(); populateDropdowns();})
-            .catch(err => logStatus("Greška spremanje: " + err, true));
+            showLoading();
+            try {
+                const res = await fetch(url, { method: method, headers: getAuthHeaders(), body: JSON.stringify(payload) });
+                if(!res.ok) throw new Error(res.status);
+                await res.json();
+                
+                logStatus("Podaci spremljeni!"); 
+                resetDataForm(); 
+                await loadEntityData(); 
+                await populateDropdowns();
+            } catch(err) {
+                logStatus("Greška spremanje: " + err, true);
+            } finally {
+                hideLoading();
+            }
         });
 
         // SKUPLJANJE PODATAKA
-        function collectPayload() {
+        function collectPayload(method) {
             const getVal = (id) => { const v = document.getElementById(id).value; return v === "" ? null : v; };
             const getInt = (id) => { const v = document.getElementById(id).value; return v ? parseInt(v) : null; };
             
@@ -1064,14 +1258,26 @@
                     jeZamjensko: document.getElementById('vozilo-zamjensko').value === 'true'
                 };
                 case 'termin': return {
-                    idKorisnik: getInt('termin-idKorisnik'),
+                    idKorisnik: trenutniServiser.idKorisnik,
                     datumVrijeme: formatDateForApi(getVal('termin-datum')),
                     odgoda: formatDateForApi(getVal('termin-odgoda')) 
                 };
-                case 'popravak': return {
+                case 'popravak':
+                    if (method === "POST")
+                        return {
+                        idVozila: getInt('popravak-idVozila'),
+                        idTermin: getInt('popravak-idTermin'),
+                        stanje: getVal('popravak-stanje')
+                    }
+                    else if (postoji) return{
+                        idVozila: getInt('popravak-idVozila'),
+                        idTermin: document.getElementById('popravak-idTermin').value = popravakTerminId,
+                        stanje: getVal('popravak-stanje') 
+                    }
+                    else return {
                     idVozila: getInt('popravak-idVozila'),
-                    idTermin: getInt('popravak-idTermin'),
-                    stanje: getVal('popravak-stanje')
+                    idTermin: popravakTerminEdit,
+                    stanje: getVal('popravak-stanje') 
                 };
                 case 'servisiranje': return {
                     idPopravak: getInt('servis-idPopravak'),
@@ -1088,22 +1294,33 @@
         }
 
         // --- DELETE (Samo za Vozilo, ostalima je gumb sakriven) ---
-        window.deleteData = function(id) {
+        window.deleteData = async function(id) {
             if(!confirm("Sigurno obrisati?")) return;
             let url = `${API_BASE}/${currentEntity}/${id}`;
-            fetch(url, { method: "DELETE", headers: getAuthHeaders() })
-            .then(() => { logStatus("Obrisano."); loadEntityData(); })
-            .catch(err => logStatus("Greška brisanje: " + err, true));
+            
+            showLoading();
+            try {
+                const res = await fetch(url, { method: "DELETE", headers: getAuthHeaders() });
+                if(!res.ok) throw new Error("Delete failed");
+                logStatus("Obrisano."); 
+                await loadEntityData();
+            } catch(err) {
+                logStatus("Greška brisanje: " + err, true);
+            } finally {
+                hideLoading();
+            }
         };
 
         // POPUNJAVANJE FORME KOD UREĐIVANJA
-        window.prepareDataEdit = function(item, compositePk = null) {
+        window.prepareDataEdit = async function(item, compositePk = null) {
             let pkVal = compositePk;
             if (!pkVal) {
                  if(item.idVozila) pkVal = item.idVozila;
                  else if(item.idTermin) pkVal = item.idTermin;
                  else if(item.idRadnja) pkVal = item.idRadnja;
-                 else if(item.idPopravak) pkVal = item.idPopravak; 
+                 else if(item.idPopravak){
+                    pkVal = item.idPopravak;
+                 }
             }
 
             document.getElementById('data-id').value = pkVal;
@@ -1134,33 +1351,88 @@
                     break;
                 case 'termin':
                     const terminUserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
-                    document.getElementById('termin-idKorisnik').value = terminUserId;
                     document.getElementById('termin-datum').value = formatDate(item.datumVrijeme);
                     document.getElementById('termin-odgoda').value = formatDate(item.odgoda);
                     break;
                 case 'popravak':
                     const popravakVoziloId = (item.vozilo && item.vozilo.idVozila) ? item.vozilo.idVozila : (item.idVozila || "");
                     const popravakTerminId = (item.termin && item.termin.idTermin) ? item.termin.idTermin : (item.idTermin || "");
+                    
                     document.getElementById('popravak-idVozila').value = popravakVoziloId;
-                    document.getElementById('popravak-idTermin').value = popravakTerminId;
+                    popravakTerminEdit = popravakTerminId;
                     document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
+                    console.log(popravakTerminId, popravakTerminEdit);
                     break;
                 case 'servisiranje':
                     const idPop = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
-                    const serviserId = (item.korisnik && item.korisnik.idKorisnik) ? item.korisnik.idKorisnik : (item.idKorisnik || "");
                     document.getElementById('servis-idPopravak').value = idPop;
                     break;
                 case 'radnja':
                     const rPopId = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
                     document.getElementById('radnja-idPopravak').value = rPopId;
-
-                    // Obrisano postavljanje vrijednosti za radnja-idKorisnik jer polje više ne postoji
-
                     const radnjaDioId = (item.dijeloviusluge && item.dijeloviusluge.idDijelausluge) ? item.dijeloviusluge.idDijelausluge : (item.idDijelausluge || "");
                     document.getElementById('radnja-idDijela').value = radnjaDioId;
                     document.getElementById('radnja-stanje').value = item.stanje || "nepotvrđeno";
                     document.getElementById('radnja-napomena').value = item.napomena || "";
                     break;
+            }
+            if (item.idPopravak) {
+            
+            try {
+                const endpoint = `${API_BASE}/termin`;
+                // 2. Čekamo odgovor od servera
+                const res = await fetch(endpoint, { headers: getAuthHeaders() });
+                let data = await res.json(); // Koristimo 'let' jer ćemo možda filtrirati listu
+                        
+                // --- INTEGRACIJA FILTRIRANJA ---
+                // Provjeravamo treba li filtrirati listu prema trenutno prijavljenom serviseru
+                if (['termin', 'popravak', 'servisiranje', 'radnja'].includes(currentEntity) && trenutniServiser) {
+                    data = data.filter(item => {
+                        let userIdToCheck = null;
+                        if (item.korisnik) {
+                            userIdToCheck = item.korisnik.idKorisnik;
+                        } else if (item.termin && item.termin.korisnik) {
+                            userIdToCheck = item.termin.korisnik.idKorisnik;
+                        }
+                        // Zadrži samo one koji pripadaju serviseru
+                        return userIdToCheck === trenutniServiser.idKorisnik;
+                    });
+                }
+            
+                // 3. Provjera podataka (sada na filtriranoj listi)
+                // 'postoji' će biti true samo ako serviser ima barem jedan svoj termin/popravak
+                if (data && data.length > 0) {
+                    postoji = true;
+                }
+            
+                console.log("Postoji li barem jedan zapis za ovog servisera:", postoji);
+            
+                if (item.idPopravak) {
+                    // Brišemo staru opciju "Trenutno postavljeni termin" ako postoji da se ne duplira
+                    const select = document.getElementById('popravak-idTermin');
+                    Array.from(select.options).forEach(opt => {
+                        if (opt.textContent === "Trenutno postavljeni termin") opt.remove();
+                    });
+                
+                    if (postoji) {
+                        const novaOpcija = document.createElement('option');
+                        novaOpcija.value = `${popravakTerminEdit}`;
+                        novaOpcija.textContent = "Trenutno postavljeni termin";
+                        novaOpcija.selected = true;
+                        select.appendChild(novaOpcija);
+                        
+                        // Osiguraj da je kontejner vidljiv
+                        const kontejner = document.getElementById('popravakTermin');
+                        if (kontejner) kontejner.style.display = "block";
+                    } else {
+                        const kontejner = document.getElementById('popravakTermin');
+                        if (kontejner) kontejner.style.display = "none";
+                    }
+                }
+            
+            } catch (err) {
+                logStatus("Greška učitavanje entiteta: " + err, true);
+            }   
             }
             window.scrollTo(0, 0);
         };
@@ -1173,11 +1445,20 @@
             saveBtn.classList.remove('btn-edit');
             saveBtn.classList.add('btn-primary');
             document.getElementById('data-cancel-btn').style.display = "none";
+            document.getElementById('popravakTermin').style.display = "block";
+            const select = document.getElementById('popravak-idTermin');
+
+            Array.from(select.options).forEach(option => {
+                if (option.textContent === "Trenutno postavljeni termin") {
+                    option.remove();
+                }
+            });
         };
         
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('btn-tab-parts').addEventListener('click', () => switchTab('parts'));
             document.getElementById('btn-tab-data').addEventListener('click', () => switchTab('data'));
+            document.getElementById('btn-tab-my-tasks').addEventListener('click', () => switchTab('mytasks'));
         });
         
         initApp();

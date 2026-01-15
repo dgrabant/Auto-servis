@@ -430,6 +430,16 @@ loader.load(
     loadingText.textContent = 'Učitavanje tekstura...';
     texture.mapping = THREE.EquirectangularReflectionMapping;
     texture.colorSpace = THREE.SRGBColorSpace;
+    if (checkIfLogedIn()) {
+      document.getElementById("imeUser").innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+      document.getElementById("inicUser").innerHTML = `${korisnik.ime[0]}${korisnik.prezime[0]}`;
+      document.getElementById("logout-btn").hidden=false;
+    }
+    else{
+      document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
+      document.getElementById("inicUser").innerHTML = "NP";
+      document.getElementById("logout-btn").hidden=true;
+    }
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
@@ -451,16 +461,7 @@ loader.load(
         renderer.render(scene, activeCamera);
         onWindowResize();
         main.hidden = true;
-        if (checkIfLogedIn()) {
-          document.getElementById("imeUser").innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
-          document.getElementById("inicUser").innerHTML = `${korisnik.ime[0]}${korisnik.prezime[0]}`;
-          document.getElementById("logout-btn").hidden=false;
-        }
-        else{
-          document.getElementById("imeUser").innerHTML = "Niste Prijavljeni";
-          document.getElementById("inicUser").innerHTML = "NP";
-          document.getElementById("logout-btn").hidden=true;
-        }
+        
         hudHTML.style.display = 'flex';
         userHTML.style.display = 'flex';
         footHTML.style.display = 'flex';
