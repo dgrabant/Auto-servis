@@ -7,6 +7,7 @@ import hr.fer.progi.autoservis.repository.KorisnikRepository;
 import hr.fer.progi.autoservis.security.UserPrincipal;
 import hr.fer.progi.autoservis.service.AuthorityCheck;
 import hr.fer.progi.autoservis.service.KorisnikService;
+import hr.fer.progi.autoservis.service.MailingAgent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,12 @@ public class KorisnikController {
 
     private final KorisnikService userService;
     private final KorisnikRepository userRepository;
+    private final MailingAgent mailingAgent;
 
-    public KorisnikController(KorisnikService userService, KorisnikRepository userRepository) {
+    public KorisnikController(KorisnikService userService, KorisnikRepository userRepository, MailingAgent mailingAgent) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.mailingAgent = mailingAgent;
     }
 
     @GetMapping
@@ -57,6 +60,13 @@ public class KorisnikController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "admin")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         try {
+            try{
+                mailingAgent.send(korisnikCreateDto.getEmail(), "Dobrodošli!", "Pozdrav i hvala na registraciji na naš Auto-servis Harlemova kočija!", "");
+            }
+            catch (Exception e){
+                System.out.println("Pogreška prilikom slanja emaila pri registraciji za korisnika: "+korisnikCreateDto.getEmail());
+            }
+
             return ResponseEntity.ok(userRepository.save(new Korisnik(korisnikCreateDto)));
         }
         catch (Exception e){
