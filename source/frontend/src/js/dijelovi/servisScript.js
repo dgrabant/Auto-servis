@@ -249,78 +249,70 @@ if (inputReg) {
 }
 
 document.getElementById('form-prijava-vozila').addEventListener('submit', async function(e) {
+    e.preventDefault();
 
     const regValue = document.getElementById('reg').value;
     const regRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/;
 
     if (!regRegex.test(regValue)) {
-        e.preventDefault();
         alert("Registracija mora biti u formatu XX-1111-XX (npr. ZG-1234-AA)!");
         return; 
     }
 
-    e.preventDefault(); 
+    const modelSelect = document.getElementById('marka-model');
+    const modelTekst = modelSelect.options[modelSelect.selectedIndex].text;
+    const odabraneStavke = document.getElementById('finalni-popis-input').value;
 
+    let ukupnaCijena = 0;
+    const aktivneStavkeElementi = document.querySelectorAll('.stavka-ponude.active');
+    aktivneStavkeElementi.forEach(el => {
+        ukupnaCijena += parseFloat(el.dataset.cijena || 0);
+    });
 
     let trenutniKorisnikId = null;
-    function provjera() {
-        return new Promise(resolve => {
-            fetch("https://auto-servis.onrender.com/api/korisnik/about", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer "+localStorage.getItem("authToken")
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        trenutniKorisnikId = null;
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                      return response.json();
-                    })
-                .then(data => {
-                    console.log("Response data:", data);
-                    trenutniKorisnikId = data.idKorisnik;
-                    resolve();
-                })
-                .catch(error => {
-                    console.error("Fetch error:", error);
-                    trenutniKorisnikId = null;
-                    resolve();
-                });
+    try {
+        const responseKorisnik = await fetch("https://auto-servis.onrender.com/api/korisnik/about", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("authToken")
+            }
         });
+        if (!responseKorisnik.ok) throw new Error("Neuspješno dohvaćanje korisnika");
+        const dataK = await responseKorisnik.json();
+        trenutniKorisnikId = dataK.idKorisnik;
+    } catch (error) {
+        console.error("Greška kod autorizacije:", error);
+        alert("Sesija je istekla ili niste prijavljeni.");
+        return;
     }
-    await provjera();
 
     const payloadVozilo = {
         idKorisnik: trenutniKorisnikId,
-        idVrsta: parseInt(document.getElementById('marka-model').value), // ID iz baze
-        regOznaka: document.getElementById('reg').value,
+        idVrsta: parseInt(modelSelect.value),
+        regOznaka: regValue,
         godinaProizvodnje: document.getElementById('godina-vozila').value ? parseInt(document.getElementById('godina-vozila').value) : null,
-        //DODATI
         serijskiBroj: null, 
-        jeZamjensko: document.getElementById('zamjensko').checked // Boolean
+        jeZamjensko: document.getElementById('zamjensko').checked 
     };
 
-    console.log("Šaljem vozilo:", payloadVozilo);
-
     try {
-        const res = await fetch(`${API_BASE}/vozilo`, {
+        // Slanje vozila
+        const resV = await fetch(`${API_BASE}/vozilo`, {
             method: "POST",
             headers: getAuthHeaders(),
             body: JSON.stringify(payloadVozilo)
         });
 
-        if (!res.ok) throw new Error("Status: " + res.status);
-        
-        const novoVozilo = await res.json();
-        console.log("Vozilo spremljeno:", novoVozilo);
-        console.log(document.getElementById('termin').value);
+        if (!resV.ok) throw new Error("Greška kod spremanja vozila: " + resV.status);
+        const novoVozilo = await resV.json();
+
+        // Slanje popravka
         const payloadPopravak = {
             idVozila: novoVozilo.idVozila, 
             idTermin: parseInt(document.getElementById('termin').value),
-            stanje: 'u pripremi'
+            stanje: 'u pripremi',
+            opisStavki: odabraneStavke 
         };
 
         const resPopravak = await fetch(`${API_BASE}/popravak`, {
@@ -331,47 +323,62 @@ document.getElementById('form-prijava-vozila').addEventListener('submit', async 
 
         if (resPopravak.ok) {
             alert("Prijava uspješno spremljena!");
-            nacrtajStatusKarticu(payloadVozilo.regOznaka, "U PRIPREMI");
+            
+           nacrtajStatusKarticu(regValue, "U PRIPREMI", modelTekst, odabraneStavke, ukupnaCijena);
+            
+            e.target.reset(); 
+            const popisLista = document.getElementById('popis-za-popravak');
+            if (popisLista) popisLista.innerHTML = '<li>Nije odabrana nijedna stavka</li>';
         } else {
             throw new Error("Greška kod kreiranja popravka: " + resPopravak.status);
         }
 
     } catch (err) {
-        console.error("Greška:", err);
+        console.error("Greška u procesu:", err);
         alert("Neuspješno slanje: " + err.message);
     }
 });
 
-function nacrtajStatusKarticu(registracija, stanje) {
+function nacrtajStatusKarticu(registracija, stanje, model, stavke, cijena) {
     const kontejner = document.getElementById('status-vozila-kontenjer');
-    const modelSelect = document.getElementById('marka-model');
-    const modelTekst = modelSelect.options[modelSelect.selectedIndex].text;
-    const datumZavrsetka = izracunajDatumZavrsetka();
+    const datumZavrsetka = typeof izracunajDatumZavrsetka === 'function' ? izracunajDatumZavrsetka() : "U obradi";
+    const btnId = `pdf-btn-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-    //ovo je proforme tu, treba popravit
     const html = `
-        <div class="kartica-statusa" style="border-left: 5px solid #00d4ff; margin-bottom: 15px;">
-            <div class="info-vozilo">
-                <span class="vozilo-naziv">${modelTekst} (${registracija})</span>
-                <span class="status-badge" style="background: #222; color: #00d4ff; border: 1px solid #00d4ff;">${stanje}</span>
+        <div class="kartica-statusa" style="border-left: 5px solid #00d4ff; background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 15px; color: white;">
+            <div class="info-vozilo" style="margin-bottom: 10px;">
+                <span style="font-weight: bold; font-size: 1.1rem;">${model} [${registracija}]</span>
+                <span style="float: right; color: #00d4ff; border: 1px solid #00d4ff; padding: 2px 8px; border-radius: 15px;">${stanje}</span>
             </div>
             
-            <div class="procjena-datuma" style="margin: 10px 0; font-size: 0.9rem; color: #ccc;">
-                <i class="fas fa-calendar-alt"></i> Procijenjeni završetak: <strong>${datumZavrsetka}</strong>
+            <div style="font-size: 0.9rem; color: #ccc; border-top: 1px solid #333; padding-top: 10px;">
+                <strong>Odabrano:</strong> ${stavke}<br>
+                <strong>Ukupna cijena:</strong> <span style="color: #2ecc71;">${cijena.toFixed(2)} €</span>
             </div>
 
-            <div class="progress-bar-pozadina">
-                <div class="progress-bar-popuna" style="width: 10%;">10%</div>
-            </div>
-            
-            <div class="napomene-servisera">
-                <p>Vaša prijava je uspješno poslana. Čekamo potvrdu termina.</p>
-            </div>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Završetak: ${datumZavrsetka}</p>
+
+            <button id="${btnId}" style="margin-top: 15px; cursor: pointer; background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; font-weight: bold;">
+                DOKUMENTACIJA (PDF)
+            </button>
         </div>
     `;
-    kontejner.innerHTML = html + kontejner.innerHTML;
+
+    kontejner.insertAdjacentHTML('afterbegin', html);
+
+    document.getElementById(btnId).onclick = () => {
+        exportVehiclePDF({
+            model: model,
+            reg: registracija,
+            stanje: stanje,
+            datum: datumZavrsetka,
+            stavke: stavke,
+            cijena: cijena
+        });
+    };
 }
 
+//OVO TREBA MINJAT KAD SE U BAZU UBACI DATUM ZAVRSETKA
 function izracunajDatumZavrsetka() {
     const danas = new Date();
     // Dodajemo 3 dana na današnji datum
@@ -380,44 +387,97 @@ function izracunajDatumZavrsetka() {
     return danas.toLocaleDateString('hr-HR');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    dohvatiPodatkeZaServis();
-});
+function exportVehiclePDF(data) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
+    const autor = "Registrirani Korisnik";
 
-//----- PDF EXPORT -----
-    /*const pdfGumb = document.getElementById('exportPDF');
+    doc.setFontSize(18);
+    doc.setTextColor(41, 128, 185);
+    doc.text("POTVRDA O PRIJAVI VOZILA", 14, 22);
 
-    pdfGumb.addEventListener('click', function() {
-        exportToPDF();
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Datum generiranja: ${new Date().toLocaleString('hr-HR')}`, 14, 30);
+    doc.text(`Izvještaj izradio: ${autor}`, 14, 35);
+
+    doc.setLineWidth(0.5);
+    doc.line(14, 40, 196, 40);
+
+    const tableBody = [
+        ["Stavka", "Informacija"],
+        ["Vozilo", data.model],
+        ["Registracija", data.reg],
+        ["Status", data.stanje],
+        ["Procijenjeni završetak", data.datum],
+        ["ODABRANE USLUGE", data.stavke],
+        ["UKUPNI TROŠAK", `${data.cijena.toFixed(2)} €`] 
+    ];
+
+    doc.autoTable({
+        startY: 45,
+        head: [tableBody[0]],
+        body: tableBody.slice(1),
+        headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+        alternateRowStyles: { fillColor: [245, 245, 245] },
+        styles: { overflow: 'linebreak', cellWidth: 'wrap' },
+        columnStyles: { 1: { cellWidth: 140 } } 
     });
- function getStatsDataForExport() {
-     // Helper funkcija koja skuplja tekst iz kartica
-     const data = [];
-     const cards = document.querySelectorAll('.stat-card');
-     cards.forEach(card => {
-         const label = card.querySelector('h4').innerText;
-         const value = card.querySelector('.value').innerText;
-         const desc = card.querySelector('.desc').innerText;
-         data.push({ Statistika: label, Vrijednost: value, Opis: desc });
-     });
-     return data;
- }
- window.exportToPDF = function() {
-     const data = getStatsDataForExport();
-     if(data.length === 0) { alert("Nema podataka za izvoz."); return; }
-     const { jsPDF } = window.jspdf;
-     const doc = new jsPDF();
-     
-     doc.text("Auto Servis - Izvještaj Statistike", 14, 20);
-     doc.setFontSize(10);
-     doc.text(`Datum generiranja: ${new Date().toLocaleString()}`, 14, 28);
-     // Priprema podataka za tablicu (array of arrays)
-     const tableBody = data.map(item => [item.Statistika, item.Vrijednost, item.Opis]);
-     doc.autoTable({
-         startY: 35,
-         head: [['Naziv Statistike', 'Vrijednost', 'Opis']],
-         body: tableBody,
-     });
-     doc.save("AutoServis_Statistika.pdf");
- };*/
+
+    const finalY = doc.lastAutoTable.finalY + 20;
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "italic");
+    doc.text("Ovaj dokument je automatski generiran iz sustava Auto Servis.", 14, finalY);
+
+    const fileDate = new Date().toISOString().split('T')[0];
+    doc.save(`Potvrda_Servis_${data.reg}_${fileDate}.pdf`);
+}
+
+async function ucitajMojePopravke() {
+    try {
+        const token = localStorage.getItem("authToken");
+        const res = await fetch(`${API_BASE}/popravak`, { 
+            headers: { "Authorization": "Bearer " + token } 
+        });
+        const popravci = await res.json();
+        
+        const kontejner = document.getElementById('status-vozila-kontenjer');
+        kontejner.innerHTML = ""; 
+
+        popravci.forEach(p => {
+            if (p.vozilo) {
+                const reg = p.vozilo.regOznaka || "Nema reg.";
+                const model = p.vozilo.vrstavozila?.nazivModela || p.vozilo.vrstaVozila?.nazivModela || "Vozilo";
+                const status = (p.stanje || "U PRIPREMI").toUpperCase();
+
+                let stavkeLista = [];
+                let suma = 0;
+
+                if (p.radnja && Array.isArray(p.radnja)) {
+                    p.radnja.forEach(r => {
+                        if (r.dijeloviusluge) {
+                            stavkeLista.push(r.dijeloviusluge.naziv);
+                            suma += parseFloat(r.dijeloviusluge.cijena || 0);
+                        }
+                    });
+                }
+
+                // Fallback ako nema radnji u bazi, koristi ono što je korisnik upisao pri prijavi
+                let prikazStavki = stavkeLista.length > 0 ? stavkeLista.join(", ") : (p.opisStavki || "Osnovni pregled");
+
+                nacrtajStatusKarticu(reg, status, model, prikazStavki, suma);
+            }
+        });
+    } catch (err) {
+        console.error("Greška kod učitavanja:", err);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Stranica učitana, pokrećem skripte...");
+    if (typeof dohvatiPodatkeZaServis === 'function') {
+        dohvatiPodatkeZaServis();
+    }
+    setTimeout(ucitajMojePopravke, 500);
+});

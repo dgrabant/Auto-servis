@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
 
     <link rel="preload" href="/css/dijelovi.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     
@@ -342,24 +346,6 @@
                 <section class="servis-sekcija status-sekcija">
                     <h2 class="naslov-sekcije">Status popravka</h2>
                     <div id="status-vozila-kontenjer">
-                        
-                        <div class="kartica-statusa">
-                            <div class="info-vozilo">
-                                <span class="vozilo-naziv">Audi RS6</span>
-                                <span class="status-badge">U TIJEKU</span>
-                            </div>
-                            
-                            <div class="progress-bar-pozadina">
-                                <div class="progress-bar-popuna" style="width: 75%;">75%</div>
-                            </div>
-                            
-                            <div class="napomene-servisera">
-                                <p><strong>Napomena:</strong> Čekamo isporuku dijelova.</p>
-                            </div>
-                            
-                            <button id="exportPDF" class="btn-pdf">Dokumentacija (PDF)</button>
-                        </div>
-
                     </div>
                 </section>
 
