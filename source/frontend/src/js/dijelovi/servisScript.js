@@ -1,26 +1,42 @@
 //povezivanje s bazom podataka
 const API_BASE = "https://auto-servis.onrender.com/api";
+// Globalna varijabla za spremanje filtriranih popravaka (za PDF)
+let mojiPopravciCache = [];
 
 function getAuthHeaders() {
-      const token = localStorage.getItem("authToken");
-         return {
-           "Content-Type": "application/json",
-           "Authorization": "Bearer " + token
-         };
+    const token = localStorage.getItem("authToken");
+    return {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+    };
 }
 
-//Ovo radi tako da se moze upisat pogresna godina, ali ce se onda prilikom predaje forme javit greska
+// Helper funkcija za dohvat trenutnog korisnika neovisno o submitu forme
+async function dohvatiIdLogiranogKorisnika() {
+    try {
+        const responseKorisnik = await fetch(`${API_BASE}/korisnik/about`, {
+            method: "GET",
+            headers: getAuthHeaders()
+        });
+        if (!responseKorisnik.ok) return null;
+        const data = await responseKorisnik.json();
+        return data.idKorisnik;
+    } catch (error) {
+        console.error("Greška pri dohvatu korisnika:", error);
+        return null;
+    }
+}
+
 // Postavi maksimalnu godinu čim se stranica učita
 const inputGodina = document.getElementById('godina-vozila');
 const trenutnaGodina = new Date().getFullYear();
-inputGodina.max = trenutnaGodina;
+if (inputGodina) inputGodina.max = trenutnaGodina;
 
 // Funkcija koja provjerava unos odma
 window.validacijaGodine = function(input) {
     const errorSpan = document.getElementById('godina-error');
-    
     if (input.value > trenutnaGodina) {
-        input.value = trenutnaGodina; // Automatski vraća na max ako korisnik pretjera
+        input.value = trenutnaGodina;
         errorSpan.style.display = 'block';
     } else {
         errorSpan.style.display = 'none';
@@ -28,7 +44,7 @@ window.validacijaGodine = function(input) {
 };
 
 async function popuniTermineIzBaze() {
-    const token = localStorage.getItem("authToken"); // Koristimo isti ključ kao za usluge
+    const token = localStorage.getItem("authToken");
     const selectTermin = document.getElementById('termin');
     
     if (!selectTermin) return;
@@ -44,44 +60,29 @@ async function popuniTermineIzBaze() {
 
         if (response.ok) {
             const termini = await response.json();
-            console.log("Uspjesno smo dohvatili termine iz baze: ", termini);
-
             selectTermin.innerHTML = '<option value="" disabled selected>Odaberite termin</option>';
             
             termini.forEach(t => {
                 const opt = document.createElement('option');
                 opt.value = t.idTermin;
-                
                 const datum = new Date(t.datumVrijeme);
                 const formatiranDatum = datum.toLocaleString('hr-HR', { 
                     day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' 
                 });
-                
                 opt.innerText = formatiranDatum;
                 selectTermin.appendChild(opt);
             });
-        } else {
-            console.error("Server vratio grešku za termine:", response.status);
         }
     } catch (err) {
         console.warn("Greška u komunikaciji s bazom.", err);
-        // Fallback termini ako baza ne radi
-        // selectTermin.innerHTML = `
-        //     <option value="" disabled selected>Odaberite termin (Baza nedostupna)</option>
-        //     <option value="1">Sutra u 08:00</option>
-        //     <option value="2">Sutra u 12:00</option>
-        // `;
     }
 }
 
 export async function dohvatiPodatkeZaServis() {
     console.log("Pokusaj dohvacanja podataka iz baze");
-
-    //ako se pojavi error bit ce uhvacen, ispisan u konzoli
     popuniModeleAuta();
     popuniTermineIzBaze();
     
-    //ispravljeno ovo U od usluga
     fetch(`${API_BASE}/dijeloviusluge`, { headers: getAuthHeaders() })
         .then(res => {
             if (!res.ok) throw new Error("Status: " + res.status);
@@ -89,47 +90,31 @@ export async function dohvatiPodatkeZaServis() {
         })
         .then(data => {
             let items = Array.isArray(data) ? data : (data.dijelovi || data.usluge || []);
-
-            console.log("Primljeni podaci:", items);
-
-            //ispis u dva razlicita bloka zbog preglednosti
             const samoUsluge = items.filter(item => item.vrsta === 'usluga');
             const samoDijelovi = items.filter(item => item.vrsta === 'dio');
 
             prikaziStavke(samoUsluge, 'usluge-popis');
             prikaziStavke(samoDijelovi, 'dijelovi-popis');
-
         })
         .catch(err => {
             console.error("Greska kod dohvacanja dijelova i usluga!" + err);
-            // prikaziFallbackPodatke(); 
         });
 }
 
 async function popuniModeleAuta() {
-    const token = localStorage.getItem("authToken");
     const select = document.getElementById('marka-model');
-    
     if (!select) return;
 
     try {
         const response = await fetch(`${API_BASE}/vrstavozila`, {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + token
-            }
+            headers: getAuthHeaders()
         });
 
-        //za debug
         if (!response.ok) throw new Error("Status: " + response.status);
-
         const modeli = await response.json();
-        console.log("Modeli auta dohvaceni iz baze!", modeli);
 
-        // Resetiramo dropdown na početno stanje
         select.innerHTML = '<option value="" disabled selected>Odaberite vozilo</option>';
-        
         modeli.forEach(model => {
             const opt = document.createElement('option');
             opt.value = model.idVrsta; 
@@ -139,27 +124,14 @@ async function popuniModeleAuta() {
 
     } catch (err) {
         console.warn("Greska kod dohvacanja modela auta iz baze!", err);
-        // Testni primjeri ako baza ne reagira
-        // select.innerHTML = `
-        //     <option value="" disabled selected>Odaberite vozilo: </option>
-        //     <option value="1">Audi A1</option>
-        //     <option value="2">Audi A3</option>
-        //     <option value="3">Audi A4</option>
-        // `;
     }
 }
 
 function prikaziStavke(lista, kontejnerId) {
     const kontejner = document.getElementById(kontejnerId);
-    
-    //baza je popunjena tako da ovo mozemo preskocit sad
-    if (!kontejner) {
-        console.error("Ne postoji element s ID-om: " + kontejnerId);
-        return;
-    }
+    if (!kontejner) return;
 
     kontejner.innerHTML = '';
-
     if (lista.length === 0) {
         kontejner.innerHTML = '<p style="color: gray;">Nema podataka za prikaz.</p>';
         return;
@@ -169,10 +141,6 @@ function prikaziStavke(lista, kontejnerId) {
         const div = document.createElement('div');
         div.className = 'stavka-ponude'; 
         
-        //iddijelaUsluge!!!
-        /*div.innerText = stavka.naziv || "Bez naziva"; 
-        div.dataset.id = stavka.idDijelaUsluge;*/
-
         const naziv = stavka.naziv || "Bez naziva";
         const cijena = stavka.cijena ? `${stavka.cijena} €` : "0 €";
 
@@ -191,12 +159,8 @@ function prikaziStavke(lista, kontejnerId) {
 
         kontejner.appendChild(div);
     });
-    
-    //za konzolu
-    console.log(`Broj stavki je: ${lista.length}`);
 }
 
-//Ovo treba za popis odabranih stavki, bez toga se one samo istaknu malo
 function osvjeziPrikazOdabranih() {
     const listaUI = document.getElementById('popis-za-popravak');
     const skriveniInput = document.getElementById('finalni-popis-input');
@@ -223,254 +187,362 @@ function osvjeziPrikazOdabranih() {
             stavka.classList.remove('active');
             osvjeziPrikazOdabranih();
         };
-
         listaUI.appendChild(li);
     });
-
     skriveniInput.value = imenaUsluga.join(", ");
 }
 
 const inputReg = document.getElementById('reg');
-
-
-//NA OVOME JOS RADIM
 if (inputReg) {
     inputReg.addEventListener('input', function(e) {
-        // Uzmi samo slova i brojke, pretvori u velika slova
         let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
         let formatirano = "";
-
         if (v.length > 0) formatirano += v.substring(0, 2);
         if (v.length > 2) formatirano += "-" + v.substring(2, 6);
         if (v.length > 6) formatirano += "-" + v.substring(6, 8);
-
         e.target.value = formatirano;
     });
 }
 
-document.getElementById('form-prijava-vozila').addEventListener('submit', async function(e) {
-    e.preventDefault();
+const formPrijava = document.getElementById('form-prijava-vozila');
+if (formPrijava) {
+    formPrijava.addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-    const regValue = document.getElementById('reg').value;
-    const regRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/;
+        const regValue = document.getElementById('reg').value;
+        const regRegex = /^[A-Z]{2}-\d{4}-[A-Z]{2}$/;
 
-    if (!regRegex.test(regValue)) {
-        alert("Registracija mora biti u formatu XX-1111-XX (npr. ZG-1234-AA)!");
-        return; 
-    }
-
-    const modelSelect = document.getElementById('marka-model');
-    const modelTekst = modelSelect.options[modelSelect.selectedIndex].text;
-    const odabraneStavke = document.getElementById('finalni-popis-input').value;
-
-    let ukupnaCijena = 0;
-    const aktivneStavkeElementi = document.querySelectorAll('.stavka-ponude.active');
-    aktivneStavkeElementi.forEach(el => {
-        ukupnaCijena += parseFloat(el.dataset.cijena || 0);
-    });
-
-    let trenutniKorisnikId = null;
-    try {
-        const responseKorisnik = await fetch("https://auto-servis.onrender.com/api/korisnik/about", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + localStorage.getItem("authToken")
-            }
-        });
-        if (!responseKorisnik.ok) throw new Error("Neuspješno dohvaćanje korisnika");
-        const dataK = await responseKorisnik.json();
-        trenutniKorisnikId = dataK.idKorisnik;
-    } catch (error) {
-        console.error("Greška kod autorizacije:", error);
-        alert("Sesija je istekla ili niste prijavljeni.");
-        return;
-    }
-
-    const payloadVozilo = {
-        idKorisnik: trenutniKorisnikId,
-        idVrsta: parseInt(modelSelect.value),
-        regOznaka: regValue,
-        godinaProizvodnje: document.getElementById('godina-vozila').value ? parseInt(document.getElementById('godina-vozila').value) : null,
-        serijskiBroj: null, 
-        jeZamjensko: document.getElementById('zamjensko').checked 
-    };
-
-    try {
-        // Slanje vozila
-        const resV = await fetch(`${API_BASE}/vozilo`, {
-            method: "POST",
-            headers: getAuthHeaders(),
-            body: JSON.stringify(payloadVozilo)
-        });
-
-        if (!resV.ok) throw new Error("Greška kod spremanja vozila: " + resV.status);
-        const novoVozilo = await resV.json();
-
-        // Slanje popravka
-        const payloadPopravak = {
-            idVozila: novoVozilo.idVozila, 
-            idTermin: parseInt(document.getElementById('termin').value),
-            stanje: 'u pripremi',
-            opisStavki: odabraneStavke 
-        };
-
-        const resPopravak = await fetch(`${API_BASE}/popravak`, {
-            method: "POST",
-            headers: getAuthHeaders(),
-            body: JSON.stringify(payloadPopravak)
-        });
-
-        if (resPopravak.ok) {
-            alert("Prijava uspješno spremljena!");
-            
-           nacrtajStatusKarticu(regValue, "U PRIPREMI", modelTekst, odabraneStavke, ukupnaCijena);
-            
-            e.target.reset(); 
-            const popisLista = document.getElementById('popis-za-popravak');
-            if (popisLista) popisLista.innerHTML = '<li>Nije odabrana nijedna stavka</li>';
-        } else {
-            throw new Error("Greška kod kreiranja popravka: " + resPopravak.status);
+        if (!regRegex.test(regValue)) {
+            alert("Registracija mora biti u formatu XX-1111-XX (npr. ZG-1234-AA)!");
+            return; 
         }
 
-    } catch (err) {
-        console.error("Greška u procesu:", err);
-        alert("Neuspješno slanje: " + err.message);
-    }
-});
+        const modelSelect = document.getElementById('marka-model');
+        const modelTekst = modelSelect.options[modelSelect.selectedIndex].text;
+        const odabraneStavke = document.getElementById('finalni-popis-input').value;
 
-function nacrtajStatusKarticu(registracija, stanje, model, stavke, cijena) {
+        let ukupnaCijena = 0;
+        document.querySelectorAll('.stavka-ponude.active').forEach(el => {
+            ukupnaCijena += parseFloat(el.dataset.cijena || 0);
+        });
+
+        const idKorisnika = await dohvatiIdLogiranogKorisnika();
+        if (!idKorisnika) {
+            alert("Niste prijavljeni ili je sesija istekla.");
+            return;
+        }
+
+        const payloadVozilo = {
+            idKorisnik: idKorisnika,
+            idVrsta: parseInt(modelSelect.value),
+            regOznaka: regValue,
+            godinaProizvodnje: document.getElementById('godina-vozila').value ? parseInt(document.getElementById('godina-vozila').value) : null,
+            serijskiBroj: null, 
+            jeZamjensko: document.getElementById('zamjensko').checked 
+        };
+
+        try {
+            const resV = await fetch(`${API_BASE}/vozilo`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payloadVozilo)
+            });
+
+            if (!resV.ok) throw new Error("Greška kod spremanja vozila: " + resV.status);
+            const novoVozilo = await resV.json();
+
+            const payloadPopravak = {
+                idVozila: novoVozilo.idVozila, 
+                idTermin: parseInt(document.getElementById('termin').value),
+                stanje: 'u pripremi',
+                opisStavki: odabraneStavke 
+            };
+
+            const resPopravak = await fetch(`${API_BASE}/popravak`, {
+                method: "POST",
+                headers: getAuthHeaders(),
+                body: JSON.stringify(payloadPopravak)
+            });
+
+            if (resPopravak.ok) {
+                alert("Prijava uspješno spremljena!");
+                
+                // Osvježi listu popravaka
+                await ucitajMojePopravke();
+                
+                e.target.reset(); 
+                const popisLista = document.getElementById('popis-za-popravak');
+                if (popisLista) popisLista.innerHTML = '<li>Nije odabrana nijedna stavka</li>';
+            } else {
+                throw new Error("Greška kod kreiranja popravka: " + resPopravak.status);
+            }
+
+        } catch (err) {
+            console.error("Greška u procesu:", err);
+            alert("Neuspješno slanje: " + err.message);
+        }
+    });
+}
+
+function nacrtajStatusKarticu(podaci) {
     const kontejner = document.getElementById('status-vozila-kontenjer');
-    const datumZavrsetka = typeof izracunajDatumZavrsetka === 'function' ? izracunajDatumZavrsetka() : "U obradi";
-    const btnId = `pdf-btn-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    // Ako nema izračuna datuma završetka, stavi +3 dana
+    const datumZavrsetka = typeof izracunajDatumZavrsetka === 'function' ? izracunajDatumZavrsetka() : new Date(Date.now() + 259200000).toLocaleDateString('hr-HR');
+    const btnId = `pdf-btn-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
     const html = `
         <div class="kartica-statusa" style="border-left: 5px solid #00d4ff; background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 15px; color: white;">
             <div class="info-vozilo" style="margin-bottom: 10px;">
-                <span style="font-weight: bold; font-size: 1.1rem;">${model} [${registracija}]</span>
-                <span style="float: right; color: #00d4ff; border: 1px solid #00d4ff; padding: 2px 8px; border-radius: 15px;">${stanje}</span>
+                <span style="font-weight: bold; font-size: 1.1rem;">${podaci.model} [${podaci.reg}]</span>
+                <span style="float: right; color: #00d4ff; border: 1px solid #00d4ff; padding: 2px 8px; border-radius: 15px;">${podaci.stanje}</span>
             </div>
             
             <div style="font-size: 0.9rem; color: #ccc; border-top: 1px solid #333; padding-top: 10px;">
-                <strong>Odabrano:</strong> ${stavke}<br>
-                <strong>Ukupna cijena:</strong> <span style="color: #2ecc71;">${cijena.toFixed(2)} €</span>
+                <strong>Radovi:</strong> ${podaci.stavkeOpis}<br>
+                <strong>Termin:</strong> ${podaci.termin} <br>
+                <strong>Ukupna cijena:</strong> <span style="color: #2ecc71; font-weight:bold;">${podaci.cijena.toFixed(2)} €</span>
             </div>
 
-            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Završetak: ${datumZavrsetka}</p>
+            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Predviđen završetak: ${datumZavrsetka}</p>
 
             <button id="${btnId}" style="margin-top: 15px; cursor: pointer; background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; font-weight: bold;">
-                DOKUMENTACIJA (PDF)
+                <i class="fas fa-file-pdf"></i> PREUZMI RAČUN / PONUDU
             </button>
         </div>
     `;
 
-    kontejner.insertAdjacentHTML('afterbegin', html);
+    kontejner.insertAdjacentHTML('beforeend', html);
 
     document.getElementById(btnId).onclick = () => {
-        exportVehiclePDF({
-            model: model,
-            reg: registracija,
-            stanje: stanje,
-            datum: datumZavrsetka,
-            stavke: stavke,
-            cijena: cijena
-        });
+        // Dodajemo datum završetka u podatke prije slanja u PDF
+        podaci.datumZavrsetka = datumZavrsetka;
+        exportVehiclePDF(podaci);
     };
 }
 
-//OVO TREBA MINJAT KAD SE U BAZU UBACI DATUM ZAVRSETKA
 function izracunajDatumZavrsetka() {
     const danas = new Date();
-    // Dodajemo 3 dana na današnji datum
     danas.setDate(danas.getDate() + 3);
-    
     return danas.toLocaleDateString('hr-HR');
 }
 
+// PDF za POJEDINAČNO vozilo
 function exportVehiclePDF(data) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
-    const autor = "Registrirani Korisnik";
+    // Zaglavlje
+    doc.setFillColor(41, 128, 185);
+    doc.rect(0, 0, 210, 20, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
+    doc.text("AUTO SERVIS - RADNI NALOG / RAČUN", 14, 13);
 
-    doc.setFontSize(18);
-    doc.setTextColor(41, 128, 185);
-    doc.text("POTVRDA O PRIJAVI VOZILA", 14, 22);
-
+    // Podaci o klijentu i vozilu
+    doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text(`Datum generiranja: ${new Date().toLocaleString('hr-HR')}`, 14, 30);
-    doc.text(`Izvještaj izradio: ${autor}`, 14, 35);
+    
+    const yStart = 30;
+    doc.text(`Vlasnik: ${data.vlasnik || 'N/A'}`, 14, yStart);
+    doc.text(`Datum izdavanja: ${new Date().toLocaleString('hr-HR')}`, 14, yStart + 5);
+    doc.text(`Status naloga: ${data.stanje}`, 14, yStart + 10);
+
+    doc.text(`Vozilo: ${data.model}`, 120, yStart);
+    doc.text(`Registracija: ${data.reg}`, 120, yStart + 5);
+    doc.text(`VIN (Šasija): ${data.vin}`, 120, yStart + 10);
+    doc.text(`Godina: ${data.godina}`, 120, yStart + 15);
 
     doc.setLineWidth(0.5);
-    doc.line(14, 40, 196, 40);
+    doc.line(14, yStart + 20, 196, yStart + 20);
 
+    // Tablica stavki
     const tableBody = [
-        ["Stavka", "Informacija"],
-        ["Vozilo", data.model],
-        ["Registracija", data.reg],
-        ["Status", data.stanje],
-        ["Procijenjeni završetak", data.datum],
-        ["ODABRANE USLUGE", data.stavke],
-        ["UKUPNI TROŠAK", `${data.cijena.toFixed(2)} €`] 
+        ["Opis stavke / Usluge", "Iznos (€)"]
     ];
 
+    // Ako je opis dugačak string (stari format), stavi ga u jedan red
+    // Ako bismo imali array u data, mogli bismo iterirati. 
+    // Ovdje koristimo data.stavkeOpis koji je string.
+    // Razdvajamo ga po zarezu ako je moguće radi ljepšeg prikaza
+    const stavkeNiz = data.stavkeOpis.split(', ');
+    stavkeNiz.forEach(stavka => {
+        // Pokušaj izvući cijenu iz stringa "Naziv (50.00 €)" za potrebe tablice ako treba, 
+        // ili samo ispiši cijeli string u lijevi stupac
+        tableBody.push([stavka, "-"]);
+    });
+
+    // Dodaj red za ukupno
+    tableBody.push([{content: 'UKUPNO:', styles: {halign: 'right', fontStyle: 'bold'}}, {content: data.cijena.toFixed(2) + ' €', styles: {fontStyle: 'bold', fillColor: [230, 255, 230]}}]);
+
     doc.autoTable({
-        startY: 45,
+        startY: yStart + 25,
         head: [tableBody[0]],
         body: tableBody.slice(1),
         headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-        alternateRowStyles: { fillColor: [245, 245, 245] },
-        styles: { overflow: 'linebreak', cellWidth: 'wrap' },
-        columnStyles: { 1: { cellWidth: 140 } } 
+        columnStyles: { 0: { cellWidth: 140 }, 1: { cellWidth: 40, halign: 'right' } },
+        theme: 'grid'
     });
 
-    const finalY = doc.lastAutoTable.finalY + 20;
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "italic");
-    doc.text("Ovaj dokument je automatski generiran iz sustava Auto Servis.", 14, finalY);
+    // Footer
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFontSize(8);
+    doc.text("Hvala na povjerenju. PDV je uključen u cijenu (ako je primjenjivo).", 14, finalY);
 
-    const fileDate = new Date().toISOString().split('T')[0];
-    doc.save(`Potvrda_Servis_${data.reg}_${fileDate}.pdf`);
+    doc.save(`Racun_${data.reg}_${Date.now()}.pdf`);
+}
+
+// ---------------- NOVE FUNKCIJE ZA PDF SVIH POPRAVAKA ----------------
+
+function dodajGumbZaSvePDF() {
+    const kontejner = document.getElementById('status-vozila-kontenjer');
+    
+    // Provjeri postoji li već gumb da ga ne dupliciramo
+    if(document.getElementById('btn-export-all')) return;
+    
+    // Ubacujemo gumb PRIJE kontejnera s karticama
+    const gumbHTML = `
+        <div style="margin-bottom: 20px; text-align: right;">
+             <button id="btn-export-all">
+                <i class="fas fa-file-pdf"></i> PREUZMI IZVJEŠTAJ ZA SVE MOJE POPRAVKE
+            </button>
+        </div>
+    `;
+    
+    // Ubacujemo prije samog containera kartica
+    kontejner.insertAdjacentHTML('beforebegin', gumbHTML);
+
+    document.getElementById('btn-export-all').addEventListener('click', generirajMasovniPDF);
+}
+
+function generirajMasovniPDF() {
+    if (mojiPopravciCache.length === 0) {
+        alert("Nema popravaka za izvoz.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l'); // Landscape orijentacija jer imamo puno stupaca
+
+    doc.setFontSize(18);
+    doc.setTextColor(41, 128, 185);
+    doc.text("EVIDENCIJA SVIH POPRAVAKA", 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Korisnik: ${mojiPopravciCache[0]?.vozilo?.korisnik?.ime || ''} ${mojiPopravciCache[0]?.vozilo?.korisnik?.prezime || ''}`, 14, 30);
+    doc.text(`Datum generiranja: ${new Date().toLocaleString('hr-HR')}`, 14, 35);
+
+    const tableHead = [[
+        "Vozilo", 
+        "Registracija", 
+        "VIN",
+        "Godina",
+        "Datum Termina",
+        "Status", 
+        "Cijena (€)"
+    ]];
+    
+    const tableBody = mojiPopravciCache.map(p => {
+        // Koristimo helper funkciju za izračun
+        const info = analizirajTroskove(p);
+        
+        const vozilo = p.vozilo || {};
+        const vrsta = vozilo.vrstaVozila || {};
+
+        return [
+            vrsta.nazivModela || "N/A",
+            vozilo.regOznaka || "-",
+            vozilo.serijskiBroj || "-", // NOVO
+            vozilo.godinaProizvodnje || "-", // NOVO
+            p.termin ? new Date(p.termin.datumVrijeme).toLocaleDateString() : "-",
+            //info.opis, // Točan opis iz baze
+            (p.stanje || "").toUpperCase(),
+            info.ukupnaCijena.toFixed(2)
+        ];
+    });
+
+    doc.autoTable({
+        startY: 45,
+        head: tableHead,
+        body: tableBody,
+        headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+        styles: { fontSize: 8, overflow: 'linebreak' },
+        columnStyles: { 
+            0: { cellWidth: 30 }, 
+            5: { cellWidth: 80 }, // Širi stupac za opis
+            7: { halign: 'right', fontStyle: 'bold' } 
+        } 
+    });
+
+    doc.save(`Svi_Popravci_Izvjestaj.pdf`);style=""
 }
 
 async function ucitajMojePopravke() {
     try {
+        const trenutniKorisnikId = await dohvatiIdLogiranogKorisnika();
+        if (!trenutniKorisnikId) return;
+
         const token = localStorage.getItem("authToken");
         const res = await fetch(`${API_BASE}/popravak`, { 
             headers: { "Authorization": "Bearer " + token } 
         });
-        const popravci = await res.json();
         
+        if (!res.ok) throw new Error("Neuspješno dohvaćanje popravaka");
+        
+        const sviPopravci = await res.json();
         const kontejner = document.getElementById('status-vozila-kontenjer');
         kontejner.innerHTML = ""; 
+        
+        // Filtriranje za trenutnog korisnika
+        const mojiPopravci = sviPopravci.filter(p => 
+            p.vozilo && p.vozilo.korisnik && p.vozilo.korisnik.idKorisnik === trenutniKorisnikId
+        );
 
-        popravci.forEach(p => {
-            if (p.vozilo) {
-                const reg = p.vozilo.regOznaka || "Nema reg.";
-                const model = p.vozilo.vrstavozila?.nazivModela || p.vozilo.vrstaVozila?.nazivModela || "Vozilo";
-                const status = (p.stanje || "U PRIPREMI").toUpperCase();
+        // Spremanje u globalni cache za masovni PDF export
+        mojiPopravciCache = mojiPopravci;
 
-                let stavkeLista = [];
-                let suma = 0;
+        dodajGumbZaSvePDF();
+        const gumbExport = document.getElementById('btn-export-all');
+        if (gumbExport) gumbExport.style.display = mojiPopravci.length > 0 ? 'inline-block' : 'none';
 
-                if (p.radnja && Array.isArray(p.radnja)) {
-                    p.radnja.forEach(r => {
-                        if (r.dijeloviusluge) {
-                            stavkeLista.push(r.dijeloviusluge.naziv);
-                            suma += parseFloat(r.dijeloviusluge.cijena || 0);
-                        }
-                    });
-                }
+        if (mojiPopravci.length === 0) {
+            kontejner.innerHTML = '<p style="color:white; text-align:center;">Nemate prijavljenih popravaka.</p>';
+            return;
+        }
 
-                // Fallback ako nema radnji u bazi, koristi ono što je korisnik upisao pri prijavi
-                let prikazStavki = stavkeLista.length > 0 ? stavkeLista.join(", ") : (p.opisStavki || "Osnovni pregled");
+        mojiPopravci.forEach(p => {
+            // Dohvat podataka prema strukturi iz admin.htmlstyle=""
+            const vozilo = p.vozilo;
+            const reg = vozilo.regOznaka || "Nema reg.";
+            const model = vozilo.vrstaVozila?.nazivModela || "Vozilo";
+            const status = (p.stanje || "U PRIPREMI").toUpperCase();
+            
+            // Dodatni podaci za PDF (iz admin strukture)
+            const vin = vozilo.serijskiBroj || "-";
+            const godina = vozilo.godinaProizvodnje || "-";
+            const vlasnik = vozilo.korisnik ? `${vozilo.korisnik.ime} ${vozilo.korisnik.prezime}` : "Nepoznato";
+            const datumTermina = p.termin ? new Date(p.termin.datumVrijeme).toLocaleDateString('hr-HR') : "Nije definirano";
 
-                nacrtajStatusKarticu(reg, status, model, prikazStavki, suma);
-            }
+            // Izračun cijene i stavki
+            console.log()
+            const info = analizirajTroskove(p);
+
+            // Poziv funkcije za crtanje kartice s proširenim objektom podataka
+            nacrtajStatusKarticu({
+                model: model,
+                reg: reg,
+                stanje: status,
+                stavkeOpis: info.opis,
+                cijena: info.ukupnaCijena,
+                vin: vin,
+                godina: godina,
+                vlasnik: vlasnik,
+                termin: datumTermina
+            });
         });
+
     } catch (err) {
-        console.error("Greška kod učitavanja:", err);
+        console.error("Greška kod učitavanja popravaka:", err);
     }
 }
 
@@ -479,5 +551,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof dohvatiPodatkeZaServis === 'function') {
         dohvatiPodatkeZaServis();
     }
-    setTimeout(ucitajMojePopravke, 500);
+    // Malo veća odgoda da budemo sigurni da je token učitan ako se koristi iz nekog drugog izvora
+    setTimeout(ucitajMojePopravke, 300);
 });
+
+// --- FUNKCIJA ZA DETALJE I CIJENU ---
+function analizirajTroskove(popravak) {
+    let ukupno = 0;
+    let stavkeTekst = [];
+    
+    //IZRACUN CIJENE
+
+    return {
+        ukupnaCijena: ukupno,
+        opis: stavkeTekst.join(", "),
+        lista: stavkeTekst // Vraća niz za ljepši ispis u PDF-u
+    };
+}

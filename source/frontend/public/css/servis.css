@@ -373,7 +373,7 @@ select:focus {
 }
 /* Zeleni obrub kad je format ispravan */
 #reg:focus:valid {
-    border-color: #28a745;
+    border-color: #10b41e;
 }
 
 @keyframes fadeIn {
@@ -389,4 +389,21 @@ select:focus {
     .ServisContainer {
         flex-direction: column;
     }
+}
+#btn-export-all:hover{
+    scale: 1.02;
+    background: #b46000 !important;
+    border: #29bfff !important;
+}
+
+#btn-export-all{
+    background: #be7516;
+    color: white; 
+    padding: 12px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    display: none;
+    transition: all 0.2s ease;
 }
