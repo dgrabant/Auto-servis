@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -98,6 +99,15 @@ public class PopravakController {
         if(AuthorityCheck.CheckAuthority(userPrincipal, "serviser") && !Objects.equals(korisnik.getIdKorisnik(), userPrincipal.getId()))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        ZonedDateTime datumVrijeme = null;
+        try {
+            if(popravakDto.getDatumVrijeme() != null) datumVrijeme = ZonedDateTime.parse(popravakDto.getDatumVrijeme());
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+        popravak.setDatumVrijeme(datumVrijeme);
+
         try {
             popravak = popravakRepository.save(popravak);
             servisiranjeRepository.save(new Servisiranje(popravak, korisnik));
@@ -130,6 +140,15 @@ public class PopravakController {
             if(vozilo != null) existing.get().setVozilo(vozilo);
             if(termin != null) existing.get().setTermin(termin);
             if(popravakDto.getStanje() != null) existing.get().setStanje(popravakDto.getStanje());
+
+            ZonedDateTime datumVrijeme = null;
+            try {
+                if(popravakDto.getDatumVrijeme() != null) datumVrijeme = ZonedDateTime.parse(popravakDto.getDatumVrijeme());
+            }
+            catch (Exception e){
+                return ResponseEntity.badRequest().build();
+            }
+            existing.get().setDatumVrijeme(datumVrijeme);
 
             try {
                 return ResponseEntity.ok(popravakRepository.save(existing.get()));

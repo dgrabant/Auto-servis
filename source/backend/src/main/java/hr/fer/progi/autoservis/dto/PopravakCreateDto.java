@@ -20,6 +20,9 @@ public class PopravakCreateDto {
     @Size(max = 20)
     private String stanje = "u pripremi";
 
+    @Setter
+    private String datumVrijeme;
+
     public void setStanje(String stanje) {
         if(PopravakStatus.exists(stanje)) this.stanje = stanje;
     }

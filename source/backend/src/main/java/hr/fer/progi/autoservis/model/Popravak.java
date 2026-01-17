@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.ZonedDateTime;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -35,6 +37,10 @@ public class Popravak {
     @NotNull
     @Size(max = 20)
     private String stanje = "u pripremi";
+
+    @Setter
+    @Column(name="datumVrijeme")
+    private ZonedDateTime datumVrijeme;
 
     public Popravak(PopravakCreateDto popravakDto){
         this.stanje = popravakDto.getStanje();
