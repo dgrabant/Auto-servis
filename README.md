@@ -1,12 +1,10 @@
 # Auto servis Web App
 
->napomena: početna verzija README, sklona učestalim promjenama, projekt je u tijeku izrade
-
 # Opis projekta
-Ovaj projekt je reultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
+Ovaj projekt je rezultat timskog rada u sklopu projeknog zadatka kolegija [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz) na Fakultetu elektrotehnike i računarstva Sveučilišta u Zagrebu. 
 
-Cilj ovog projekta je razviti aplikaciju koja olakšava i prati rad auto servisa. Omogućava korisnicima da zakažu termin u auto servisu, da prate rad i status njihovog vozila te pruža mogućnost komunikacije sa servisom. Osim toga, olakšava preraspodjelu rada serviserima, pruža im detaljan uvid u svako vozilo kao i mogućnost vođenja detaljne evidencije vezane uz svako vozilo. Vlasniku auto servisa pruža mogućnost dubinskog razumijevanja i pregled rada auto servisa te njegovo vođenje. Sustav olakšava u promjene određenih značajki auto servisa te uvidom u statistiku pruža koristan pregled svih informacija i pruža alat za planiranje i kontinuiran razvoj i napredak auto servisa.
-> Razvojem ovog projekta, tim je ostvario bolje razumijevanje stvarnoga svijeta, kao i napredak svojih inženjerskih sposobnostima u svim mogućim aspektima.
+Cilj je ovoga projekta razviti aplikaciju koja olakšava i prati rad auto servisa. Omogućava korisnicima da zakažu termin u auto servisu, da prate rad i status njihovog vozila te pruža mogućnost komunikacije sa servisom. Osim toga, olakšava preraspodjelu rada serviserima, pruža im detaljan uvid u svako vozilo kao i mogućnost vođenja detaljne evidencije vezane uz svako vozilo. Vlasniku auto servisa pruža mogućnost dubinskog razumijevanja i pregled rada auto servisa te njegovo vođenje. Sustav olakšava u promjene određenih značajki auto servisa te uvidom u statistiku pruža koristan pregled svih informacija i pruža alat za planiranje i kontinuiran razvoj i napredak auto servisa.
+> Razvojem ovog projekta, tim je ostvario bolje razumijevanje stvarnoga svijeta, kao i napredak svojih inženjerskih sposobnosti.
 
 # Funkcijski zahtjevi
 Sustav mora omogućiti registraciju i prijavu korisnika putem vanjskog OAuth2 servisa (npr. Google, Microsoft), bez potrebe za lokalnom lozinkom.
@@ -48,11 +46,6 @@ Blender, Three.js - za 3D modele
 [Car	Mihael](https://github.com/MihaelCar) <br>
 [Žlender	Luka](https://github.com/LukaZlender) <br>
 [Ivelić	Luka](https://github.com/LukaIvelic-fer) <br>
-
-
-# Kontribucije
->Pravila ovise o organizaciji tima i su često izdvojena u CONTRIBUTING.md
-
 
 
 # 📝 Kodeks ponašanja [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
