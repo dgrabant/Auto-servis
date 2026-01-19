@@ -95,16 +95,24 @@ function provjera() {
             document.getElementById("logout-btn").hidden=false;
             if (data.uloga == "admin") {
               document.getElementById("logo").href = "/admin.html";
+              document.getElementById("logoServis").href = "/upravitelj.html";
             }
             if (data.uloga == "upravitelj") {
               document.getElementById("logo").href = "/upravitelj.html";
+              document.getElementById("logoServis").href = "/upravitelj.html";
             }
             if (data.uloga == "serviser") {
               document.getElementById("logo").href = "/serviser.html";
+              document.getElementById("logoServis").href = "/upravitelj.html";
             }
             resolve();
         })
         .catch(error => {
+            if (checkIfLogedIn()) {
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('performance');
+              window.location.href = 'https://autoservis-progi.onrender.com/';
+            }
             console.error("Fetch error:", error);
             resolve();
         });
