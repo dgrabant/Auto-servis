@@ -401,6 +401,10 @@
                             </select>
                         </div>
                         <div class="form-group">
+                            <label>Datum popravka (datumVrijeme):</label>
+                            <input type="datetime-local" id="popravak-datum">
+                        </div>
+                        <div class="form-group">
                             <label>Stanje:</label>
                             <select id="popravak-stanje">
                                 <option value="u pripremi">U pripremi</option>
@@ -1088,6 +1092,7 @@
                     { key: 'popravak.vozilo', label: 'Vozilo' },
                     { key: 'popravak.korisnik', label: 'Vlasnik' },
                     { key: 'popravak.datum', label: 'Termin' },
+                    { key: 'datumVrijeme', label: 'Datum Popravka' },
                     { key: 'stanje', label: 'Stanje' }
                 ];
             } else if (currentEntity === 'radnja') {
@@ -1267,16 +1272,19 @@
                         return {
                         idVozila: getInt('popravak-idVozila'),
                         idTermin: getInt('popravak-idTermin'),
+                        datumVrijeme: formatDateForApi(getVal('popravak-datum')),
                         stanje: getVal('popravak-stanje')
                     }
                     else if (postoji) return{
                         idVozila: getInt('popravak-idVozila'),
-                        idTermin: document.getElementById('popravak-idTermin').value = popravakTerminId,
+                        idTermin: document.getElementById('popravak-idTermin').value = popravakTerminEdit,
+                        datumVrijeme: formatDateForApi(getVal('popravak-datum')),
                         stanje: getVal('popravak-stanje') 
                     }
                     else return {
                     idVozila: getInt('popravak-idVozila'),
                     idTermin: popravakTerminEdit,
+                    datumVrijeme: formatDateForApi(getVal('popravak-datum')),
                     stanje: getVal('popravak-stanje') 
                 };
                 case 'servisiranje': return {
@@ -1325,6 +1333,16 @@
 
             document.getElementById('data-id').value = pkVal;
 
+            const select = document.getElementById('popravak-idTermin');
+            if(select) {
+                Array.from(select.options).forEach(option => {
+                    if (option.textContent.includes("Trenutno postavljeni termin")) {
+                        option.remove();
+                    }
+                });
+                select.value = "";
+            }
+
             const saveBtn = document.getElementById('data-save-btn');
             saveBtn.textContent = "Ažuriraj";
             saveBtn.classList.remove('btn-primary');
@@ -1357,11 +1375,28 @@
                 case 'popravak':
                     const popravakVoziloId = (item.vozilo && item.vozilo.idVozila) ? item.vozilo.idVozila : (item.idVozila || "");
                     const popravakTerminId = (item.termin && item.termin.idTermin) ? item.termin.idTermin : (item.idTermin || "");
-                    
+
                     document.getElementById('popravak-idVozila').value = popravakVoziloId;
                     popravakTerminEdit = popravakTerminId;
                     document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
-                    console.log(popravakTerminId, popravakTerminEdit);
+                    document.getElementById('popravak-datum').value = formatDate(item.datumVrijeme);
+                    
+                    // Logika za termin
+                    try {
+                        // Ovdje pojednostavljujemo logiku prikaza termina
+                        const select = document.getElementById('popravak-idTermin');
+                        
+                        
+                        if (popravakTerminEdit) {
+                            const novaOpcija = document.createElement('option');
+                            novaOpcija.value = popravakTerminEdit;
+                            novaOpcija.textContent = "Trenutno postavljeni termin (ID: " + popravakTerminEdit + ")";
+                            novaOpcija.selected = true;
+                            select.prepend(novaOpcija);
+                            document.getElementById('popravakTermin').style.display = "block";
+                            postoji = true;
+                        } 
+                    } catch(e) { console.error(e); }
                     break;
                 case 'servisiranje':
                     const idPop = item.popravak ? item.popravak.idPopravak : (item.idPopravak || "");
@@ -1376,70 +1411,13 @@
                     document.getElementById('radnja-napomena').value = item.napomena || "";
                     break;
             }
-            if (item.idPopravak) {
-            
-            try {
-                const endpoint = `${API_BASE}/termin`;
-                // 2. Čekamo odgovor od servera
-                const res = await fetch(endpoint, { headers: getAuthHeaders() });
-                let data = await res.json(); // Koristimo 'let' jer ćemo možda filtrirati listu
-                        
-                // --- INTEGRACIJA FILTRIRANJA ---
-                // Provjeravamo treba li filtrirati listu prema trenutno prijavljenom serviseru
-                if (['termin', 'popravak', 'servisiranje', 'radnja'].includes(currentEntity) && trenutniServiser) {
-                    data = data.filter(item => {
-                        let userIdToCheck = null;
-                        if (item.korisnik) {
-                            userIdToCheck = item.korisnik.idKorisnik;
-                        } else if (item.termin && item.termin.korisnik) {
-                            userIdToCheck = item.termin.korisnik.idKorisnik;
-                        }
-                        // Zadrži samo one koji pripadaju serviseru
-                        return userIdToCheck === trenutniServiser.idKorisnik;
-                    });
-                }
-            
-                // 3. Provjera podataka (sada na filtriranoj listi)
-                // 'postoji' će biti true samo ako serviser ima barem jedan svoj termin/popravak
-                if (data && data.length > 0) {
-                    postoji = true;
-                }
-            
-                console.log("Postoji li barem jedan zapis za ovog servisera:", postoji);
-            
-                if (item.idPopravak) {
-                    // Brišemo staru opciju "Trenutno postavljeni termin" ako postoji da se ne duplira
-                    const select = document.getElementById('popravak-idTermin');
-                    Array.from(select.options).forEach(opt => {
-                        if (opt.textContent === "Trenutno postavljeni termin") opt.remove();
-                    });
-                
-                    if (postoji) {
-                        const novaOpcija = document.createElement('option');
-                        novaOpcija.value = `${popravakTerminEdit}`;
-                        novaOpcija.textContent = "Trenutno postavljeni termin";
-                        novaOpcija.selected = true;
-                        select.appendChild(novaOpcija);
-                        
-                        // Osiguraj da je kontejner vidljiv
-                        const kontejner = document.getElementById('popravakTermin');
-                        if (kontejner) kontejner.style.display = "block";
-                    } else {
-                        const kontejner = document.getElementById('popravakTermin');
-                        if (kontejner) kontejner.style.display = "none";
-                    }
-                }
-            
-            } catch (err) {
-                logStatus("Greška učitavanje entiteta: " + err, true);
-            }   
-            }
             window.scrollTo(0, 0);
         };
 
         window.resetDataForm = function() {
             dataForm.reset();
             document.getElementById('data-id').value = "";
+            document.getElementById('popravak-datum').value = "";
             const saveBtn = document.getElementById('data-save-btn');
             saveBtn.textContent = "Spremi";
             saveBtn.classList.remove('btn-edit');
