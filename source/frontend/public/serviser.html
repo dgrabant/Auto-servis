@@ -239,7 +239,7 @@
                         <tr>
                             <th>Vozilo</th>
                             <th>Korisnik</th>
-                            <th>Termin</th>
+                            <th>Zadaci</th> <th>Termin</th>
                             <th>Stanje</th>
                             <th>Brze Akcije</th>
                         </tr>
@@ -623,27 +623,31 @@
             }
         }
 
-        // --- NOVA FUNKCIJA: UČITAVANJE MOJIH ZADATAKA ---
+        // --- UČITAVANJE MOJIH ZADATAKA S RADNJAMA ---
         async function loadMyTasks() {
             showLoading();
             try {
-                // Dohvaćamo veznu tablicu Servisiranje da vidimo koji su popravci dodijeljeni meni
-                const res = await fetch(`${API_BASE}/servisiranje`, { headers: getAuthHeaders() });
-                if(!res.ok) throw new Error("Neuspješan dohvat zadataka");
-                const allTasks = await res.json();
+                // 1. Dohvaćamo veznu tablicu Servisiranje (moji dodijeljeni popravci)
+                const resServis = await fetch(`${API_BASE}/servisiranje`, { headers: getAuthHeaders() });
+                if(!resServis.ok) throw new Error("Neuspješan dohvat servisiranja");
+                const allServis = await resServis.json();
+
+                // 2. Dohvaćamo sve radnje kako bismo vidjeli specifične zadatke
+                const resRadnje = await fetch(`${API_BASE}/radnja`, { headers: getAuthHeaders() });
+                const allRadnje = resRadnje.ok ? await resRadnje.json() : [];
                 
                 // Filtriraj gdje je idKorisnik == trenutniServiser.idKorisnik
-                const myTasks = allTasks.filter(task => task.korisnik && task.korisnik.idKorisnik === trenutniServiser.idKorisnik);
+                const myRepairs = allServis.filter(task => task.korisnik && task.korisnik.idKorisnik === trenutniServiser.idKorisnik);
                 
                 const tbody = document.getElementById('my-tasks-table-body');
                 tbody.innerHTML = "";
 
-                if(myTasks.length === 0) {
-                    tbody.innerHTML = "<tr><td colspan='5'>Nemate dodijeljenih popravaka.</td></tr>";
+                if(myRepairs.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='6'>Nemate dodijeljenih popravaka.</td></tr>";
                     return;
                 }
 
-                myTasks.forEach(task => {
+                myRepairs.forEach(task => {
                     const popravak = task.popravak;
                     if(!popravak) return;
                     
@@ -653,7 +657,28 @@
                     const terminTxt = popravak.termin ? new Date(popravak.termin.datumVrijeme).toLocaleString() : "Nema termina";
                     const stanje = popravak.stanje || "Nepoznato";
                     
-                    // Bojanje stanja
+                    // Tražimo radnje koje pripadaju ovom popravku I ovom serviseru
+                    const mojeRadnje = allRadnje.filter(r => 
+                        (r.popravak && r.popravak.idPopravak === popravak.idPopravak) &&
+                        (r.korisnik && r.korisnik.idKorisnik === trenutniServiser.idKorisnik)
+                    );
+
+                    // Formatiranje teksta radnji
+                    let radnjeHTML = "";
+                    if (mojeRadnje.length > 0) {
+                        radnjeHTML = `<ul style="margin:0; padding-left:20px; font-size:0.9em;">`;
+                        mojeRadnje.forEach(r => {
+                            const naziv = r.dijeloviusluge ? r.dijeloviusluge.naziv : "Opća radnja";
+                            const statusRadnje = r.stanje === 'završeno' ? '✅' : '🛠️';
+                            radnjeHTML += `<li>${statusRadnje} ${naziv}</li>`;
+                        });
+                        radnjeHTML += `</ul>`;
+                    } else {
+                        radnjeHTML = `<span style="color:#94a3b8; font-style:italic;">Nema definiranih radnji</span>`;
+                    }
+                    // -----------------------------------------------------------------------
+
+                    // Bojanje stanja popravka
                     let stanjeColor = "black";
                     if(stanje.toLowerCase().includes("tijek")) stanjeColor = "#f59e0b"; // žuto
                     if(stanje.toLowerCase().includes("završ")) stanjeColor = "#10b981"; // zeleno
@@ -662,7 +687,7 @@
                     tr.innerHTML = `
                         <td><strong>${voziloTxt}</strong></td>
                         <td>${korisnikTxt}</td>
-                        <td>${terminTxt}</td>
+                        <td>${radnjeHTML}</td> <td>${terminTxt}</td>
                         <td style="color:${stanjeColor}; font-weight:bold;">${stanje.toUpperCase()}</td>
                         <td>
                              <button class="btn-sm btn-primary" onclick="switchToRepairEdit(${popravak.idPopravak})">Detalji & Radnje</button>
