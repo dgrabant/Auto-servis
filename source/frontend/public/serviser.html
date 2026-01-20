@@ -690,7 +690,7 @@
                         <td>${radnjeHTML}</td> <td>${terminTxt}</td>
                         <td style="color:${stanjeColor}; font-weight:bold;">${stanje.toUpperCase()}</td>
                         <td>
-                             <button class="btn-sm btn-primary" onclick="switchToRepairEdit(${popravak.idPopravak})">Detalji & Radnje</button>
+                            <button class="btn-sm btn-primary" onclick="switchToRepairEdit(${popravak.idPopravak})">Detalji & Radnje</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -725,36 +725,13 @@
         // --- HELPER ZA DROPDOWNOVE ---
         async function populateDropdowns() {
             showLoading(); // Wrap fetching dropdowns
-            try {
-                // 1. Korisnici
-                const userRes = await fetch(`${API_BASE}/korisnik`, { headers: getAuthHeaders() });
-                cachedUsers = await userRes.json();
-                
+            try {   
                 const userSelects = {
                     'vozilo-idKorisnik': false,
                     'termin-idKorisnik': true,
                     'radnja-idKorisnik': true   
                 };
                 
-                for (const [selId, filterForServiser] of Object.entries(userSelects)) {
-                    const sel = document.getElementById(selId);
-                    if(sel) {
-                        sel.innerHTML = '<option value="">Odaberite...</option>';
-                        let usersToShow = cachedUsers;
-                        if (filterForServiser && trenutniServiser) {
-                            usersToShow = cachedUsers.filter(u => u.idKorisnik === trenutniServiser.idKorisnik);
-                        }
-                        usersToShow.forEach(u => {
-                            const opt = document.createElement('option');
-                            opt.value = u.idKorisnik;
-                            opt.textContent = `${u.ime} ${u.prezime} | ${u.email || u.username} (ID: ${u.idKorisnik})`;
-                            sel.appendChild(opt);
-                        });
-                        if(filterForServiser && usersToShow.length === 1) {
-                            sel.value = usersToShow[0].idKorisnik;
-                        }
-                    }
-                }
 
                 // 2. Vrste vozila
                 const vrstavRes = await fetch(`${API_BASE}/vrstavozila`, { headers: getAuthHeaders() });
