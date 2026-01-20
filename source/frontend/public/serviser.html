@@ -401,7 +401,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Datum popravka (datumVrijeme):</label>
+                            <label>Kraj popravka</label>
                             <input type="datetime-local" id="popravak-datum">
                         </div>
                         <div class="form-group">
@@ -412,6 +412,13 @@
                                 <option value="odbijeno">Odbijeno</option>
                                 <option value="završeno">Završeno</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Opis popravka:</label>
+                            <textarea id="popravak-opis" maxlength="1000" placeholder="Detaljan opis popravka..." style="height: 100px;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -725,7 +732,7 @@
         // --- HELPER ZA DROPDOWNOVE ---
         async function populateDropdowns() {
             showLoading(); // Wrap fetching dropdowns
-            try {   
+            try {
                 const userSelects = {
                     'vozilo-idKorisnik': false,
                     'termin-idKorisnik': true,
@@ -1089,11 +1096,12 @@
                     { key: 'odgoda', label: 'Odgoda' }
                 ];
             } else if (currentEntity === 'popravak') {
-                 columns = [
+                columns = [
                     { key: 'idPopravak', label: 'ID' },
                     { key: 'popravak.vozilo', label: 'Vozilo' },
                     { key: 'popravak.korisnik', label: 'Vlasnik' },
                     { key: 'popravak.datum', label: 'Termin' },
+                    { key: 'opis', label: 'Opis' },
                     { key: 'datumVrijeme', label: 'Datum Popravka' },
                     { key: 'stanje', label: 'Stanje' }
                 ];
@@ -1141,9 +1149,15 @@
                         val = item.vozilo ? item.vozilo.regOznaka : (item.idVozila || '-');
                     } else if (col.key === 'popravak.korisnik') {
                         val = item.vozilo && item.vozilo.korisnik ? 
-                              `${item.vozilo.korisnik.ime} ${item.vozilo.korisnik.prezime}` : '-';
+                            `${item.vozilo.korisnik.ime} ${item.vozilo.korisnik.prezime}` : '-';
                     } else if (col.key === 'popravak.datum') {
                         val = item.termin ? item.termin.datumVrijeme : (item.idTermin || '-');
+                    }
+                    else if (col.key === 'opis') {
+                        // Ako nema opisa, stavi crticu, inače stavi u div sa scrollom
+                        let text = item.opis || '-';
+                        // Ovdje definiramo prozorčić s fiksnom visinom i scrollom
+                        val = `<div style="max-height: 80px; overflow-y: auto; min-width: 150px; white-space: pre-wrap; font-size: 0.85rem; border: 1px solid #e2e8f0; padding: 5px; border-radius: 4px; background: #fff;">${text}</div>`;
                     }
                     // Radnja specifika
                     else if (col.key === 'radnja.serviser') {
@@ -1152,7 +1166,7 @@
                         val = item.dijeloviusluge ? `${item.dijeloviusluge.naziv} (${item.dijeloviusluge.cijena}€)` : '-';
                     } else if (col.key === 'radnja.vozilo') {
                         val = item.popravak && item.popravak.vozilo ? 
-                              `${item.popravak.vozilo.regOznaka}` : '-';
+                            `${item.popravak.vozilo.regOznaka}` : '-';
                     }
                     // Servisiranje specifika
                     else if (col.key === 'servis.model') {
@@ -1275,19 +1289,22 @@
                         idVozila: getInt('popravak-idVozila'),
                         idTermin: getInt('popravak-idTermin'),
                         datumVrijeme: formatDateForApi(getVal('popravak-datum')),
-                        stanje: getVal('popravak-stanje')
+                        stanje: getVal('popravak-stanje'),
+                        opis: getVal('popravak-opis')
                     }
                     else if (postoji) return{
                         idVozila: getInt('popravak-idVozila'),
                         idTermin: document.getElementById('popravak-idTermin').value = popravakTerminEdit,
                         datumVrijeme: formatDateForApi(getVal('popravak-datum')),
-                        stanje: getVal('popravak-stanje') 
+                        stanje: getVal('popravak-stanje'),
+                        opis: getVal('popravak-opis') 
                     }
                     else return {
                     idVozila: getInt('popravak-idVozila'),
                     idTermin: popravakTerminEdit,
                     datumVrijeme: formatDateForApi(getVal('popravak-datum')),
-                    stanje: getVal('popravak-stanje') 
+                    stanje: getVal('popravak-stanje'),
+                    opis: getVal('popravak-opis')
                 };
                 case 'servisiranje': return {
                     idPopravak: getInt('servis-idPopravak'),
@@ -1382,6 +1399,7 @@
                     popravakTerminEdit = popravakTerminId;
                     document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
                     document.getElementById('popravak-datum').value = formatDate(item.datumVrijeme);
+                    document.getElementById('popravak-opis').value = item.opis || "";
                     
                     // Logika za termin
                     try {
@@ -1426,6 +1444,7 @@
             saveBtn.classList.add('btn-primary');
             document.getElementById('data-cancel-btn').style.display = "none";
             document.getElementById('popravakTermin').style.display = "block";
+            document.getElementById('popravak-opis').value = "";
             const select = document.getElementById('popravak-idTermin');
 
             Array.from(select.options).forEach(option => {

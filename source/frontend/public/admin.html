@@ -460,6 +460,13 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Opis popravka:</label>
+                            <textarea id="popravak-opis" maxlength="1000" placeholder="Detaljan opis popravka..." style="height: 100px;"></textarea>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="fields-servisiranje" class="data-fields">
@@ -534,7 +541,7 @@
     </div>
     
     <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; flex-direction:column; justify-content:center; align-items:center; color:white; backdrop-filter: blur(5px);">
-        <div class="spinner"></div> <p>Spremanje u tijeku, molimo pričekajte...</p>
+        <div class="spinner"></div> <p>Učitavanje u tijeku, molimo pričekajte...</p>
     </div>
 
     <script>
@@ -972,6 +979,7 @@
             
             document.getElementById('part-cancel-btn').style.display = "none";
             document.getElementById('type-service').checked = true; 
+            document.getElementById('popravak-opis').value = "";
         };
 
         // --- 2. KORISNICI ---
@@ -1223,6 +1231,7 @@
                    { key: 'popravak.vozilo', label: 'Vozilo (Reg)' },
                    { key: 'popravak.korisnik', label: 'Vlasnik' },
                    { key: 'popravak.datum', label: 'Termin (Datum)' },
+                   { key: 'opis', label: 'Opis' },
                    { key: 'datumVrijeme', label: 'Kraj Popravka' },
                    { key: 'stanje', label: 'Stanje' }
                 ];
@@ -1302,6 +1311,11 @@
                          val = item.popravak?.vozilo?.korisnik?.email || '-';
                     } else if (col.key === 'servis.serviser') {
                         val = item.korisnik ? `${item.korisnik.ime} ${item.korisnik.prezime}` : (item.idKorisnik || '-');
+                    } else if (col.key === 'opis') {
+                        // Ako nema opisa, stavi crticu, inače stavi u div sa scrollom
+                        let text = item.opis || '-';
+                        // Ovdje definiramo prozorčić s fiksnom visinom i scrollom
+                        val = `<div style="max-height: 80px; overflow-y: auto; min-width: 150px; white-space: pre-wrap; font-size: 0.85rem; border: 1px solid #e2e8f0; padding: 5px; border-radius: 4px; background: #fff;">${text}</div>`;
                     }
                     else {
                         val = item[col.key];
@@ -1361,12 +1375,15 @@
             if(id) url += `/${id}`; 
 
             const payload = collectPayload(method);
+            console.log("poslano: ",payload);
             if(!validatePayload(payload, currentEntity)) {
                 hideLoader();
                 return;
             }
+            
         
             try {
+
                 const res = await fetch(url, { 
                     method: method, 
                     headers: getAuthHeaders(), 
@@ -1423,19 +1440,22 @@
                         idVozila: getInt('popravak-idVozila'),
                         idTermin: getInt('popravak-idTermin'),
                         datumVrijeme: formatDateForApi(getVal('popravak-datum')), // <-- NOVO
-                        stanje: getVal('popravak-stanje')
+                        stanje: getVal('popravak-stanje'),
+                        opis: getVal('popravak-opis')
                     }
                     else if (postoji) return{
                         idVozila: getInt('popravak-idVozila'),
                         idTermin: document.getElementById('popravak-idTermin').value = popravakTerminEdit,
                         datumVrijeme: formatDateForApi(getVal('popravak-datum')), // <-- NOVO
-                        stanje: getVal('popravak-stanje') 
+                        stanje: getVal('popravak-stanje'), 
+                        opis: getVal('popravak-opis')
                     }
                     else return {
                     idVozila: getInt('popravak-idVozila'),
                     idTermin: popravakTerminEdit,
                     datumVrijeme: formatDateForApi(getVal('popravak-datum')), // <-- NOVO
-                    stanje: getVal('popravak-stanje') 
+                    stanje: getVal('popravak-stanje'),
+                    opis: getVal('popravak-opis')
                 };
                 case 'servisiranje': return {
                     idPopravak: getInt('servis-idPopravak'),
@@ -1537,6 +1557,7 @@
                         popravakTerminEdit = popravakTerminId;
                         document.getElementById('popravak-stanje').value = item.stanje || "u pripremi";
                         document.getElementById('popravak-datum').value = formatDate(item.datumVrijeme);
+                        document.getElementById('popravak-opis').value = item.opis || "";
 
                         // Logika za termin
                         try {
