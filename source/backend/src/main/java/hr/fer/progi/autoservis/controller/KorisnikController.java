@@ -39,7 +39,7 @@ public class KorisnikController {
     }
 
     @GetMapping("/about")
-    public ResponseEntity<Korisnik> getUserById(@AuthenticationPrincipal UserPrincipal userPrincipal) {
+    public ResponseEntity<Korisnik> getUser(@AuthenticationPrincipal UserPrincipal userPrincipal) {
         if(!AuthorityCheck.CheckAuthority(userPrincipal)) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return userRepository.findById(userPrincipal.getId())

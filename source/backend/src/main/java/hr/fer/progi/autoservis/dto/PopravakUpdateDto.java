@@ -20,7 +20,7 @@ public class PopravakUpdateDto {
     private String datumVrijeme;
 
     @Setter
-    @Size(max = 500)
+    @Size(max = 1000)
     private String opis;
 
     public void setStanje(String stanje) {

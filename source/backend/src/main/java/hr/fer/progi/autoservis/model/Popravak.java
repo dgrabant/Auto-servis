@@ -43,8 +43,8 @@ public class Popravak {
     private ZonedDateTime datumVrijeme;
 
     @Setter
-    @Size(max = 500)
-    @Column(length = 500)
+    @Size(max = 1000)
+    @Column(length = 1000)
     private String opis = "";
 
     public Popravak(PopravakCreateDto popravakDto){
