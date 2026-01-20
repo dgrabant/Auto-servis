@@ -397,9 +397,9 @@ select:focus {
 }
 
 #btn-export-all{
-    background: #be7516;
+    background: red;
     color: white; 
-    padding: 12px 20px; 
+    padding: 20px 20px 20px 20px; 
     border: none; 
     border-radius: 5px; 
     cursor: pointer; 
