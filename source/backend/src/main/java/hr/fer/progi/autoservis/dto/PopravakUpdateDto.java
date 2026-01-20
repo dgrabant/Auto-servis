@@ -19,6 +19,10 @@ public class PopravakUpdateDto {
     @Setter
     private String datumVrijeme;
 
+    @Setter
+    @Size(max = 500)
+    private String opis;
+
     public void setStanje(String stanje) {
         if(PopravakStatus.exists(stanje)) this.stanje = stanje;
     }

@@ -124,7 +124,7 @@ public class PopravakController {
         if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        if(popravakDto.getIdVozila() == null && popravakDto.getIdTermin() == null && popravakDto.getStanje() == null) return ResponseEntity.badRequest().build();
+        if(popravakDto.getIdVozila() == null && popravakDto.getIdTermin() == null && popravakDto.getStanje() == null && popravakDto.getOpis() == null) return ResponseEntity.badRequest().build();
 
         Optional<Popravak> existing = popravakRepository.findById(id);
         if(existing.isPresent()){
@@ -140,6 +140,7 @@ public class PopravakController {
             if(vozilo != null) existing.get().setVozilo(vozilo);
             if(termin != null) existing.get().setTermin(termin);
             if(popravakDto.getStanje() != null) existing.get().setStanje(popravakDto.getStanje());
+            if(popravakDto.getOpis() != null) existing.get().setOpis(popravakDto.getOpis());
 
             ZonedDateTime datumVrijeme = null;
             try {

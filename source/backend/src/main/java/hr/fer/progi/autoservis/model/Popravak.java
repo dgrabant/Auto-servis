@@ -42,8 +42,14 @@ public class Popravak {
     @Column(name="datumVrijeme")
     private ZonedDateTime datumVrijeme;
 
+    @Setter
+    @Size(max = 500)
+    @Column(length = 500)
+    private String opis = "";
+
     public Popravak(PopravakCreateDto popravakDto){
         this.stanje = popravakDto.getStanje();
+        this.opis = popravakDto.getOpis();
     }
 
     public void setStanje(String stanje) {
