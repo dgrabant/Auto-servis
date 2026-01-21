@@ -116,10 +116,15 @@
     box-shadow: 0px 4px 16px 0px rgba(0,0,0,0.5);
     margin-top: 10px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 .kartica-statusa:hover{
     border-color: #29bfff !important;
     scale: 1.02;
+}
+.kartica-statusa strong {
+    font-weight: 600;
 }
 
 .info-vozilo {
@@ -132,23 +137,25 @@
 .vozilo-reg { color: #888; }
 
 .progress-bar-pozadina {
-    background: #444;
-    height: 25px;
-    border-radius: 15px;
+    background: #0f172a; /* Tamna pozadina trake (kao admin header) */
+    height: 18px; /* Malo tanja traka */
+    border-radius: 10px;
     overflow: hidden;
-    margin: 10px 0;
+    margin: 5px 0;
+    border: 1px solid #334155; /* Diskretan rub */
 }
 
 .progress-bar-popuna {
-    background: linear-gradient(90deg, #00527a, #38bff8);
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     font-weight: bold;
-    transition: width 1s ease-in-out;
+    text-shadow: 0px 0px 2px rgba(0,0,0,0.8);
+    transition: width 1s ease-in-out, background-color 0.3s ease;
+    white-space: nowrap; /* Da tekst ne skače */
 }
 
 .trenutna-faza {
@@ -174,12 +181,15 @@
 }
 
 .status-badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.75rem;
+    padding: 4px 10px;
     border-radius: 4px;
-    background: #38bff8;
-    color: black;
-    font-weight: bold;
+    background: #1e293b;
+    color: #4ade80; /* Zelena slova kao u admin terminalu */
+    border: 1px solid #38bff844;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .napomene-servisera {
@@ -392,15 +402,16 @@ select:focus {
 }
 #btn-export-all:hover{
     scale: 1.02;
-    background: #b46000 !important;
+    background: #6ad2ff !important;
+    color: rgb(0, 0, 0) !important;
     border: #29bfff !important;
 }
 
 #btn-export-all{
-    background: red;
-    color: white; 
+    background: #002b3e;
+    color: rgb(255, 255, 255); 
     padding: 20px 20px 20px 20px; 
-    border: none; 
+    border: #227600;
     border-radius: 5px; 
     cursor: pointer; 
     font-weight: bold; 

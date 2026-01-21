@@ -1,3 +1,4 @@
+let sveRadnjeCache = [];
 //povezivanje s bazom podataka
 const API_BASE = "https://auto-servis.onrender.com/api";
 // Globalna varijabla za spremanje filtriranih popravaka (za PDF)
@@ -362,111 +363,78 @@ if (formPrijava) {
     });
 }
 
-//Nisan sigurna jel radi kako bi trebalo, pogledaj opet
-async function spremiRadnjeUBazu(idPopravka, idKorisnika) {
-    const aktivneStavke = document.querySelectorAll('.stavka-ponude.active');
-    
-    if (aktivneStavke.length === 0) {
-        console.log("Nema odabranih stavki za spremanje");
-        return;
-    }
 
-    console.log("Spremanje radnji za popravak:", idPopravka, "korisnik:", idKorisnika);
-    console.log("Broj odabranih stavki:", aktivneStavke.length);
-
-    const promises = [];
-
-    aktivneStavke.forEach(stavka => {
-        const idDijelaUsluge = parseInt(stavka.dataset.id);
-        
-        const radnjaPayload = {
-            idPopravak: idPopravka,
-            idKorisnik: idKorisnika,
-            idDijelausluge: idDijelaUsluge,  //pogledaj ovo sa idDijelUsluge (veliko ili malo u)??
-            stanje: 'nepotvrđeno',
-            napomena: null
-        };
-
-        console.log("Payload za radnju:", radnjaPayload);
-
-        const promise = fetch(`${API_BASE}/radnja`, {
-            method: "POST",
-            headers: getAuthHeaders(),
-            body: JSON.stringify(radnjaPayload)
-        }).then(async (res) => {
-            if (!res.ok) {
-                const errorText = await res.text();
-                console.error(`Greška ${res.status} za stavku ${idDijelaUsluge}:`, errorText);
-                return { success: false, status: res.status, error: errorText };
-            }
-            const data = await res.json();
-            console.log("Uspješno spremljena radnja:", data); //nema ovoga u konzoli tako da triba to popravit
-            return { success: true, data };
-        });
-
-        promises.push(promise);
-    });
-
-    try {
-        const results = await Promise.all(promises);
-        const failedRequests = results.filter(r => !r.success);
-        
-        if (failedRequests.length > 0) {
-            console.error(`${failedRequests.length} radnji nije uspješno spremljeno:`, failedRequests);
-            console.warn("NAPOMENA: Radnje mogu spremati samo serviseri, upravitelji ili admini.");
-            console.warn("Cijena je i dalje sačuvana u opisStavki.");
-        } else {
-            console.log(`Uspješno spremljeno ${results.length} radnji`);
-        }
-    } catch (err) {
-        console.error("Greška pri spremanju radnji:", err);
-    }
-}
 
 function nacrtajStatusKarticu(podaci) {
     const kontejner = document.getElementById('status-vozila-kontenjer');
     
-    const progres = podaci.datumZavrsetka ? izracunajProgres(podaci.termin, podaci.datumZavrsetka) : 0;
-    const progresBarva = progres < 50 ? '#3498db' : progres < 80 ? '#f39c12' : '#2ecc71';
-    
-    const datumZavrsetka = podaci.datumZavrsetka || 'Nije definirano';
+    // Određivanje boje progress bara
+    let progres = podaci.progres || 0;
+    let bojaStatus = '#2ecc71';
+    let progresBoja = '#38bff8'; // Plava
+    if (progres === 100) progresBoja = '#2ecc71'; // Zelena (Završeno)
+    else if (progres > 60) progresBoja = '#f39c12'; // Narančasta
+    else if (podaci.stanje == 'ODBIJENO'){
+        progresBoja = '#ff0000ff';
+        progres = 100;
+        bojaStatus = '#ff2f2fff';
+    } 
+
+    const datumZavrsetkaPrikaz = podaci.datumZavrsetka || 'Nije definirano';
     const btnId = `pdf-btn-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
+    // Prikaži progress bar samo ako postoji datum završetka
+    const displayProgressBar = (podaci.rawDatumZavrsetka) ? 'block' : 'none';
+
+    // Tekst statusa iznad trake
+    let statusTrakeTekst = `${progres}%`;
+    if (progres === 100) statusTrakeTekst = "100%";
+
     const html = `
-        <div class="kartica-statusa" style="border-left: 5px solid #00d4ff; background: #1a1a1a; padding: 20px; border-radius: 10px; margin-bottom: 15px; color: white;">
+        <div class="kartica-statusa">
             <div class="info-vozilo" style="margin-bottom: 10px;">
-                <span style="font-weight: bold; font-size: 1.1rem;">${podaci.model} [${podaci.reg}]</span>
-                <span style="float: right; color: #00d4ff; border: 1px solid #00d4ff; padding: 2px 8px; border-radius: 15px;">${podaci.stanje}</span>
+                <span style="font-weight: bold; font-size: 1.1rem; color:white;">${podaci.model} <span style="color:#aaa; font-size:0.9rem;">[${podaci.reg}]</span></span>
+                <span class="status-badge" style="color: ${bojaStatus}; float: right;">${podaci.stanje}</span>
             </div>
-            ${progres > 0 ? `
-            <!-- Progress Bar -->
-            <div style="margin: 15px 0;">
+
+            <div style="display: ${displayProgressBar}; margin: 15px 0;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">
-                    <span>Progres popravka</span>
-                    <span style="font-weight: bold; color: ${progresBarva};">${progres}%</span>
+                    <span>Procjena stanja (postoji šansa komplikacije)</span>
+                    <span style="font-weight: bold; color: ${progresBoja};">${statusTrakeTekst}</span>
                 </div>
-                <div style="background: #333; height: 8px; border-radius: 10px; overflow: hidden;">
-                    <div style="background: ${progresBarva}; width: ${progres}%; height: 100%; transition: width 0.3s ease;"></div>
+                <div class="progress-bar-pozadina">
+                    <div class="progress-bar-popuna" style="width: ${progres}%; background: ${progresBoja}; box-shadow: 0 0 10px ${progresBoja};">
+                        ${progres > 10 ? progres + '%' : ''} 
+                    </div>
                 </div>
+                <p style="font-size:0.75rem; color:#888; text-align:right; margin-top:2px;">
+                    ${progres === 100 ? 'Predviđeno vrijeme servisa je završilo.' : 'Prikaz vremena od termina do predviđenog kraja.'}
+                </p>
             </div>
-            ` : ''}
             
-            <div style="font-size: 0.9rem; color: #ccc; border-top: 1px solid #333; padding-top: 10px;">
-                <strong>Radovi:</strong><br>
-                <div style="margin-left: 15px; margin-top: 5px;">
+            <div style="font-size: 0.9rem; color: #ccc; border-top: 1px solid #38bff844; padding-top: 10px;">
+                <strong style="color:#38bff8;">Radovi:</strong><br>
+                <div style="margin-left: 15px; margin-top: 5px; margin-bottom:10px;">
                     ${podaci.lista.map(stavka => `• ${stavka}`).join('<br>')}
                 </div>
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
-                    <strong>Termin prijema:</strong> ${podaci.termin}<br>
-                    <strong>Predviđen završetak:</strong> ${datumZavrsetka}<br>
-                    <strong>Ukupna cijena:</strong> 
-                    <span style="color: #2ecc71; font-weight:bold; font-size: 1.2rem;">
-                        ${podaci.cijena.toFixed(2)} €
-                    </span>
+                
+                <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>📥 Termin prijema:</span>
+                        <span style="color:white;">${podaci.termin}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:5px;">
+                        <span>🏁 Predviđen kraj:</span>
+                        <span style="color:${podaci.datumZavrsetka ? '#fff' : '#888'}; font-weight:bold;">${datumZavrsetkaPrikaz}</span>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top:8px; padding-top:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <span>Ukupna cijena:</span>
+                        <span style="color: #2ecc71; font-weight:bold; font-size: 1.2rem;">${podaci.cijena.toFixed(2)} €</span>
+                    </div>
                 </div>
             </div>
 
-            <button id="${btnId}" style="margin-top: 15px; cursor: pointer; background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 5px; width: 100%; font-weight: bold;">
+            <button id="${btnId}" class="btn-pdf">
                 <i class="fas fa-file-pdf"></i> PREUZMI RAČUN / PONUDU
             </button>
         </div>
@@ -475,31 +443,35 @@ function nacrtajStatusKarticu(podaci) {
     kontejner.insertAdjacentHTML('beforeend', html);
 
     document.getElementById(btnId).onclick = () => {
-        podaci.datumZavrsetka = datumZavrsetka;
         exportVehiclePDF(podaci);
     };
 }
+function izracunajProgres(startDatum, endDatum) {
+    // Ako nema datuma početka ili kraja, progres je 0
+    if (!startDatum || !endDatum) return 0;
 
-/*function izracunajProgres(datumTermina, datumZavrsetka) {
-    if (!datumTermina || !datumZavrsetka) return 0;
-    
-    const pocetak = new Date(datumTermina);
-    const zavrsetak = new Date(datumZavrsetka);
-    const sada = new Date();
-    
-    const ukupnoVrijeme = zavrsetak - pocetak;
-    const protekloVrijeme = sada - pocetak;
-    
-    const postotak = Math.min(100, Math.max(0, (protekloVrijeme / ukupnoVrijeme) * 100));
-    
-    return Math.round(postotak);
-}*/
+    const start = new Date(startDatum).getTime();
+    const end = new Date(endDatum).getTime();
+    const now = new Date().getTime();
 
-/*function izracunajDatumZavrsetka() {
-    const danas = new Date();
-    danas.setDate(danas.getDate() + 3);
-    return danas.toLocaleDateString('hr-HR');
-}*/
+    // 1. Ako je trenutno vrijeme prošlo datum završetka -> 100%
+    if (now >= end) return 100;
+
+    // 2. Ako termin još nije ni počeo -> 0%
+    if (now <= start) return 0;
+
+    // 3. Računanje postotka proteklog vremena
+    const ukupnoTrajanje = end - start;
+    const proteklo = now - start;
+
+    // Zaštita od dijeljenja s nulom (ako su start i end isti)
+    if (ukupnoTrajanje <= 0) return 100;
+
+    const postotak = (proteklo / ukupnoTrajanje) * 100;
+    
+    // Vraća zaokružen broj (npr. 45)
+    return Math.min(Math.round(postotak), 100);
+}
 
 // PDF za POJEDINAČNO vozilo
 function exportVehiclePDF(data) {
@@ -615,7 +587,7 @@ function generirajMasovniPDF() {
     }
 
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('l'); // Landscape orijentacija jer imamo puno stupaca
+    const doc = new jsPDF('l'); 
 
     doc.setFontSize(18);
     doc.setTextColor(41, 128, 185);
@@ -637,8 +609,8 @@ function generirajMasovniPDF() {
     ]];
     
     const tableBody = mojiPopravciCache.map(p => {
-        // Koristimo helper funkciju za izračun
-        const info = analizirajTroskove(p);
+        // --- PROMJENA: Šaljemo cache radnji u funkciju ---
+        const info = analizirajTroskove(p, sveRadnjeCache);
         
         const vozilo = p.vozilo || {};
         const vrsta = vozilo.vrstaVozila || {};
@@ -646,12 +618,11 @@ function generirajMasovniPDF() {
         return [
             vrsta.nazivModela || "N/A",
             vozilo.regOznaka || "-",
-            vozilo.serijskiBroj || "-", // NOVO
-            vozilo.godinaProizvodnje || "-", // NOVO
+            vozilo.serijskiBroj || "-", 
+            vozilo.godinaProizvodnje || "-", 
             p.termin ? new Date(p.termin.datumVrijeme).toLocaleDateString() : "-",
-            //info.opis, // Točan opis iz baze
             (p.stanje || "").toUpperCase(),
-            info.ukupnaCijena.toFixed(2)
+            info.ukupnaCijena.toFixed(2) // Sada prikazuje točnu cijenu
         ];
     });
 
@@ -663,12 +634,12 @@ function generirajMasovniPDF() {
         styles: { fontSize: 8, overflow: 'linebreak' },
         columnStyles: { 
             0: { cellWidth: 30 }, 
-            5: { cellWidth: 80 }, // Širi stupac za opis
+            5: { cellWidth: 80 }, 
             7: { halign: 'right', fontStyle: 'bold' } 
         } 
     });
 
-    doc.save(`Svi_Popravci_Izvjestaj.pdf`);style=""
+    doc.save(`Svi_Popravci_Izvjestaj.pdf`);
 }
 
 async function ucitajMojePopravke() {
@@ -677,16 +648,25 @@ async function ucitajMojePopravke() {
         if (!trenutniKorisnikId) return;
 
         const token = localStorage.getItem("authToken");
-        const res = await fetch(`${API_BASE}/popravak`, { 
-            headers: { "Authorization": `Bearer ${token}` } 
-        });
         
-        if (!res.ok) throw new Error("Neuspješno dohvaćanje popravaka");
+        // --- PROMJENA: Dohvaćamo i popravke i radnje odjednom ---
+        const [resPopravci, resRadnje] = await Promise.all([
+            fetch(`${API_BASE}/popravak`, { headers: { "Authorization": `Bearer ${token}` } }),
+            fetch(`${API_BASE}/radnja`, { headers: { "Authorization": `Bearer ${token}` } })
+        ]);
         
-        const sviPopravci = await res.json();
+        if (!resPopravci.ok || !resRadnje.ok) throw new Error("Neuspješno dohvaćanje podataka s servera");
+        
+        const sviPopravci = await resPopravci.json();
+        const sveRadnje = await resRadnje.json(); // Dohvaćene radnje
+
+        // Spremamo u globalne varijable za kasnije (PDF)
+        sveRadnjeCache = sveRadnje;
+
         const kontejner = document.getElementById('status-vozila-kontenjer');
         kontejner.innerHTML = ""; 
         
+        // Filtriramo samo popravke logiranog korisnika
         const mojiPopravci = sviPopravci.filter(p => 
             p.vozilo && p.vozilo.korisnik && p.vozilo.korisnik.idKorisnik === trenutniKorisnikId
         );
@@ -710,30 +690,35 @@ async function ucitajMojePopravke() {
             
             const vin = vozilo.serijskiBroj || "-";
             const godina = vozilo.godinaProizvodnje || "-";
-            const vlasnik = vozilo.korisnik ? 
-                `${vozilo.korisnik.ime} ${vozilo.korisnik.prezime}` : "Nepoznato";
-            const datumTermina = p.termin ? 
-                new Date(p.termin.datumVrijeme).toLocaleDateString('hr-HR') : "Nije definirano";
+            const vlasnik = vozilo.korisnik ? `${vozilo.korisnik.ime} ${vozilo.korisnik.prezime}` : "Nepoznato";
             
-            // Dohvat datuma završetka iz baze (ako postoji)
-            const datumZavrsetka = p.datumZavrsetka ? 
-                new Date(p.datumZavrsetka).toLocaleDateString('hr-HR') : null;
+            const options = { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+            
+            const rawTermin = p.termin ? p.termin.datumVrijeme : null;
+            const rawKraj = p.datumVrijeme; 
 
-            // Izračun cijene iz opisStavki
-            const info = analizirajTroskove(p);
+            const datumTermina = rawTermin ? new Date(rawTermin).toLocaleString('hr-HR', options) : "Nije definirano";
+            const datumZavrsetka = rawKraj ? new Date(rawKraj).toLocaleString('hr-HR', options) : null;
+
+            const postotakGotovo = izracunajProgres(rawTermin, rawKraj);
+
+            // --- PROMJENA: Sada šaljemo i 'sveRadnje' u funkciju ---
+            const info = analizirajTroskove(p, sveRadnje);
 
             nacrtajStatusKarticu({
                 model: model,
                 reg: reg,
                 stanje: status,
                 stavkeOpis: info.opis,
-                cijena: info.ukupnaCijena,
+                cijena: info.ukupnaCijena, // Ovo će sada biti ispravno izračunato
                 lista: info.lista,
                 vin: vin,
                 godina: godina,
                 vlasnik: vlasnik,
                 termin: datumTermina,
-                datumZavrsetka: datumZavrsetka
+                datumZavrsetka: datumZavrsetka,
+                rawDatumZavrsetka: rawKraj,
+                progres: postotakGotovo
             });
         });
 
@@ -743,7 +728,7 @@ async function ucitajMojePopravke() {
 }
 
 
-async function spremiSamoUOpisStavki(idPopravka) {
+/*async function spremiSamoUOpisStavki(idPopravka) {
     // Izračunaj stavke sa cijenama
     const aktivneStavke = document.querySelectorAll('.stavka-ponude.active');
     let opisStavki = [];
@@ -760,7 +745,7 @@ async function spremiSamoUOpisStavki(idPopravka) {
     };
     
     try {
-        const res = await fetch(`${API_BASE}/popravak/${idPopravak}`, {
+        const res = await fetch(`${API_BASE}/popravak/${idPopravka}`, {
             method: "PUT",
             headers: getAuthHeaders(),
             body: JSON.stringify(updatePayload)
@@ -772,7 +757,7 @@ async function spremiSamoUOpisStavki(idPopravka) {
     } catch (err) {
         console.error("Greška pri ažuriranju:", err);
     }
-}
+}*/
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Stranica učitana, pokrećem skripte...");
@@ -784,34 +769,93 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- FUNKCIJA ZA DETALJE I CIJENU ---
-function analizirajTroskove(popravak) {
+function analizirajTroskove(popravak, sveRadnje = []) {
     let ukupno = 0;
     let stavkeTekst = [];
+    let pronadeneRadnje = [];
+    console.log("Dobiveno iz tablice ",popravak, sveRadnje)
+
+    // --- 1. PRIMARNA METODA: Pretraga po ID-u u listi radnji ---
+    // Provjeravamo postoji li lista 'sveRadnje' i filtriramo one koje pripadaju ovom popravku
+    if (Array.isArray(sveRadnje) && sveRadnje.length > 0) {
+        pronadeneRadnje = sveRadnje.filter(r => {
+            // Provjera poveznice: r.popravak može biti objekt ili ID
+            const rPopravakId = (r.popravak && r.popravak.idPopravak) 
+                                ? r.popravak.idPopravak 
+                                : r.idPopravak;
+            
+            return rPopravakId === popravak.idPopravak;
+        });
+    } 
+    // Fallback: Ako je backend vratio radnje unutar samog objekta popravak
+    else if (popravak.radnje && Array.isArray(popravak.radnje)) {
+        pronadeneRadnje = popravak.radnje;
+    }
+
+    // Ako smo našli strukturne podatke, računamo sumu
+    if (pronadeneRadnje.length > 0) {
+        pronadeneRadnje.forEach(radnja => {
+            // Računamo samo ako je stanje 'potvrđeno' ili 'završeno'
+            // Ignoriramo 'nepotvrđeno' ili 'odbijeno'
+            const stanje = radnja.stanje ? radnja.stanje.toLowerCase() : "";
+            if (stanje === 'potvrđeno' || stanje === 'završeno') {
+                
+                // Dohvat cijene iz objekta dijeloviusluge
+                if (radnja.dijeloviusluge && radnja.dijeloviusluge.cijena) {
+                    let cijena = parseFloat(radnja.dijeloviusluge.cijena);
+                    let naziv = radnja.dijeloviusluge.naziv || "Stavka";
+                    
+                    ukupno += cijena;
+                    stavkeTekst.push(`${naziv} (${cijena.toFixed(2)} €)`);
+                }
+            }
+        });
+
+        if (ukupno > 0 || stavkeTekst.length > 0) {
+            return {
+                ukupnaCijena: parseFloat(ukupno.toFixed(2)),
+                opis: stavkeTekst.length > 0 ? "Stavke iz sustava: " + stavkeTekst.join(", ") : popravak.opis,
+                lista: stavkeTekst,
+                metoda: "Baza podataka"
+            };
+        }
+    }
+
+    // --- 2. FALLBACK METODA: Parsiranje teksta (Regex) ---
+    // Koristi se samo ako nema povezanih radnji u bazi, a cijena je upisana ručno u opis
+    const izvorTeksta = popravak.opis || "";
     
-    // Provjeravamo i 'opis' i 'opisStavki' (za svaki slučaj)
-    const izvorTeksta = popravak.opis || popravak.opisStavki || "";
-    
-    if (izvorTeksta) {
-        // Regex koji traži sve što je u zagradama s oznakom € (npr. 75.00 €)
-        const regexCijena = /\((\d+\.?\d*)\s*€\)/g;
+    if (ukupno === 0 && izvorTeksta) {
+        // Regex hvata formate: (100 €), (100.50 €), (1.200,00 €)
+        const regexCijena = /\(([\d.,]+)\s*€\)/g;
         let match;
         
         while ((match = regexCijena.exec(izvorTeksta)) !== null) {
-            ukupno += parseFloat(match[1]);
-        }
+            let brojString = match[1];
 
-        // Za prikaz na kartici, uzimamo samo dio sa stavkama ako postoji
-        if (izvorTeksta.includes("STAVKE:")) {
-            const samoStavke = izvorTeksta.split("|")[0].replace("STAVKE:", "").trim();
-            stavkeTekst = samoStavke.split(", ");
-        } else {
-            stavkeTekst = izvorTeksta.split(", ");
+            // HR format detekcija (ako ima zarez, on je decimala)
+            if (brojString.includes(',')) {
+                // 1.200,50 -> 1200.50
+                brojString = brojString.replace(/\./g, '').replace(',', '.');
+            } 
+            // Ako nema zareza, pretpostavljamo standardni JS format ili cijeli broj
+            
+            const iznos = parseFloat(brojString);
+            if (!isNaN(iznos)) {
+                ukupno += iznos;
+            }
+        }
+        
+        // Pokušaj izvući popis stavki ako su odvojene zarezom
+        if (ukupno > 0 && stavkeTekst.length === 0) {
+            stavkeTekst = izvorTeksta.split(',').map(s => s.trim());
         }
     }
 
     return {
-        ukupnaCijena: ukupno,
+        ukupnaCijena: parseFloat(ukupno.toFixed(2)),
         opis: izvorTeksta,
-        lista: stavkeTekst
+        lista: stavkeTekst,
+        metoda: ukupno > 0 && pronadeneRadnje.length === 0 ? "Parsiranje opisa" : "Nema troškova"
     };
 }
