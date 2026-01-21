@@ -26,7 +26,7 @@ public class VrstaVozilaController {
 
     @GetMapping
     public ResponseEntity<List<VrstaVozila>> getAllVehicleTypes(@AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         List<VrstaVozila> vehicleTypes = vrstaVozilaRepository.findAll();
