@@ -40,7 +40,7 @@ public class PopravakController {
 
     @GetMapping
     public ResponseEntity<List<Popravak>> getAll(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if(AuthorityCheck.CheckAuthority(userPrincipal, "serviser")) {
