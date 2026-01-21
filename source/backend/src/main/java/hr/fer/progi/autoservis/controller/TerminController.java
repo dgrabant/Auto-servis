@@ -39,7 +39,7 @@ public class TerminController {
 
     @GetMapping
     public ResponseEntity<List<Termin>> getAll(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         List<Termin> termini = new ArrayList<>();
