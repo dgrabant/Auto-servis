@@ -43,7 +43,7 @@ public class RadnjaController {
 
     @GetMapping
     public ResponseEntity<List<Radnja>> getAll(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if(AuthorityCheck.CheckAuthority(userPrincipal, "serviser")){
@@ -67,7 +67,7 @@ public class RadnjaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Radnja> getById(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Radnja radnja = radnjaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));

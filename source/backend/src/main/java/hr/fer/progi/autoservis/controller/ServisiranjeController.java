@@ -34,7 +34,7 @@ public class ServisiranjeController {
 
     @GetMapping
     public ResponseEntity<List<Servisiranje>> getAll(@AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         if(AuthorityCheck.CheckAuthority(userPrincipal, "serviser")) {
@@ -56,7 +56,7 @@ public class ServisiranjeController {
 
     @GetMapping("/{id1}.{id2}")
     public ResponseEntity<Servisiranje> getById(@PathVariable Integer id1, @PathVariable Integer id2, @AuthenticationPrincipal UserPrincipal userPrincipal){
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Popravak popravak = popravakRepository.findById(id1).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));

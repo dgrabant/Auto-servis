@@ -35,7 +35,7 @@ public class VrstaVozilaController {
 
     @GetMapping("/{id}")
     public ResponseEntity<VrstaVozila> getVehicleTypeById(@PathVariable Integer id, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         return vrstaVozilaRepository.findById(id)
