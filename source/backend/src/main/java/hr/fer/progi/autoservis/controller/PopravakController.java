@@ -84,7 +84,7 @@ public class PopravakController {
 
     @PostMapping
     public ResponseEntity<Popravak> create(@Valid @RequestBody PopravakCreateDto popravakDto, @AuthenticationPrincipal UserPrincipal userPrincipal) {
-        if(!AuthorityCheck.CheckAuthority(userPrincipal, "serviser", "upravitelj", "admin"))
+        if(!AuthorityCheck.CheckAuthority(userPrincipal))
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Vozilo vozilo = voziloRepository.findById(popravakDto.getIdVozila()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
